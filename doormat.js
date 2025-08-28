@@ -320,12 +320,12 @@ function draw() {
     // Draw fringe
     drawFringe();
     
-    // Draw text on top of everything
+    pop(); // End rotation
+    
+    // Draw text on top of everything (outside rotation)
     if (textData.length > 0) {
         drawTextOverlay();
     }
-    
-    pop(); // End rotation
 }
 
 function drawStripe(stripe) {
@@ -580,8 +580,15 @@ function drawSelvedgeEdges() {
 }
 
 function drawTextOverlay() {
-    // Draw text on top of the doormat
+    // Draw text on top of the doormat (outside rotation context)
     push();
+    
+    // Apply the same rotation as the doormat to keep text aligned
+    translate(width/2, height/2);
+    rotate(PI/2);
+    translate(-height/2, -width/2);
+    
+    // Now translate to the doormat area
     translate(fringeLength, fringeLength);
     
     fill(0, 0, 0, 255); // Solid black
