@@ -299,7 +299,7 @@ function drawSelvedgeEdges() {
         
         // Draw flowing semicircular weft thread that connects layers
         let radius = weftThickness * 1.5; // Size based on weft thickness
-        let centerX = fringeLength - radius;
+        let centerX = fringeLength - radius/2; // Move closer to the mat
         let centerY = y;
         
         // Draw the semicircle (flowing from left to right)
@@ -322,7 +322,7 @@ function drawSelvedgeEdges() {
         
         // Draw flowing semicircular weft thread that connects layers
         let radius = weftThickness * 1.5; // Size based on weft thickness
-        let centerX = fringeLength + doormatWidth + radius;
+        let centerX = fringeLength + doormatWidth + radius/2; // Move closer to the mat
         let centerY = y;
         
         // Draw the semicircle (flowing from right to left)
@@ -335,22 +335,22 @@ function drawSelvedgeEdges() {
 }
 
 function drawFringeSection(x, y, w, h, side) {
-    let fringeStrands = w / 6; // More fringe strands for realistic look
+    let fringeStrands = w / 12; // More fringe strands for thinner threads
     let strandWidth = w / fringeStrands;
     
     for (let i = 0; i < fringeStrands; i++) {
         let strandX = x + i * strandWidth;
         let strandColor = random(selectedPalette.colors);
         
-        // Draw individual fringe strand with more realistic appearance
-        for (let j = 0; j < 8; j++) { // Fewer but thicker threads per strand
-            let threadX = strandX + random(-strandWidth/4, strandWidth/4);
+        // Draw individual fringe strand with thin threads
+        for (let j = 0; j < 12; j++) { // More but thinner threads per strand
+            let threadX = strandX + random(-strandWidth/6, strandWidth/6);
             let startY = side === 'top' ? y + h : y;
             let endY = side === 'top' ? y : y + h;
             
-            // Add more natural curl/wave to the fringe
-            let waveAmplitude = random(2, 6);
-            let waveFreq = random(0.2, 0.4);
+            // Add natural curl/wave to the fringe
+            let waveAmplitude = random(1, 3);
+            let waveFreq = random(0.3, 0.5);
             
             // Use darker version of strand color for fringe
             let fringeColor = color(strandColor);
@@ -359,15 +359,15 @@ function drawFringeSection(x, y, w, h, side) {
             let b = blue(fringeColor) * 0.7;
             
             stroke(r, g, b);
-            strokeWeight(random(1, 2.5));
+            strokeWeight(random(0.5, 1)); // Much thinner threads
             
             noFill();
             beginShape();
-            for (let t = 0; t <= 1; t += 0.05) {
+            for (let t = 0; t <= 1; t += 0.1) {
                 let yPos = lerp(startY, endY, t);
                 let xOffset = sin(t * PI * waveFreq) * waveAmplitude * t;
                 // Add some randomness to make it look more natural
-                xOffset += random(-1, 1);
+                xOffset += random(-0.5, 0.5);
                 vertex(threadX + xOffset, yPos);
             }
             endShape();
