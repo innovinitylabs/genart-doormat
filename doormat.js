@@ -587,9 +587,9 @@ function drawTextOverlay() {
     fill(0, 0, 0, 255); // Solid black
     noStroke();
     
-    // Draw each text pixel as a larger rectangle for better visibility
+    // Draw each text pixel as a much larger rectangle for better visibility
     for (let textPixel of textData) {
-        rect(textPixel.x, textPixel.y, textPixel.width * 2, textPixel.height * 2);
+        rect(textPixel.x, textPixel.y, textPixel.width * 4, textPixel.height * 4);
     }
     
     pop();
@@ -697,18 +697,19 @@ function generateTextData() {
     textData = [];
     if (!doormatText) return;
     
-    // Simple 5x7 font grid for each character (made larger)
-    const charWidth = 12;
-    const charHeight = 16;
-    const spacing = 4;
+    // Simple 5x7 font grid for each character (made much larger)
+    const charWidth = 24;
+    const charHeight = 32;
+    const spacing = 8;
     
     // Calculate text dimensions
     const textWidth = doormatText.length * (charWidth + spacing);
     const textHeight = charHeight;
     
-    // Center the text on the doormat
-    const startX = (doormatWidth - textWidth) / 2;
-    const startY = (doormatHeight - textHeight) / 2;
+    // Center the text on the doormat (accounting for 90-degree rotation)
+    // After rotation: width becomes height, height becomes width
+    const startX = (doormatHeight - textWidth) / 2;
+    const startY = (doormatWidth - textHeight) / 2;
     
     // Generate character data
     for (let i = 0; i < doormatText.length; i++) {
