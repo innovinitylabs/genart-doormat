@@ -287,8 +287,8 @@ function drawFringe() {
 }
 
 function drawSelvedgeEdges() {
-    // Left selvedge edge
-    for (let y = fringeLength; y < fringeLength + doormatHeight; y += 3) {
+    // Left selvedge edge - flowing semicircular weft threads
+    for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftThickness + 1) {
         let selvedgeColor = random(selectedPalette.colors);
         let r = red(color(selvedgeColor)) * 0.8;
         let g = green(color(selvedgeColor)) * 0.8;
@@ -297,12 +297,21 @@ function drawSelvedgeEdges() {
         fill(r, g, b);
         noStroke();
         
-        // Draw looped weft thread around the edge
-        ellipse(fringeLength - 2, y, 4, 3);
+        // Draw flowing semicircular weft thread that connects layers
+        let radius = weftThickness * 1.5; // Size based on weft thickness
+        let centerX = fringeLength - radius;
+        let centerY = y;
+        
+        // Draw the semicircle
+        arc(centerX, centerY, radius * 2, radius * 2, -HALF_PI, HALF_PI);
+        
+        // Add subtle shadow for depth
+        fill(r * 0.7, g * 0.7, b * 0.7, 100);
+        arc(centerX + 1, centerY + 1, radius * 2, radius * 2, -HALF_PI, HALF_PI);
     }
     
-    // Right selvedge edge
-    for (let y = fringeLength; y < fringeLength + doormatHeight; y += 3) {
+    // Right selvedge edge - flowing semicircular weft threads
+    for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftThickness + 1) {
         let selvedgeColor = random(selectedPalette.colors);
         let r = red(color(selvedgeColor)) * 0.8;
         let g = green(color(selvedgeColor)) * 0.8;
@@ -311,8 +320,17 @@ function drawSelvedgeEdges() {
         fill(r, g, b);
         noStroke();
         
-        // Draw looped weft thread around the edge
-        ellipse(fringeLength + doormatWidth + 2, y, 4, 3);
+        // Draw flowing semicircular weft thread that connects layers
+        let radius = weftThickness * 1.5; // Size based on weft thickness
+        let centerX = fringeLength + doormatWidth + radius;
+        let centerY = y;
+        
+        // Draw the semicircle (flipped for right side)
+        arc(centerX, centerY, radius * 2, radius * 2, HALF_PI, -HALF_PI);
+        
+        // Add subtle shadow for depth
+        fill(r * 0.7, g * 0.7, b * 0.7, 100);
+        arc(centerX - 1, centerY + 1, radius * 2, radius * 2, HALF_PI, -HALF_PI);
     }
 }
 
