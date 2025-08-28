@@ -6,7 +6,9 @@ let doormatHeight = 600;
 let fringeLength = 30;
 let currentSeed = 42;
 let warpThickness = 2; // Default warp thread thickness
-let weftThickness = 2; // Default weft thread thickness
+let weftThickness = 8; // Default weft thread thickness
+let warpSpacing = 3; // Default warp spacing
+let weftSpacing = 9; // Default weft spacing
 
 // Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
@@ -156,8 +158,7 @@ function draw() {
 
 function drawStripe(stripe) {
     // Create a proper plain weave structure like the diagram
-    let warpSpacing = warpThickness + 1; // Space between warp threads
-    let weftSpacing = weftThickness + 1; // Space between weft threads
+    // Use the global spacing variables that can be controlled by sliders
     
     // First, draw the warp threads (vertical) as the foundation
     for (let x = 0; x < doormatWidth; x += warpSpacing) {
@@ -292,7 +293,6 @@ function drawFringe() {
 function drawSelvedgeEdges() {
     // Left selvedge edge - flowing semicircular weft threads
     // Use the same spacing as the actual weft threads in drawStripe
-    let weftSpacing = weftThickness + 1;
     
     // FIXED: Use relative coordinates like the weft threads (accounting for canvas translation)
     for (let y = 0; y < doormatHeight; y += weftSpacing) {
@@ -470,8 +470,22 @@ function updateWeftThicknessInSketch(thickness) {
     redraw();
 }
 
+// Function to update warp spacing from HTML slider
+function updateWarpSpacingInSketch(spacing) {
+    warpSpacing = spacing;
+    redraw();
+}
+
+// Function to update weft spacing from HTML slider
+function updateWeftSpacingInSketch(spacing) {
+    weftSpacing = spacing;
+    redraw();
+}
+
 // Make the functions globally available
 if (typeof window !== 'undefined') {
     window.updateWarpThicknessInSketch = updateWarpThicknessInSketch;
     window.updateWeftThicknessInSketch = updateWeftThicknessInSketch;
+    window.updateWarpSpacingInSketch = updateWarpSpacingInSketch;
+    window.updateWeftSpacingInSketch = updateWeftSpacingInSketch;
 }

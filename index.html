@@ -140,11 +140,19 @@
         <div class="slider-controls">
             <div class="slider-group">
                 <label for="warpThickness">Warp Thickness: <span id="warpThicknessValue">2</span></label>
-                <input type="range" id="warpThickness" min="1" max="8" value="2" step="1" oninput="updateWarpThickness()">
+                <input type="range" id="warpThickness" min="1" max="12" value="2" step="1" oninput="updateWarpThickness()">
             </div>
             <div class="slider-group">
-                <label for="weftThickness">Weft Thickness: <span id="weftThicknessValue">2</span></label>
-                <input type="range" id="weftThickness" min="1" max="8" value="2" step="1" oninput="updateWeftThickness()">
+                <label for="weftThickness">Weft Thickness: <span id="weftThicknessValue">8</span></label>
+                <input type="range" id="weftThickness" min="1" max="12" value="8" step="1" oninput="updateWeftThickness()">
+            </div>
+            <div class="slider-group">
+                <label for="warpSpacing">Warp Spacing: <span id="warpSpacingValue">3</span></label>
+                <input type="range" id="warpSpacing" min="2" max="15" value="3" step="1" oninput="updateWarpSpacing()">
+            </div>
+            <div class="slider-group">
+                <label for="weftSpacing">Weft Spacing: <span id="weftSpacingValue">9</span></label>
+                <input type="range" id="weftSpacing" min="2" max="15" value="9" step="1" oninput="updateWeftSpacing()">
             </div>
         </div>
         
@@ -192,6 +200,22 @@
             document.getElementById('weftThicknessValue').textContent = thickness;
             if (typeof window.updateWeftThicknessInSketch === 'function') {
                 window.updateWeftThicknessInSketch(parseInt(thickness));
+            }
+        }
+        
+        function updateWarpSpacing() {
+            const spacing = document.getElementById('warpSpacing').value;
+            document.getElementById('warpSpacingValue').textContent = spacing;
+            if (typeof window.updateWarpSpacingInSketch === 'function') {
+                window.updateWarpSpacingInSketch(parseInt(spacing));
+            }
+        }
+        
+        function updateWeftSpacing() {
+            const spacing = document.getElementById('weftSpacing').value;
+            document.getElementById('weftSpacingValue').textContent = spacing;
+            if (typeof window.updateWeftSpacingInSketch === 'function') {
+                window.updateWeftSpacingInSketch(parseInt(spacing));
             }
         }
         
