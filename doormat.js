@@ -292,8 +292,23 @@ function drawSelvedgeEdges() {
     let weftSpacing = weftThickness + 1;
     
     // Loop through each stripe and draw selvedge for each weft thread in that stripe
+    let isFirstWeft = true;
+    let isLastWeft = false;
+    
     for (let stripe of stripeData) {
-        for (let y = stripe.y + weftSpacing; y < stripe.y + stripe.height - weftSpacing; y += weftSpacing) {
+        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
+            // Skip the very first and very last weft threads of the entire doormat
+            if (isFirstWeft) {
+                isFirstWeft = false;
+                continue;
+            }
+            
+            // Check if this is the last weft thread
+            if (stripe === stripeData[stripeData.length - 1] && y + weftSpacing >= stripe.y + stripe.height) {
+                isLastWeft = true;
+                break;
+            }
+            
             // Get the color from the current stripe
             let selvedgeColor = color(stripe.primaryColor);
             
@@ -326,8 +341,23 @@ function drawSelvedgeEdges() {
     }
     
     // Right selvedge edge - flowing semicircular weft threads
+    let isFirstWeftRight = true;
+    let isLastWeftRight = false;
+    
     for (let stripe of stripeData) {
-        for (let y = stripe.y + weftSpacing; y < stripe.y + stripe.height - weftSpacing; y += weftSpacing) {
+        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
+            // Skip the very first and very last weft threads of the entire doormat
+            if (isFirstWeftRight) {
+                isFirstWeftRight = false;
+                continue;
+            }
+            
+            // Check if this is the last weft thread
+            if (stripe === stripeData[stripeData.length - 1] && y + weftSpacing >= stripe.y + stripe.height) {
+                isLastWeftRight = true;
+                break;
+            }
+            
             // Get the color from the current stripe
             let selvedgeColor = color(stripe.primaryColor);
             
