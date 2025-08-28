@@ -289,84 +289,88 @@ function drawFringe() {
 function drawSelvedgeEdges() {
     // Left selvedge edge - flowing semicircular weft threads
     for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftThickness + 1) {
-        let selvedgeColor = random(selectedPalette.colors);
-        let r = red(color(selvedgeColor)) * 0.8;
-        let g = green(color(selvedgeColor)) * 0.8;
-        let b = blue(color(selvedgeColor)) * 0.8;
+        // Find the stripe that contains this y position
+        let currentStripe = null;
+        for (let stripe of stripeData) {
+            if (y >= stripe.y && y < stripe.y + stripe.height) {
+                currentStripe = stripe;
+                break;
+            }
+        }
         
-        fill(r, g, b);
-        noStroke();
-        
-        // POSITIONING ANALYSIS FOR LEFT SELVEDGE:
-        // 
-        // Canvas layout:
-        // | fringeLength | doormatWidth | fringeLength |
-        // |    30px     |    400px     |    30px      |
-        // 
-        // Doormat edges:
-        // - Left edge of main mat: fringeLength (30px)
-        // - Right edge of main mat: fringeLength + doormatWidth (430px)
-        // 
-        // Current positioning:
-        let radius = weftThickness * 1.5; // Size based on weft thickness
-        // let centerX = fringeLength - radius; // This places the center of semicircle OUTSIDE the mat
-        // 
-        // Problem: centerX = 30 - radius means:
-        // - If radius = 3, centerX = 27 (3px outside mat)
-        // - If radius = 6, centerX = 24 (6px outside mat)
-        // - This creates a gap between semicircle and mat edge
-        // 
-        // Correct positioning should be:
-        // - Semicircle should start AT the mat edge (fringeLength)
-        // - So centerX should be: fringeLength + radius (not minus)
-        // - This way semicircle flows from mat edge outward
-        
-        let centerX = fringeLength + radius; // FIXED: Center at mat edge, semicircle flows outward
-        let centerY = y;
-        
-        // Draw the semicircle (flowing from left to right)
-        arc(centerX, centerY, radius * 2, radius * 2, HALF_PI, -HALF_PI);
-        
-        // Add subtle shadow for depth
-        fill(r * 0.7, g * 0.7, b * 0.7, 100);
-        arc(centerX + 1, centerY + 1, radius * 2, radius * 2, HALF_PI, -HALF_PI);
+        if (currentStripe) {
+            // Get the color from the current stripe
+            let selvedgeColor = color(currentStripe.primaryColor);
+            
+            // Check if there's a secondary color for blending
+            if (currentStripe.secondaryColor && currentStripe.weaveType === 'mixed') {
+                let secondaryColor = color(currentStripe.secondaryColor);
+                // Blend the colors based on noise for variation
+                let blendFactor = noise(y * 0.1) * 0.5 + 0.5;
+                selvedgeColor = lerpColor(selvedgeColor, secondaryColor, blendFactor);
+            }
+            
+            let r = red(selvedgeColor) * 0.8;
+            let g = green(selvedgeColor) * 0.8;
+            let b = blue(selvedgeColor) * 0.8;
+            
+            fill(r, g, b);
+            noStroke();
+            
+            let radius = weftThickness * 1.5; // Size based on weft thickness
+            let centerX = fringeLength; // Center at mat edge
+            let centerY = y;
+            
+            // Draw the semicircle (flowing from left to right)
+            arc(centerX, centerY, radius * 2, radius * 2, HALF_PI, -HALF_PI);
+            
+            // Add subtle shadow for depth
+            fill(r * 0.7, g * 0.7, b * 0.7, 100);
+            arc(centerX + 1, centerY + 1, radius * 2, radius * 2, HALF_PI, -HALF_PI);
+        }
     }
     
     // Right selvedge edge - flowing semicircular weft threads
     for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftThickness + 1) {
-        let selvedgeColor = random(selectedPalette.colors);
-        let r = red(color(selvedgeColor)) * 0.8;
-        let g = green(color(selvedgeColor)) * 0.8;
-        let b = blue(color(selvedgeColor)) * 0.8;
+        // Find the stripe that contains this y position
+        let currentStripe = null;
+        for (let stripe of stripeData) {
+            if (y >= stripe.y && y < stripe.y + stripe.height) {
+                currentStripe = stripe;
+                break;
+            }
+        }
         
-        fill(r, g, b);
-        noStroke();
-        
-        // POSITIONING ANALYSIS FOR RIGHT SELVEDGE:
-        // 
-        // Current positioning:
-        let radius = weftThickness * 1.5; // Size based on weft thickness
-        // let centerX = fringeLength + doormatWidth + radius; // This places center OUTSIDE the mat
-        // 
-        // Problem: centerX = 430 + radius means:
-        // - If radius = 3, centerX = 433 (3px outside mat)
-        // - If radius = 6, centerX = 436 (6px outside mat)
-        // - This creates a gap between semicircle and mat edge
-        // 
-        // Correct positioning should be:
-        // - Semicircle should start AT the mat edge (fringeLength + doormatWidth)
-        // - So centerX should be: fringeLength + doormatWidth - radius (not plus)
-        // - This way semicircle flows from mat edge outward
-        
-        let centerX = fringeLength + doormatWidth - radius; // FIXED: Center at mat edge, semicircle flows outward
-        let centerY = y;
-        
-        // Draw the semicircle (flowing from right to left)
-        arc(centerX, centerY, radius * 2, radius * 2, -HALF_PI, HALF_PI);
-        
-        // Add subtle shadow for depth
-        fill(r * 0.7, g * 0.7, b * 0.7, 100);
-        arc(centerX - 1, centerY + 1, radius * 2, radius * 2, -HALF_PI, HALF_PI);
+        if (currentStripe) {
+            // Get the color from the current stripe
+            let selvedgeColor = color(currentStripe.primaryColor);
+            
+            // Check if there's a secondary color for blending
+            if (currentStripe.secondaryColor && currentStripe.weaveType === 'mixed') {
+                let secondaryColor = color(currentStripe.secondaryColor);
+                // Blend the colors based on noise for variation
+                let blendFactor = noise(y * 0.1) * 0.5 + 0.5;
+                selvedgeColor = lerpColor(selvedgeColor, secondaryColor, blendFactor);
+            }
+            
+            let r = red(selvedgeColor) * 0.8;
+            let g = green(selvedgeColor) * 0.8;
+            let b = blue(selvedgeColor) * 0.8;
+            
+            fill(r, g, b);
+            noStroke();
+            
+            let radius = weftThickness * 1.5; // Size based on weft thickness
+            let centerX = fringeLength + doormatWidth; // Center at mat edge
+            let centerY = y;
+            
+            // Draw the semicircle (flowing from right to left)
+            arc(centerX, centerY, radius * 2, radius * 2, -HALF_PI, HALF_PI);
+            
+            // Add subtle shadow for depth
+            fill(r * 0.7, g * 0.7, b * 0.7, 100);
+            arc(centerX - 1, centerY + 1, radius * 2, radius * 2, -HALF_PI, HALF_PI);
+        }
     }
 }
 
