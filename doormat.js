@@ -5,7 +5,7 @@ let doormatWidth = 800;
 let doormatHeight = 1200;
 let fringeLength = 30;
 let currentSeed = 42;
-let warpThickness = 2; // Default warp thread thickness
+let warpThickness = 2; // Will be set randomly
 let weftThickness = 8; // Default weft thread thickness
 
 // Color palettes inspired by traditional doormats - more muted and realistic
@@ -240,6 +240,9 @@ function generateDoormat(seed) {
     currentSeed = seed;
     randomSeed(seed);
     noiseSeed(seed);
+    
+    // Set random warp thickness between 1 and 2
+    warpThickness = random([1, 2]);
     
     // Select random palette
     selectedPalette = random(colorPalettes);
@@ -581,12 +584,12 @@ function drawTextOverlay() {
     push();
     translate(fringeLength, fringeLength);
     
-    fill(0, 0, 0, 200); // Semi-transparent black
+    fill(0, 0, 0, 255); // Solid black
     noStroke();
     
-    // Draw each text pixel as a small rectangle
+    // Draw each text pixel as a larger rectangle for better visibility
     for (let textPixel of textData) {
-        rect(textPixel.x, textPixel.y, textPixel.width, textPixel.height);
+        rect(textPixel.x, textPixel.y, textPixel.width * 2, textPixel.height * 2);
     }
     
     pop();
@@ -675,17 +678,7 @@ function generateDoormat(seed) {
     }
 }
 
-// Function to update warp thickness from HTML slider
-function updateWarpThicknessInSketch(thickness) {
-    warpThickness = thickness;
-    redraw();
-}
 
-// Function to update weft thickness from HTML slider
-function updateWeftThicknessInSketch(thickness) {
-    weftThickness = thickness;
-    redraw();
-}
 
 // Text embedding functions
 function addTextToDoormatInSketch(text) {
@@ -713,10 +706,9 @@ function generateTextData() {
     const textWidth = doormatText.length * (charWidth + spacing);
     const textHeight = charHeight;
     
-    // Center the text on the doormat (accounting for 90-degree rotation)
-    // After rotation: width becomes height, height becomes width
-    const startX = (doormatHeight - textWidth) / 2;
-    const startY = (doormatWidth - textHeight) / 2;
+    // Center the text on the doormat
+    const startX = (doormatWidth - textWidth) / 2;
+    const startY = (doormatHeight - textHeight) / 2;
     
     // Generate character data
     for (let i = 0; i < doormatText.length; i++) {
@@ -783,8 +775,6 @@ function generateCharacterPixels(char, x, y, width, height) {
 
 // Make the functions globally available
 if (typeof window !== 'undefined') {
-    window.updateWarpThicknessInSketch = updateWarpThicknessInSketch;
-    window.updateWeftThicknessInSketch = updateWeftThicknessInSketch;
     window.addTextToDoormatInSketch = addTextToDoormatInSketch;
     window.clearTextFromDoormat = clearTextFromDoormat;
 }

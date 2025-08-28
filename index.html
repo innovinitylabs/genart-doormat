@@ -154,16 +154,7 @@
             <button onclick="clearText()">Clear Text</button>
         </div>
         
-        <div class="slider-controls">
-            <div class="slider-group">
-                <label for="warpThickness">Warp Thickness: <span id="warpThicknessValue">2</span></label>
-                <input type="range" id="warpThickness" min="1" max="8" value="2" step="1" oninput="updateWarpThickness()">
-            </div>
-            <div class="slider-group">
-                <label for="weftThickness">Weft Thickness: <span id="weftThicknessValue">2</span></label>
-                <input type="range" id="weftThickness" min="1" max="8" value="2" step="1" oninput="updateWeftThickness()">
-            </div>
-        </div>
+
         
         <div class="canvas-container" id="canvas-container">
             <!-- P5.js canvas will be inserted here -->
@@ -173,7 +164,6 @@
             <strong>Instructions:</strong><br>
             • Click "Generate New Doormat" for a random pattern<br>
             • Enter a seed number and click "Use Seed" for reproducible results<br>
-            • Adjust warp (vertical) and weft (horizontal) thread thickness separately<br>
             • Enter text to embed it into the doormat pattern (max 20 characters)<br>
             • Click "Save as Image" to download your doormat
         </p>
@@ -197,21 +187,7 @@
             saveCanvas('doormat-' + Date.now(), 'png');
         }
         
-        function updateWarpThickness() {
-            const thickness = document.getElementById('warpThickness').value;
-            document.getElementById('warpThicknessValue').textContent = thickness;
-            if (typeof window.updateWarpThicknessInSketch === 'function') {
-                window.updateWarpThicknessInSketch(parseInt(thickness));
-            }
-        }
-        
-        function updateWeftThickness() {
-            const thickness = document.getElementById('weftThickness').value;
-            document.getElementById('weftThicknessValue').textContent = thickness;
-            if (typeof window.updateWeftThicknessInSketch === 'function') {
-                window.updateWeftThicknessInSketch(parseInt(thickness));
-            }
-        }
+
         
         function addTextToDoormat() {
             const text = document.getElementById('textInput').value.trim();
