@@ -83,6 +83,132 @@ const colorPalettes = [
             '#F39C12', // Orange
             '#F1C40F'  // Sunflower
         ]
+    },
+    // Classic Red & Black - most common doormat colors
+    {
+        name: "Classic Red & Black",
+        colors: [
+            '#8B0000', // Dark Red
+            '#DC143C', // Crimson
+            '#B22222', // Fire Brick
+            '#000000', // Black
+            '#2F2F2F', // Dark Gray
+            '#696969', // Dim Gray
+            '#8B4513', // Saddle Brown
+            '#A0522D'  // Sienna
+        ]
+    },
+    // Natural Jute & Hemp - eco-friendly doormat colors
+    {
+        name: "Natural Jute & Hemp",
+        colors: [
+            '#F5DEB3', // Wheat
+            '#DEB887', // Burlywood
+            '#D2B48C', // Tan
+            '#BC8F8F', // Rosy Brown
+            '#8B7355', // Muted Brown
+            '#A0522D', // Sienna
+            '#654321', // Dark Brown
+            '#2F2F2F'  // Dark Gray
+        ]
+    },
+    // Coastal Blue & White - beach house style
+    {
+        name: "Coastal Blue & White",
+        colors: [
+            '#4682B4', // Steel Blue
+            '#5F9EA0', // Cadet Blue
+            '#87CEEB', // Sky Blue
+            '#B0E0E6', // Powder Blue
+            '#F8F8FF', // Ghost White
+            '#F0F8FF', // Alice Blue
+            '#E6E6FA', // Lavender
+            '#B0C4DE'  // Light Steel Blue
+        ]
+    },
+    // Rustic Farmhouse - warm, earthy tones
+    {
+        name: "Rustic Farmhouse",
+        colors: [
+            '#8B4513', // Saddle Brown
+            '#A0522D', // Sienna
+            '#CD853F', // Peru
+            '#D2691E', // Chocolate
+            '#F4A460', // Sandy Brown
+            '#DEB887', // Burlywood
+            '#F5DEB3', // Wheat
+            '#F4E4BC'  // Cream
+        ]
+    },
+    // Modern Gray & White - contemporary minimalist
+    {
+        name: "Modern Gray & White",
+        colors: [
+            '#F5F5F5', // White Smoke
+            '#FFFFFF', // White
+            '#D3D3D3', // Light Gray
+            '#C0C0C0', // Silver
+            '#A9A9A9', // Dark Gray
+            '#808080', // Gray
+            '#696969', // Dim Gray
+            '#2F2F2F'  // Dark Gray
+        ]
+    },
+    // Autumn Harvest - warm fall colors
+    {
+        name: "Autumn Harvest",
+        colors: [
+            '#8B4513', // Saddle Brown
+            '#D2691E', // Chocolate
+            '#CD853F', // Peru
+            '#F4A460', // Sandy Brown
+            '#8B0000', // Dark Red
+            '#B22222', // Fire Brick
+            '#FF8C00', // Dark Orange
+            '#FFA500'  // Orange
+        ]
+    },
+    // Spring Garden - fresh, vibrant colors
+    {
+        name: "Spring Garden",
+        colors: [
+            '#228B22', // Forest Green
+            '#32CD32', // Lime Green
+            '#90EE90', // Light Green
+            '#98FB98', // Pale Green
+            '#FF69B4', // Hot Pink
+            '#FFB6C1', // Light Pink
+            '#87CEEB', // Sky Blue
+            '#F0E68C'  // Khaki
+        ]
+    },
+    // Industrial Metal - urban, modern look
+    {
+        name: "Industrial Metal",
+        colors: [
+            '#2F4F4F', // Dark Slate Gray
+            '#696969', // Dim Gray
+            '#808080', // Gray
+            '#A9A9A9', // Dark Gray
+            '#C0C0C0', // Silver
+            '#D3D3D3', // Light Gray
+            '#F5F5F5', // White Smoke
+            '#000000'  // Black
+        ]
+    },
+    // Mediterranean - warm, sun-baked colors
+    {
+        name: "Mediterranean",
+        colors: [
+            '#FF6347', // Tomato
+            '#FF4500', // Orange Red
+            '#FF8C00', // Dark Orange
+            '#FFA500', // Orange
+            '#F4A460', // Sandy Brown
+            '#DEB887', // Burlywood
+            '#87CEEB', // Sky Blue
+            '#4682B4'  // Steel Blue
+        ]
     }
 ];
 
