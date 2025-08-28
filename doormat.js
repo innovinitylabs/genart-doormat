@@ -317,6 +317,11 @@ function draw() {
     // Draw fringe
     drawFringe();
     
+    // Draw text on top of everything
+    if (textData.length > 0) {
+        drawTextOverlay();
+    }
+    
     pop(); // End rotation
 }
 
@@ -330,30 +335,10 @@ function drawStripe(stripe) {
         for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
             let warpColor = color(stripe.primaryColor);
             
-            // Check if this position should be modified for text
-            let isTextPixel = false;
-            if (textData.length > 0) {
-                for (let textPixel of textData) {
-                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
-                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
-                        isTextPixel = true;
-                        break;
-                    }
-                }
-            }
-            
             // Add subtle variation to warp threads
             let r = red(warpColor) + random(-15, 15);
             let g = green(warpColor) + random(-15, 15);
             let b = blue(warpColor) + random(-15, 15);
-            
-            // Modify color for text pixels
-            if (isTextPixel) {
-                // Make text pixels much darker/more prominent
-                r = 0;
-                g = 0;
-                b = 0;
-            }
             
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
@@ -373,18 +358,6 @@ function drawStripe(stripe) {
         for (let x = 0; x < doormatWidth; x += warpSpacing) {
             let weftColor = color(stripe.primaryColor);
             
-            // Check if this position should be modified for text
-            let isTextPixel = false;
-            if (textData.length > 0) {
-                for (let textPixel of textData) {
-                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
-                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
-                        isTextPixel = true;
-                        break;
-                    }
-                }
-            }
-            
             // Add variation based on weave type
             if (stripe.weaveType === 'mixed' && stripe.secondaryColor) {
                 if (noise(x * 0.1, y * 0.1) > 0.5) {
@@ -399,14 +372,6 @@ function drawStripe(stripe) {
             let r = red(weftColor) + random(-20, 20);
             let g = green(weftColor) + random(-20, 20);
             let b = blue(weftColor) + random(-20, 20);
-            
-            // Modify color for text pixels
-            if (isTextPixel) {
-                // Make text pixels much darker/more prominent
-                r = 0;
-                g = 0;
-                b = 0;
-            }
             
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
@@ -609,6 +574,22 @@ function drawSelvedgeEdges() {
             arc(centerX, centerY, radius * 0.4, radius * 0.4, -HALF_PI, HALF_PI);
         }
     }
+}
+
+function drawTextOverlay() {
+    // Draw text on top of the doormat
+    push();
+    translate(fringeLength, fringeLength);
+    
+    fill(0, 0, 0, 200); // Semi-transparent black
+    noStroke();
+    
+    // Draw each text pixel as a small rectangle
+    for (let textPixel of textData) {
+        rect(textPixel.x, textPixel.y, textPixel.width, textPixel.height);
+    }
+    
+    pop();
 }
 
 function drawFringeSection(x, y, w, h, side) {
