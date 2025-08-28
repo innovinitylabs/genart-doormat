@@ -6,7 +6,7 @@ let doormatHeight = 600;
 let fringeLength = 30;
 let currentSeed = 42;
 let warpThickness = 2; // Default warp thread thickness
-let weftThickness = 2; // Default weft thread thickness
+let weftThickness = 8; // Default weft thread thickness
 
 // Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
@@ -337,6 +337,10 @@ function drawSelvedgeEdges() {
             // Add subtle shadow for depth
             fill(r * 0.7, g * 0.7, b * 0.7, 100);
             arc(centerX + 1, centerY + 1, radius * 2, radius * 2, HALF_PI, -HALF_PI);
+            
+            // Add small hole in the center to show background
+            fill(245, 245, 220); // Background color
+            arc(centerX, centerY, radius * 0.8, radius * 0.8, HALF_PI, -HALF_PI);
         }
     }
     
@@ -386,6 +390,10 @@ function drawSelvedgeEdges() {
             // Add subtle shadow for depth
             fill(r * 0.7, g * 0.7, b * 0.7, 100);
             arc(centerX - 1, centerY + 1, radius * 2, radius * 2, -HALF_PI, HALF_PI);
+            
+            // Add small hole in the center to show background
+            fill(245, 245, 220); // Background color
+            arc(centerX, centerY, radius * 0.8, radius * 0.8, -HALF_PI, HALF_PI);
         }
     }
 }
