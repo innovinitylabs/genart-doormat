@@ -217,11 +217,22 @@ let stripeData = [];
 let doormatText = ""; // Text to embed in the doormat
 let textData = []; // Text positioning and character data
 
+// Initialize with a default palette
+function initializePalette() {
+    if (!selectedPalette) {
+        selectedPalette = colorPalettes[0]; // Use first palette as default
+    }
+}
+
 function setup() {
     // Create canvas with swapped dimensions for 90-degree rotation
     // After rotation: width becomes height, height becomes width
     let canvas = createCanvas(doormatHeight + (fringeLength * 2), doormatWidth + (fringeLength * 2));
     canvas.parent('canvas-container');
+    
+    // Initialize palette
+    initializePalette();
+    
     noLoop();
 }
 
@@ -244,6 +255,11 @@ function generateStripeData() {
     stripeData = [];
     let totalHeight = doormatHeight;
     let currentY = 0;
+    
+    // Safety check for selectedPalette
+    if (!selectedPalette || !selectedPalette.colors) {
+        initializePalette();
+    }
     
     while (currentY < totalHeight) {
         // Random stripe height between 8 and 40 pixels
@@ -601,6 +617,12 @@ function drawFringeSection(x, y, w, h, side) {
     
     for (let i = 0; i < fringeStrands; i++) {
         let strandX = x + i * strandWidth;
+        
+        // Safety check for selectedPalette
+        if (!selectedPalette || !selectedPalette.colors) {
+            initializePalette();
+        }
+        
         let strandColor = random(selectedPalette.colors);
         
         // Draw individual fringe strand with thin threads
