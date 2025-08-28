@@ -299,7 +299,7 @@ function drawSelvedgeEdges() {
         
         // Draw flowing semicircular weft thread that connects layers
         let radius = weftThickness * 1.5; // Size based on weft thickness
-        let centerX = fringeLength - radius/2; // Move closer to the mat
+        let centerX = fringeLength - radius; // Position at the left edge of the mat
         let centerY = y;
         
         // Draw the semicircle (flowing from left to right)
@@ -322,7 +322,7 @@ function drawSelvedgeEdges() {
         
         // Draw flowing semicircular weft thread that connects layers
         let radius = weftThickness * 1.5; // Size based on weft thickness
-        let centerX = fringeLength + doormatWidth + radius/2; // Move closer to the mat
+        let centerX = fringeLength + doormatWidth + radius; // Position at the right edge of the mat
         let centerY = y;
         
         // Draw the semicircle (flowing from right to left)
