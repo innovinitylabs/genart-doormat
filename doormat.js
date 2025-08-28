@@ -297,9 +297,31 @@ function drawSelvedgeEdges() {
         fill(r, g, b);
         noStroke();
         
-        // Draw flowing semicircular weft thread that connects layers
+        // POSITIONING ANALYSIS FOR LEFT SELVEDGE:
+        // 
+        // Canvas layout:
+        // | fringeLength | doormatWidth | fringeLength |
+        // |    30px     |    400px     |    30px      |
+        // 
+        // Doormat edges:
+        // - Left edge of main mat: fringeLength (30px)
+        // - Right edge of main mat: fringeLength + doormatWidth (430px)
+        // 
+        // Current positioning:
         let radius = weftThickness * 1.5; // Size based on weft thickness
-        let centerX = fringeLength - radius; // Position at the left edge of the mat
+        // let centerX = fringeLength - radius; // This places the center of semicircle OUTSIDE the mat
+        // 
+        // Problem: centerX = 30 - radius means:
+        // - If radius = 3, centerX = 27 (3px outside mat)
+        // - If radius = 6, centerX = 24 (6px outside mat)
+        // - This creates a gap between semicircle and mat edge
+        // 
+        // Correct positioning should be:
+        // - Semicircle should start AT the mat edge (fringeLength)
+        // - So centerX should be: fringeLength + radius (not minus)
+        // - This way semicircle flows from mat edge outward
+        
+        let centerX = fringeLength + radius; // FIXED: Center at mat edge, semicircle flows outward
         let centerY = y;
         
         // Draw the semicircle (flowing from left to right)
@@ -320,9 +342,23 @@ function drawSelvedgeEdges() {
         fill(r, g, b);
         noStroke();
         
-        // Draw flowing semicircular weft thread that connects layers
+        // POSITIONING ANALYSIS FOR RIGHT SELVEDGE:
+        // 
+        // Current positioning:
         let radius = weftThickness * 1.5; // Size based on weft thickness
-        let centerX = fringeLength + doormatWidth + radius; // Position at the right edge of the mat
+        // let centerX = fringeLength + doormatWidth + radius; // This places center OUTSIDE the mat
+        // 
+        // Problem: centerX = 430 + radius means:
+        // - If radius = 3, centerX = 433 (3px outside mat)
+        // - If radius = 6, centerX = 436 (6px outside mat)
+        // - This creates a gap between semicircle and mat edge
+        // 
+        // Correct positioning should be:
+        // - Semicircle should start AT the mat edge (fringeLength + doormatWidth)
+        // - So centerX should be: fringeLength + doormatWidth - radius (not plus)
+        // - This way semicircle flows from mat edge outward
+        
+        let centerX = fringeLength + doormatWidth - radius; // FIXED: Center at mat edge, semicircle flows outward
         let centerY = y;
         
         // Draw the semicircle (flowing from right to left)
