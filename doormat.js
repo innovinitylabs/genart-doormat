@@ -349,10 +349,10 @@ function drawStripe(stripe) {
             
             // Modify color for text pixels
             if (isTextPixel) {
-                // Make text pixels darker/more prominent
-                r = r * 0.3;
-                g = g * 0.3;
-                b = b * 0.3;
+                // Make text pixels much darker/more prominent
+                r = 0;
+                g = 0;
+                b = 0;
             }
             
             r = constrain(r, 0, 255);
@@ -402,10 +402,10 @@ function drawStripe(stripe) {
             
             // Modify color for text pixels
             if (isTextPixel) {
-                // Make text pixels darker/more prominent
-                r = r * 0.3;
-                g = g * 0.3;
-                b = b * 0.3;
+                // Make text pixels much darker/more prominent
+                r = 0;
+                g = 0;
+                b = 0;
             }
             
             r = constrain(r, 0, 255);
@@ -723,18 +723,19 @@ function generateTextData() {
     textData = [];
     if (!doormatText) return;
     
-    // Simple 5x7 font grid for each character
-    const charWidth = 6;
-    const charHeight = 8;
-    const spacing = 2;
+    // Simple 5x7 font grid for each character (made larger)
+    const charWidth = 12;
+    const charHeight = 16;
+    const spacing = 4;
     
     // Calculate text dimensions
     const textWidth = doormatText.length * (charWidth + spacing);
     const textHeight = charHeight;
     
-    // Center the text on the doormat
-    const startX = (doormatWidth - textWidth) / 2;
-    const startY = (doormatHeight - textHeight) / 2;
+    // Center the text on the doormat (accounting for 90-degree rotation)
+    // After rotation: width becomes height, height becomes width
+    const startX = (doormatHeight - textWidth) / 2;
+    const startY = (doormatWidth - textHeight) / 2;
     
     // Generate character data
     for (let i = 0; i < doormatText.length; i++) {
