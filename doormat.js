@@ -339,6 +339,8 @@ function drawSelvedgeEdges() {
             arc(centerX + 1, centerY + 1, radius * 2, radius * 2, HALF_PI, -HALF_PI);
             
             // Add small transparent hole in the center
+            // To increase hole size: change 0.4 to a larger value (e.g., 0.6, 0.8)
+            // To decrease hole size: change 0.4 to a smaller value (e.g., 0.2, 0.3)
             noFill();
             arc(centerX, centerY, radius * 0.4, radius * 0.4, HALF_PI, -HALF_PI);
         }
@@ -392,6 +394,8 @@ function drawSelvedgeEdges() {
             arc(centerX - 1, centerY + 1, radius * 2, radius * 2, -HALF_PI, HALF_PI);
             
             // Add small transparent hole in the center
+            // To increase hole size: change 0.4 to a larger value (e.g., 0.6, 0.8)
+            // To decrease hole size: change 0.4 to a smaller value (e.g., 0.2, 0.3)
             noFill();
             arc(centerX, centerY, radius * 0.4, radius * 0.4, -HALF_PI, HALF_PI);
         }
