@@ -302,12 +302,12 @@ function drawSelvedgeEdges() {
         let centerX = fringeLength - radius;
         let centerY = y;
         
-        // Draw the semicircle
-        arc(centerX, centerY, radius * 2, radius * 2, -HALF_PI, HALF_PI);
+        // Draw the semicircle (flowing from left to right)
+        arc(centerX, centerY, radius * 2, radius * 2, HALF_PI, -HALF_PI);
         
         // Add subtle shadow for depth
         fill(r * 0.7, g * 0.7, b * 0.7, 100);
-        arc(centerX + 1, centerY + 1, radius * 2, radius * 2, -HALF_PI, HALF_PI);
+        arc(centerX + 1, centerY + 1, radius * 2, radius * 2, HALF_PI, -HALF_PI);
     }
     
     // Right selvedge edge - flowing semicircular weft threads
@@ -325,12 +325,12 @@ function drawSelvedgeEdges() {
         let centerX = fringeLength + doormatWidth + radius;
         let centerY = y;
         
-        // Draw the semicircle (flipped for right side)
-        arc(centerX, centerY, radius * 2, radius * 2, HALF_PI, -HALF_PI);
+        // Draw the semicircle (flowing from right to left)
+        arc(centerX, centerY, radius * 2, radius * 2, -HALF_PI, HALF_PI);
         
         // Add subtle shadow for depth
         fill(r * 0.7, g * 0.7, b * 0.7, 100);
-        arc(centerX - 1, centerY + 1, radius * 2, radius * 2, HALF_PI, -HALF_PI);
+        arc(centerX - 1, centerY + 1, radius * 2, radius * 2, -HALF_PI, HALF_PI);
     }
 }
 
