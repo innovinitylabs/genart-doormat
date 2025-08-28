@@ -1,13 +1,12 @@
 // Generative Doormat Art - P5.js
 // Inspired by traditional woven doormats with stripes and fringe
 
-let doormatWidth = 400;
-let doormatHeight = 600;
+let doormatWidth = 800;
+let doormatHeight = 1200;
 let fringeLength = 30;
 let currentSeed = 42;
 let warpThickness = 2; // Default warp thread thickness
 let weftThickness = 8; // Default weft thread thickness
-let pixelDensity = 2; // 2x DPI for high quality output
 
 // Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
@@ -66,6 +65,24 @@ const colorPalettes = [
             '#F5DEB3', // Wheat
             '#F4E4BC'  // Cream
         ]
+    },
+    // Vivid Mellow palette - energetic but slightly muted
+    {
+        name: "Vivid Mellow",
+        colors: [
+            '#E67E22', // Carrot Orange
+            '#D35400', // Pumpkin
+            '#E74C3C', // Alizarin Crimson
+            '#C0392B', // Pomegranate
+            '#8E44AD', // Wisteria
+            '#9B59B6', // Amethyst
+            '#3498DB', // Belize Hole
+            '#2980B9', // Midnight Blue
+            '#16A085', // Green Sea
+            '#1ABC9C', // Turquoise
+            '#F39C12', // Orange
+            '#F1C40F'  // Sunflower
+        ]
     }
 ];
 
@@ -75,7 +92,6 @@ let stripeData = [];
 function setup() {
     let canvas = createCanvas(doormatWidth + (fringeLength * 2), doormatHeight + (fringeLength * 2));
     canvas.parent('canvas-container');
-    pixelDensity(pixelDensity); // Set 2x DPI for high quality
     noLoop();
 }
 
