@@ -173,9 +173,6 @@ function draw() {
     // Draw fringe
     drawFringe();
     
-    // Draw border
-    drawBorder();
-    
     pop(); // End rotation
 }
 
