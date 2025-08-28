@@ -7,6 +7,7 @@ let fringeLength = 30;
 let currentSeed = 42;
 let warpThickness = 2; // Will be set randomly
 let weftThickness = 8; // Default weft thread thickness
+const TEXT_SCALE = 2; // 1.5x rounded to 2 for clearer visibility
 
 // Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
@@ -354,10 +355,13 @@ function drawStripe(stripe) {
             
             // Modify color for text pixels (vertical lines use weft thickness)
             if (isTextPixel) {
-                // Make text pixels much darker
-                r = 0;
-                g = 0;
-                b = 0;
+                // Determine background brightness to choose text color
+                const bgBrightness = (r + g + b) / 3;
+                if (bgBrightness < 100) { // dark background -> light text
+                    r = g = b = 255;
+                } else {
+                    r = g = b = 0; // light background -> dark text
+                }
             }
             
             r = constrain(r, 0, 255);
@@ -407,10 +411,12 @@ function drawStripe(stripe) {
             
             // Modify color for text pixels (horizontal lines use warp thickness)
             if (isTextPixel) {
-                // Make text pixels much darker
-                r = 0;
-                g = 0;
-                b = 0;
+                const bgBrightness = (r + g + b) / 3;
+                if (bgBrightness < 100) {
+                    r = g = b = 255;
+                } else {
+                    r = g = b = 0;
+                }
             }
             
             r = constrain(r, 0, 255);
@@ -723,11 +729,13 @@ function generateTextData() {
     // Use actual thread spacing for text
     const warpSpacing = warpThickness + 1;
     const weftSpacing = weftThickness + 1;
+    const scaledWarp = warpSpacing * TEXT_SCALE;
+    const scaledWeft = weftSpacing * TEXT_SCALE;
     
     // Character dimensions based on thread spacing
-    const charWidth = 7 * warpSpacing; // width after rotation (7 columns)
-    const charHeight = 5 * weftSpacing; // height after rotation (5 rows)
-    const spacing = weftSpacing; // vertical gap between stacked characters
+    const charWidth = 7 * scaledWarp; // width after rotation (7 columns)
+    const charHeight = 5 * scaledWeft; // height after rotation (5 rows)
+    const spacing = scaledWeft; // vertical gap between stacked characters
     
     // Calculate text dimensions
     const textWidth = charWidth;
@@ -752,6 +760,8 @@ function generateCharacterPixels(char, x, y, width, height) {
     // Use actual thread spacing
     const warpSpacing = warpThickness + 1;
     const weftSpacing = weftThickness + 1;
+    const scaledWarp = warpSpacing * TEXT_SCALE;
+    const scaledWeft = weftSpacing * TEXT_SCALE;
 
     // Character definitions (5x7 grid)
     const charMap = {
@@ -792,15 +802,15 @@ function generateCharacterPixels(char, x, y, width, height) {
     // Rotate 90° CCW: newX = col, newY = numRows - 1 - row
     for (let row = 0; row < numRows; row++) {
         for (let col = 0; col < numCols; col++) {
-            if (charDef[row][col] === "1") {
-                // Rotate 90° clockwise then mirror horizontally
-                const newCol = numRows - 1 - row; // 6 - row (since numRows=7)
-                const newRow = col;
+            if (charDef[row][col] === '1') {
+                // Rotate 180°: flip both axes
+                const newCol = row;
+                const newRow = numCols - 1 - col;
                 pixels.push({
-                    x: x + newCol * warpSpacing,
-                    y: y + newRow * weftSpacing,
-                    width: warpSpacing,
-                    height: weftSpacing
+                    x: x + newCol * scaledWarp,
+                    y: y + newRow * scaledWeft,
+                    width: scaledWarp,
+                    height: scaledWeft
                 });
             }
         }
