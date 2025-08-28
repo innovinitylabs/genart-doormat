@@ -90,7 +90,9 @@ let selectedPalette;
 let stripeData = [];
 
 function setup() {
-    let canvas = createCanvas(doormatWidth + (fringeLength * 2), doormatHeight + (fringeLength * 2));
+    // Create canvas with swapped dimensions for 90-degree rotation
+    // After rotation: width becomes height, height becomes width
+    let canvas = createCanvas(doormatHeight + (fringeLength * 2), doormatWidth + (fringeLength * 2));
     canvas.parent('canvas-container');
     noLoop();
 }
