@@ -725,83 +725,86 @@ function generateTextData() {
     const weftSpacing = weftThickness + 1;
     
     // Character dimensions based on thread spacing
-    const charWidth = 3 * warpSpacing; // 3 warp threads wide (rotated)
-    const charHeight = 7 * weftSpacing; // 7 weft threads tall
-    const spacing = 2 * warpSpacing; // 2 warp threads between characters
+    const charWidth = 7 * warpSpacing; // width after rotation (7 columns)
+    const charHeight = 5 * weftSpacing; // height after rotation (5 rows)
+    const spacing = weftSpacing; // vertical gap between stacked characters
     
     // Calculate text dimensions
-    const textWidth = doormatText.length * (charWidth + spacing);
-    const textHeight = charHeight;
+    const textWidth = charWidth;
+    const textHeight = doormatText.length * (charHeight + spacing) - spacing;
     
     // Center the text on the doormat (accounting for 90-degree rotation)
     // After rotation: width becomes height, height becomes width
-    const startX = (doormatHeight - textWidth) / 2;
-    const startY = (doormatWidth - textHeight) / 2;
+    const startX = (doormatWidth - textWidth) / 2;
+    const startY = (doormatHeight - textHeight) / 2;
     
-    // Generate character data
+    // Generate character data vertically bottom-to-top
     for (let i = 0; i < doormatText.length; i++) {
         const char = doormatText.charAt(i);
-        const charX = startX + i * (charWidth + spacing);
-        
-        // Generate pixel positions for this character
-        const charPixels = generateCharacterPixels(char, charX, startY, charWidth, charHeight);
+        const charY = startY + (doormatText.length - 1 - i) * (charHeight + spacing);
+        const charPixels = generateCharacterPixels(char, startX, charY, charWidth, charHeight);
         textData.push(...charPixels);
     }
 }
 
 function generateCharacterPixels(char, x, y, width, height) {
     const pixels = [];
-    
     // Use actual thread spacing
     const warpSpacing = warpThickness + 1;
     const weftSpacing = weftThickness + 1;
-    
-    // Simple character definitions (5x7 grid) - rotated 90 degrees counterclockwise
+
+    // Character definitions (5x7 grid)
     const charMap = {
-        'A': [[0,1,0], [1,0,1], [1,0,1], [1,1,1], [1,0,1], [1,0,1], [1,0,1]],
-        'B': [[1,1,0], [1,0,1], [1,0,1], [1,1,0], [1,0,1], [1,0,1], [1,1,0]],
-        'C': [[0,1,0], [1,0,1], [1,0,0], [1,0,0], [1,0,0], [1,0,1], [0,1,0]],
-        'D': [[1,1,0], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,1,0]],
-        'E': [[1,1,1], [1,0,0], [1,0,0], [1,1,0], [1,0,0], [1,0,0], [1,1,1]],
-        'F': [[1,1,1], [1,0,0], [1,0,0], [1,1,0], [1,0,0], [1,0,0], [1,0,0]],
-        'G': [[0,1,0], [1,0,1], [1,0,0], [1,0,1], [1,0,1], [1,0,1], [0,1,0]],
-        'H': [[1,0,1], [1,0,1], [1,0,1], [1,1,1], [1,0,1], [1,0,1], [1,0,1]],
-        'I': [[1,1,1], [0,1,0], [0,1,0], [0,1,0], [0,1,0], [0,1,0], [1,1,1]],
-        'J': [[0,0,1], [0,0,1], [0,0,1], [0,0,1], [1,0,1], [1,0,1], [0,1,0]],
-        'K': [[1,0,1], [1,0,1], [1,1,0], [1,0,0], [1,1,0], [1,0,1], [1,0,1]],
-        'L': [[1,0,0], [1,0,0], [1,0,0], [1,0,0], [1,0,0], [1,0,0], [1,1,1]],
-        'M': [[1,0,1], [1,1,1], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,0,1]],
-        'N': [[1,0,1], [1,1,1], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,0,1]],
-        'O': [[0,1,0], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [0,1,0]],
-        'P': [[1,1,0], [1,0,1], [1,0,1], [1,1,0], [1,0,0], [1,0,0], [1,0,0]],
-        'Q': [[0,1,0], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,1,1], [0,1,1]],
-        'R': [[1,1,0], [1,0,1], [1,0,1], [1,1,0], [1,0,1], [1,0,1], [1,0,1]],
-        'S': [[0,1,0], [1,0,1], [1,0,0], [0,1,0], [0,0,1], [1,0,1], [0,1,0]],
-        'T': [[1,1,1], [0,1,0], [0,1,0], [0,1,0], [0,1,0], [0,1,0], [0,1,0]],
-        'U': [[1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [0,1,0]],
-        'V': [[1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,0,1], [0,1,0], [0,1,0]],
-        'W': [[1,0,1], [1,0,1], [1,0,1], [1,0,1], [1,1,1], [1,1,1], [1,0,1]],
-        'X': [[1,0,1], [1,0,1], [0,1,0], [0,1,0], [0,1,0], [1,0,1], [1,0,1]],
-        'Y': [[1,0,1], [1,0,1], [0,1,0], [0,1,0], [0,1,0], [0,1,0], [0,1,0]],
-        'Z': [[1,1,1], [0,0,1], [0,1,0], [0,1,0], [0,1,0], [1,0,0], [1,1,1]],
-        ' ': [[0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]]
+        'A': ["01110","10001","10001","11111","10001","10001","10001"],
+        'B': ["11110","10001","10001","11110","10001","10001","11110"],
+        'C': ["01111","10000","10000","10000","10000","10000","01111"],
+        'D': ["11110","10001","10001","10001","10001","10001","11110"],
+        'E': ["11111","10000","10000","11110","10000","10000","11111"],
+        'F': ["11111","10000","10000","11110","10000","10000","10000"],
+        'G': ["01111","10000","10000","10011","10001","10001","01111"],
+        'H': ["10001","10001","10001","11111","10001","10001","10001"],
+        'I': ["11111","00100","00100","00100","00100","00100","11111"],
+        'J': ["11111","00001","00001","00001","00001","10001","01110"],
+        'K': ["10001","10010","10100","11000","10100","10010","10001"],
+        'L': ["10000","10000","10000","10000","10000","10000","11111"],
+        'M': ["10001","11011","10101","10001","10001","10001","10001"],
+        'N': ["10001","11001","10101","10011","10001","10001","10001"],
+        'O': ["01110","10001","10001","10001","10001","10001","01110"],
+        'P': ["11110","10001","10001","11110","10000","10000","10000"],
+        'Q': ["01110","10001","10001","10001","10101","10010","01101"],
+        'R': ["11110","10001","10001","11110","10100","10010","10001"],
+        'S': ["01111","10000","10000","01110","00001","00001","11110"],
+        'T': ["11111","00100","00100","00100","00100","00100","00100"],
+        'U': ["10001","10001","10001","10001","10001","10001","01110"],
+        'V': ["10001","10001","10001","10001","10001","01010","00100"],
+        'W': ["10001","10001","10001","10001","10101","11011","10001"],
+        'X': ["10001","10001","01010","00100","01010","10001","10001"],
+        'Y': ["10001","10001","01010","00100","00100","00100","00100"],
+        'Z': ["11111","00001","00010","00100","01000","10000","11111"],
+        ' ': ["00000","00000","00000","00000","00000","00000","00000"]
     };
     
     const charDef = charMap[char] || charMap[' '];
-    
-    for (let row = 0; row < charDef.length; row++) {
-        for (let col = 0; col < charDef[row].length; col++) {
-            if (charDef[row][col] === 1) {
+
+    const numRows = charDef.length;
+    const numCols = charDef[0].length;
+
+    // Rotate 90° CCW: newX = col, newY = numRows - 1 - row
+    for (let row = 0; row < numRows; row++) {
+        for (let col = 0; col < numCols; col++) {
+            if (charDef[row][col] === "1") {
+                // Rotate 90° clockwise then mirror horizontally
+                const newCol = numRows - 1 - row; // 6 - row (since numRows=7)
+                const newRow = col;
                 pixels.push({
-                    x: x + col * warpSpacing,
-                    y: y + row * weftSpacing,
+                    x: x + newCol * warpSpacing,
+                    y: y + newRow * weftSpacing,
                     width: warpSpacing,
                     height: weftSpacing
                 });
             }
         }
     }
-    
     return pixels;
 }
 
