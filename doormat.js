@@ -322,10 +322,7 @@ function draw() {
     
     pop(); // End rotation
     
-    // Draw text on top of everything (outside rotation)
-    if (textData.length > 0) {
-        drawTextOverlay();
-    }
+
 }
 
 function drawStripe(stripe) {
@@ -338,10 +335,30 @@ function drawStripe(stripe) {
         for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
             let warpColor = color(stripe.primaryColor);
             
+            // Check if this position should be modified for text
+            let isTextPixel = false;
+            if (textData.length > 0) {
+                for (let textPixel of textData) {
+                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
+                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
+                        isTextPixel = true;
+                        break;
+                    }
+                }
+            }
+            
             // Add subtle variation to warp threads
             let r = red(warpColor) + random(-15, 15);
             let g = green(warpColor) + random(-15, 15);
             let b = blue(warpColor) + random(-15, 15);
+            
+            // Modify color for text pixels (vertical lines use weft thickness)
+            if (isTextPixel) {
+                // Make text pixels much darker
+                r = 0;
+                g = 0;
+                b = 0;
+            }
             
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
@@ -361,6 +378,18 @@ function drawStripe(stripe) {
         for (let x = 0; x < doormatWidth; x += warpSpacing) {
             let weftColor = color(stripe.primaryColor);
             
+            // Check if this position should be modified for text
+            let isTextPixel = false;
+            if (textData.length > 0) {
+                for (let textPixel of textData) {
+                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
+                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
+                        isTextPixel = true;
+                        break;
+                    }
+                }
+            }
+            
             // Add variation based on weave type
             if (stripe.weaveType === 'mixed' && stripe.secondaryColor) {
                 if (noise(x * 0.1, y * 0.1) > 0.5) {
@@ -375,6 +404,14 @@ function drawStripe(stripe) {
             let r = red(weftColor) + random(-20, 20);
             let g = green(weftColor) + random(-20, 20);
             let b = blue(weftColor) + random(-20, 20);
+            
+            // Modify color for text pixels (horizontal lines use warp thickness)
+            if (isTextPixel) {
+                // Make text pixels much darker
+                r = 0;
+                g = 0;
+                b = 0;
+            }
             
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
@@ -579,28 +616,7 @@ function drawSelvedgeEdges() {
     }
 }
 
-function drawTextOverlay() {
-    // Draw text on top of the doormat (outside rotation context)
-    push();
-    
-    // Apply the same rotation as the doormat to keep text aligned
-    translate(width/2, height/2);
-    rotate(PI/2);
-    translate(-height/2, -width/2);
-    
-    // Now translate to the doormat area
-    translate(fringeLength, fringeLength);
-    
-    fill(0, 0, 0, 255); // Solid black
-    noStroke();
-    
-    // Draw each text pixel as a much larger rectangle for better visibility
-    for (let textPixel of textData) {
-        rect(textPixel.x, textPixel.y, textPixel.width * 4, textPixel.height * 4);
-    }
-    
-    pop();
-}
+
 
 function drawFringeSection(x, y, w, h, side) {
     let fringeStrands = w / 12; // More fringe strands for thinner threads
@@ -704,10 +720,14 @@ function generateTextData() {
     textData = [];
     if (!doormatText) return;
     
-    // Simple 5x7 font grid for each character (made much larger)
-    const charWidth = 24;
-    const charHeight = 32;
-    const spacing = 8;
+    // Use actual thread spacing for text
+    const warpSpacing = warpThickness + 1;
+    const weftSpacing = weftThickness + 1;
+    
+    // Character dimensions based on thread spacing
+    const charWidth = 5 * warpSpacing; // 5 warp threads wide
+    const charHeight = 7 * weftSpacing; // 7 weft threads tall
+    const spacing = 2 * warpSpacing; // 2 warp threads between characters
     
     // Calculate text dimensions
     const textWidth = doormatText.length * (charWidth + spacing);
@@ -731,6 +751,10 @@ function generateTextData() {
 
 function generateCharacterPixels(char, x, y, width, height) {
     const pixels = [];
+    
+    // Use actual thread spacing
+    const warpSpacing = warpThickness + 1;
+    const weftSpacing = weftThickness + 1;
     
     // Simple character definitions (5x7 grid)
     const charMap = {
@@ -769,10 +793,10 @@ function generateCharacterPixels(char, x, y, width, height) {
         for (let col = 0; col < charDef[row].length; col++) {
             if (charDef[row][col] === 1) {
                 pixels.push({
-                    x: x + col,
-                    y: y + row,
-                    width: 1,
-                    height: 1
+                    x: x + col * warpSpacing,
+                    y: y + row * weftSpacing,
+                    width: warpSpacing,
+                    height: weftSpacing
                 });
             }
         }
