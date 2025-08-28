@@ -149,7 +149,7 @@
         </div>
         
         <div class="controls">
-            <input type="text" id="textInput" class="text-input" placeholder="Enter text for doormat" maxlength="20">
+            <input type="text" id="textInput" class="text-input" placeholder="Enter text for doormat (A-Z, 0-9, space)" maxlength="11" oninput="validateTextInput(this)">
             <button onclick="addTextToDoormat()">Add Text</button>
             <button onclick="clearText()">Clear Text</button>
         </div>
@@ -164,7 +164,7 @@
             <strong>Instructions:</strong><br>
             • Click "Generate New Doormat" for a random pattern<br>
             • Enter a seed number and click "Use Seed" for reproducible results<br>
-            • Enter text to embed it into the doormat pattern (max 20 characters)<br>
+            • Enter text to embed it into the doormat pattern (max 11 characters, A-Z, 0-9, space only)<br>
             • Click "Save as Image" to download your doormat
         </p>
     </div>
@@ -201,6 +201,13 @@
             if (typeof window.clearTextFromDoormat === 'function') {
                 window.clearTextFromDoormat();
             }
+        }
+        
+        function validateTextInput(input) {
+            // Remove any characters that are not A-Z, 0-9, or space
+            input.value = input.value.replace(/[^A-Za-z0-9\s]/g, '');
+            // Convert to uppercase
+            input.value = input.value.toUpperCase();
         }
         
         // Generate initial doormat
