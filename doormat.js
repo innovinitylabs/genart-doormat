@@ -293,7 +293,7 @@ function drawSelvedgeEdges() {
     
     // Loop through each stripe and draw selvedge for each weft thread in that stripe
     for (let stripe of stripeData) {
-        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
+        for (let y = stripe.y + weftSpacing; y < stripe.y + stripe.height - weftSpacing; y += weftSpacing) {
             // Get the color from the current stripe
             let selvedgeColor = color(stripe.primaryColor);
             
@@ -327,7 +327,7 @@ function drawSelvedgeEdges() {
     
     // Right selvedge edge - flowing semicircular weft threads
     for (let stripe of stripeData) {
-        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
+        for (let y = stripe.y + weftSpacing; y < stripe.y + stripe.height - weftSpacing; y += weftSpacing) {
             // Get the color from the current stripe
             let selvedgeColor = color(stripe.primaryColor);
             
