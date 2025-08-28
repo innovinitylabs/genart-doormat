@@ -41,7 +41,8 @@ A P5.js generative art piece inspired by traditional woven doormats with horizon
 
 ## Technical Details
 
-- **Canvas Size**: 660x460 pixels (600x400 doormat + 30px fringe on each side)
+- **Canvas Size**: 460x660 pixels (400x600 doormat + 30px fringe on each side)
+- **Orientation**: Portrait (taller than wide) like traditional doormats
 - **Weave Resolution**: 2x2 pixel warp/weft intersections for finer detail
 - **Color Palettes**: 4 muted, realistic palettes with 8 colors each
 - **Fringe**: Thicker, more natural strands with organic wave patterns
