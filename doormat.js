@@ -5,6 +5,7 @@ let doormatWidth = 400;
 let doormatHeight = 600;
 let fringeLength = 30;
 let currentSeed = 42;
+let threadThickness = 2; // Default thread thickness
 
 // Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
@@ -151,9 +152,8 @@ function draw() {
 
 function drawStripe(stripe) {
     // Create a proper plain weave structure like the diagram
-    let warpSpacing = 3; // Space between warp threads
-    let weftSpacing = 3; // Space between weft threads
-    let threadThickness = 2; // Thickness of individual threads
+    let warpSpacing = threadThickness + 1; // Space between warp threads
+    let weftSpacing = threadThickness + 1; // Space between weft threads
     
     // First, draw the warp threads (vertical) as the foundation
     for (let x = 0; x < doormatWidth; x += warpSpacing) {
@@ -390,4 +390,15 @@ function generateDoormat(seed) {
     if (typeof redraw === 'function') {
         redraw();
     }
+}
+
+// Function to update thread thickness from HTML slider
+function updateThreadThicknessInSketch(thickness) {
+    threadThickness = thickness;
+    redraw();
+}
+
+// Make the function globally available
+if (typeof window !== 'undefined') {
+    window.updateThreadThicknessInSketch = updateThreadThicknessInSketch;
 }

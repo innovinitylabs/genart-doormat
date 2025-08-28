@@ -63,6 +63,48 @@
             width: 100px;
         }
         
+        .slider-controls {
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .slider-controls label {
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .slider-controls input[type="range"] {
+            width: 200px;
+            height: 6px;
+            background: #ddd;
+            outline: none;
+            border-radius: 3px;
+            -webkit-appearance: none;
+        }
+        
+        .slider-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #8B4513;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .slider-controls input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #8B4513;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        
         .canvas-container {
             margin: 20px 0;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -88,6 +130,11 @@
             <button onclick="generateFromSeed()">Use Seed</button>
         </div>
         
+        <div class="slider-controls">
+            <label for="threadThickness">Thread Thickness: <span id="threadThicknessValue">2</span></label>
+            <input type="range" id="threadThickness" min="1" max="8" value="2" step="1" oninput="updateThreadThickness()">
+        </div>
+        
         <div class="canvas-container" id="canvas-container">
             <!-- P5.js canvas will be inserted here -->
         </div>
@@ -96,6 +143,7 @@
             <strong>Instructions:</strong><br>
             • Click "Generate New Doormat" for a random pattern<br>
             • Enter a seed number and click "Use Seed" for reproducible results<br>
+            • Adjust thread thickness with the slider for different textures<br>
             • Click "Save as Image" to download your doormat
         </p>
     </div>
@@ -116,6 +164,14 @@
         
         function saveDoormat() {
             saveCanvas('doormat-' + Date.now(), 'png');
+        }
+        
+        function updateThreadThickness() {
+            const thickness = document.getElementById('threadThickness').value;
+            document.getElementById('threadThicknessValue').textContent = thickness;
+            if (typeof window.updateThreadThicknessInSketch === 'function') {
+                window.updateThreadThicknessInSketch(parseInt(thickness));
+            }
         }
         
         // Generate initial doormat
