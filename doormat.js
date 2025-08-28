@@ -6,62 +6,62 @@ let doormatHeight = 400;
 let fringeLength = 30;
 let currentSeed = 42;
 
-// Color palettes inspired by traditional doormats
+// Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
-    // Earthy palette
+    // Muted Earthy palette
     {
-        name: "Earthy",
+        name: "Muted Earthy",
         colors: [
-            '#8B4513', // Saddle Brown
-            '#D2691E', // Chocolate  
-            '#F4A460', // Sandy Brown
-            '#DEB887', // Burlywood
-            '#CD853F', // Peru
+            '#8B7355', // Muted Brown
             '#A0522D', // Sienna
+            '#CD853F', // Peru
+            '#DEB887', // Burlywood
+            '#D2B48C', // Tan
+            '#BC8F8F', // Rosy Brown
             '#F5DEB3', // Wheat
-            '#FFE4B5'  // Moccasin
+            '#F4E4BC'  // Cream
         ]
     },
-    // Traditional palette
+    // Muted Traditional palette
     {
-        name: "Traditional",
+        name: "Muted Traditional",
         colors: [
-            '#B22222', // Fire Brick
-            '#228B22', // Forest Green
-            '#4169E1', // Royal Blue
-            '#FFD700', // Gold
-            '#8B0000', // Dark Red
-            '#006400', // Dark Green
-            '#191970', // Midnight Blue
+            '#8B2635', // Muted Red
+            '#556B2F', // Dark Olive Green
+            '#4B5D6B', // Muted Blue
+            '#B8860B', // Dark Goldenrod
+            '#654321', // Dark Brown
+            '#2F4F2F', // Dark Forest Green
+            '#2F4F4F', // Dark Slate Gray
             '#F5F5DC'  // Beige
         ]
     },
-    // Ocean palette
+    // Muted Ocean palette
     {
-        name: "Ocean",
+        name: "Muted Ocean",
         colors: [
-            '#008B8B', // Dark Cyan
-            '#20B2AA', // Light Sea Green
-            '#4682B4', // Steel Blue
-            '#5F9EA0', // Cadet Blue
-            '#708090', // Slate Gray
-            '#2F4F4F', // Dark Slate Gray
-            '#F0F8FF', // Alice Blue
-            '#E0FFFF'  // Light Cyan
+            '#5F7A7A', // Muted Teal
+            '#6B8E8E', // Dark Sea Green
+            '#4A6B7A', // Muted Blue
+            '#5F7A6B', // Muted Green
+            '#6B6B7A', // Muted Gray-Blue
+            '#4A5F6B', // Dark Slate
+            '#E8F0F0', // Light Gray
+            '#D4E6E6'  // Very Light Teal
         ]
     },
-    // Sunset palette
+    // Muted Sunset palette
     {
-        name: "Sunset",
+        name: "Muted Sunset",
         colors: [
-            '#FF4500', // Orange Red
-            '#FF6347', // Tomato
-            '#FFD700', // Gold
-            '#FF8C00', // Dark Orange
-            '#DC143C', // Crimson
-            '#B22222', // Fire Brick
-            '#FFFFE0', // Light Yellow
-            '#FFF8DC'  // Cornsilk
+            '#8B4513', // Saddle Brown
+            '#A0522D', // Sienna
+            '#CD853F', // Peru
+            '#D2691E', // Chocolate
+            '#8B0000', // Dark Red
+            '#A0522D', // Sienna
+            '#F5DEB3', // Wheat
+            '#F4E4BC'  // Cream
         ]
     }
 ];
@@ -150,9 +150,11 @@ function draw() {
 }
 
 function drawStripe(stripe) {
-    let weftSize = 3; // Height of individual weft threads
-    let warpSize = 4; // Width of individual warp threads
+    // More realistic thread sizes for cloth-like appearance
+    let weftSize = 2; // Height of individual weft threads
+    let warpSize = 2; // Width of individual warp threads
     
+    // Draw the base stripe with weft threads (horizontal)
     for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSize) {
         for (let x = 0; x < doormatWidth; x += warpSize) {
             let baseColor = color(stripe.primaryColor);
@@ -166,13 +168,13 @@ function drawStripe(stripe) {
             } else if (stripe.weaveType === 'textured') {
                 // Add noise-based brightness variation
                 let noiseVal = noise(x * 0.05, y * 0.05);
-                baseColor = lerpColor(color(stripe.primaryColor), color(255), noiseVal * 0.3);
+                baseColor = lerpColor(color(stripe.primaryColor), color(255), noiseVal * 0.2);
             }
             
-            // Add slight random variation to simulate fabric irregularities
-            let r = red(baseColor) + random(-15, 15);
-            let g = green(baseColor) + random(-15, 15);
-            let b = blue(baseColor) + random(-15, 15);
+            // Add more realistic fabric irregularities
+            let r = red(baseColor) + random(-20, 20);
+            let g = green(baseColor) + random(-20, 20);
+            let b = blue(baseColor) + random(-20, 20);
             
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
@@ -181,33 +183,84 @@ function drawStripe(stripe) {
             fill(r, g, b);
             noStroke();
             
-            // Draw individual warp/weft intersection
-            rect(x, y, warpSize, weftSize);
-            
-            // Occasionally add darker lines to simulate thread shadows
-            if (random() < 0.1) {
-                fill(r * 0.7, g * 0.7, b * 0.7);
-                rect(x, y + weftSize - 1, warpSize, 1);
+            // Draw individual weft thread segment with slight curve
+            let threadCurve = sin(x * 0.1) * 0.5;
+            rect(x, y + threadCurve, warpSize, weftSize);
+        }
+    }
+    
+    // Draw warp threads (vertical) that are visible through the weave
+    for (let x = 0; x < doormatWidth; x += warpSize * 2) {
+        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSize) {
+            // Only show warp threads occasionally to create the woven effect
+            if (random() < 0.3) {
+                let warpColor = color(stripe.primaryColor);
+                
+                // Make warp threads slightly darker
+                let r = red(warpColor) * 0.8;
+                let g = green(warpColor) * 0.8;
+                let b = blue(warpColor) * 0.8;
+                
+                fill(r, g, b, 150); // Semi-transparent
+                noStroke();
+                
+                // Draw thin vertical warp thread
+                let warpCurve = cos(y * 0.1) * 0.3;
+                rect(x + warpCurve, y, 1, weftSize);
+            }
+        }
+    }
+    
+    // Add subtle texture overlay for cloth-like appearance
+    for (let x = 0; x < doormatWidth; x += 4) {
+        for (let y = stripe.y; y < stripe.y + stripe.height; y += 4) {
+            let noiseVal = noise(x * 0.02, y * 0.02);
+            if (noiseVal > 0.6) {
+                fill(255, 255, 255, 30); // Subtle highlight
+                noStroke();
+                ellipse(x, y, 1, 1);
+            } else if (noiseVal < 0.4) {
+                fill(0, 0, 0, 20); // Subtle shadow
+                noStroke();
+                ellipse(x, y, 1, 1);
             }
         }
     }
 }
 
 function drawTextureOverlay() {
-    // Add subtle overall texture to simulate fabric
+    // Add more realistic fabric texture overlay
     push();
-    blendMode(MULTIPLY);
-    loadPixels();
+    blendMode(OVERLAY);
     
-    for (let x = 0; x < doormatWidth; x += 2) {
-        for (let y = 0; y < doormatHeight; y += 2) {
-            let noiseVal = noise(x * 0.02, y * 0.02);
-            let alpha = map(noiseVal, 0, 1, 240, 255);
-            fill(255, alpha);
+    // Create subtle fabric grain
+    for (let x = 0; x < doormatWidth; x += 3) {
+        for (let y = 0; y < doormatHeight; y += 3) {
+            let noiseVal = noise(x * 0.01, y * 0.01);
+            let grainIntensity = map(noiseVal, 0, 1, -30, 30);
+            
+            fill(255 + grainIntensity, 255 + grainIntensity, 255 + grainIntensity, 40);
             noStroke();
-            rect(x, y, 2, 2);
+            rect(x, y, 3, 3);
         }
     }
+    
+    // Add subtle weave pattern
+    for (let x = 0; x < doormatWidth; x += 8) {
+        for (let y = 0; y < doormatHeight; y += 8) {
+            let weaveNoise = noise(x * 0.05, y * 0.05);
+            if (weaveNoise > 0.7) {
+                fill(255, 255, 255, 20);
+                noStroke();
+                rect(x, y, 8, 8);
+            } else if (weaveNoise < 0.3) {
+                fill(0, 0, 0, 15);
+                noStroke();
+                rect(x, y, 8, 8);
+            }
+        }
+    }
+    
     pop();
 }
 
@@ -217,34 +270,49 @@ function drawFringe() {
     
     // Bottom fringe
     drawFringeSection(fringeLength, fringeLength + doormatHeight, doormatWidth, fringeLength, 'bottom');
+    
+    // Add subtle shadow under the doormat
+    push();
+    fill(0, 0, 0, 30);
+    noStroke();
+    rect(fringeLength + 5, fringeLength + doormatHeight + 5, doormatWidth - 10, 10);
+    pop();
 }
 
 function drawFringeSection(x, y, w, h, side) {
-    let fringeStrands = w / 8; // Number of fringe strands
+    let fringeStrands = w / 6; // More fringe strands for realistic look
     let strandWidth = w / fringeStrands;
     
     for (let i = 0; i < fringeStrands; i++) {
         let strandX = x + i * strandWidth;
         let strandColor = random(selectedPalette.colors);
         
-        // Draw individual fringe strand
-        for (let j = 0; j < 15; j++) { // Multiple threads per strand
-            let threadX = strandX + random(-strandWidth/3, strandWidth/3);
+        // Draw individual fringe strand with more realistic appearance
+        for (let j = 0; j < 8; j++) { // Fewer but thicker threads per strand
+            let threadX = strandX + random(-strandWidth/4, strandWidth/4);
             let startY = side === 'top' ? y + h : y;
             let endY = side === 'top' ? y : y + h;
             
-            // Add some curl/wave to the fringe
-            let waveAmplitude = random(3, 8);
-            let waveFreq = random(0.1, 0.3);
+            // Add more natural curl/wave to the fringe
+            let waveAmplitude = random(2, 6);
+            let waveFreq = random(0.2, 0.4);
             
-            stroke(strandColor);
-            strokeWeight(random(0.5, 1.5));
+            // Use darker version of strand color for fringe
+            let fringeColor = color(strandColor);
+            let r = red(fringeColor) * 0.7;
+            let g = green(fringeColor) * 0.7;
+            let b = blue(fringeColor) * 0.7;
+            
+            stroke(r, g, b);
+            strokeWeight(random(1, 2.5));
             
             noFill();
             beginShape();
-            for (let t = 0; t <= 1; t += 0.1) {
+            for (let t = 0; t <= 1; t += 0.05) {
                 let yPos = lerp(startY, endY, t);
                 let xOffset = sin(t * PI * waveFreq) * waveAmplitude * t;
+                // Add some randomness to make it look more natural
+                xOffset += random(-1, 1);
                 vertex(threadX + xOffset, yPos);
             }
             endShape();

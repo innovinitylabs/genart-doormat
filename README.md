@@ -4,17 +4,18 @@ A P5.js generative art piece inspired by traditional woven doormats with horizon
 
 ## Features
 
-🎨 **Multiple Color Palettes**: 
-- Earthy (browns, tans, beiges)
-- Traditional (reds, greens, blues, golds)
-- Ocean (cyans, blues, teals)
-- Sunset (oranges, reds, yellows)
+🎨 **Realistic Muted Color Palettes**: 
+- Muted Earthy (soft browns, tans, beiges)
+- Muted Traditional (dull reds, olive greens, muted blues)
+- Muted Ocean (soft teals, sea greens, gray-blues)
+- Muted Sunset (warm browns, siennas, creams)
 
-🧵 **Realistic Weaving Simulation**:
-- Individual warp and weft thread rendering
+🧵 **Realistic Cloth-Like Weaving**:
+- Both horizontal (weft) and vertical (warp) threads visible
+- Organic thread curves and natural fabric irregularities
 - Three weave types: solid, mixed, and textured
-- Random color variations to simulate fabric irregularities
-- Subtle shadows and highlights
+- Subtle highlights and shadows for depth
+- Grain texture overlay for authentic fabric appearance
 
 🎯 **Stripe Patterns**:
 - Random stripe heights (8-40 pixels)
@@ -41,9 +42,10 @@ A P5.js generative art piece inspired by traditional woven doormats with horizon
 ## Technical Details
 
 - **Canvas Size**: 660x460 pixels (600x400 doormat + 30px fringe on each side)
-- **Weave Resolution**: 4x3 pixel warp/weft intersections
-- **Color Palettes**: 4 carefully curated palettes with 8 colors each
-- **Fringe**: Procedurally generated with natural wave patterns
+- **Weave Resolution**: 2x2 pixel warp/weft intersections for finer detail
+- **Color Palettes**: 4 muted, realistic palettes with 8 colors each
+- **Fringe**: Thicker, more natural strands with organic wave patterns
+- **Texture**: Multi-layer grain and weave pattern overlays
 
 ## File Structure
 
