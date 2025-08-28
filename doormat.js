@@ -340,7 +340,7 @@ function drawSelvedgeEdges() {
             
             // Add small hole in the center to show background
             fill(245, 245, 220); // Background color
-            arc(centerX, centerY, radius * 0.8, radius * 0.8, HALF_PI, -HALF_PI);
+            arc(centerX, centerY, radius * 0.4, radius * 0.4, HALF_PI, -HALF_PI);
         }
     }
     
@@ -393,7 +393,7 @@ function drawSelvedgeEdges() {
             
             // Add small hole in the center to show background
             fill(245, 245, 220); // Background color
-            arc(centerX, centerY, radius * 0.8, radius * 0.8, -HALF_PI, HALF_PI);
+            arc(centerX, centerY, radius * 0.4, radius * 0.4, -HALF_PI, HALF_PI);
         }
     }
 }
