@@ -139,6 +139,9 @@ function draw() {
         drawStripe(stripe);
     }
     
+    // Draw selvedge edges (inside translated context)
+    drawSelvedgeEdges();
+    
     // Add overall texture overlay
     drawTextureOverlay();
     
@@ -291,8 +294,9 @@ function drawSelvedgeEdges() {
     // Use the same spacing as the actual weft threads in drawStripe
     let weftSpacing = weftThickness + 1;
     
-    for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftSpacing) {
-        // Find the stripe that contains this y position
+    // FIXED: Use relative coordinates like the weft threads (accounting for canvas translation)
+    for (let y = 0; y < doormatHeight; y += weftSpacing) {
+        // Find the stripe that contains this y position (using relative coordinates)
         let currentStripe = null;
         for (let stripe of stripeData) {
             if (y >= stripe.y && y < stripe.y + stripe.height) {
@@ -321,7 +325,7 @@ function drawSelvedgeEdges() {
             noStroke();
             
             let radius = weftThickness * 1.5; // Size based on weft thickness
-            let centerX = fringeLength; // Center at mat edge
+            let centerX = 0; // Left edge of the translated canvas (relative coordinates)
             let centerY = y + weftThickness/2; // Align with the center of the weft thread
             
             // Draw the semicircle (flowing from left to right)
@@ -334,8 +338,8 @@ function drawSelvedgeEdges() {
     }
     
     // Right selvedge edge - flowing semicircular weft threads
-    for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftSpacing) {
-        // Find the stripe that contains this y position
+    for (let y = 0; y < doormatHeight; y += weftSpacing) {
+        // Find the stripe that contains this y position (using relative coordinates)
         let currentStripe = null;
         for (let stripe of stripeData) {
             if (y >= stripe.y && y < stripe.y + stripe.height) {
@@ -364,7 +368,7 @@ function drawSelvedgeEdges() {
             noStroke();
             
             let radius = weftThickness * 1.5; // Size based on weft thickness
-            let centerX = fringeLength + doormatWidth; // Center at mat edge
+            let centerX = doormatWidth; // Right edge of the translated canvas (relative coordinates)
             let centerY = y + weftThickness/2; // Align with the center of the weft thread
             
             // Draw the semicircle (flowing from right to left)
