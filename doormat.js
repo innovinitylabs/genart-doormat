@@ -7,7 +7,29 @@ let fringeLength = 30;
 let currentSeed = 42;
 let warpThickness = 2; // Will be set randomly
 let weftThickness = 8; // Default weft thread thickness
-const TEXT_SCALE = 2; // 1.5x rounded to 2 for clearer visibility
+const TEXT_SCALE = 2; // scale factor
+const MAX_CHARS = 11;
+
+// Text colors (chosen from palette)
+let lightTextColor;
+let darkTextColor;
+
+function updateTextColors() {
+    if (!selectedPalette || !selectedPalette.colors) return;
+    let darkest = selectedPalette.colors[0];
+    let lightest = selectedPalette.colors[0];
+    let darkestVal = 999, lightestVal = -1;
+    for (let hex of selectedPalette.colors) {
+        let c = color(hex);
+        let bright = (red(c) + green(c) + blue(c)) / 3;
+        if (bright < darkestVal) { darkestVal = bright; darkest = hex; }
+        if (bright > lightestVal) { lightestVal = bright; lightest = hex; }
+    }
+    darkTextColor = color(darkest);
+    // make colours more contrasted
+    lightTextColor = lerpColor(color(lightest), color(255), 0.3);
+    darkTextColor  = lerpColor(color(darkest), color(0),   0.4);
+}
 
 // Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
@@ -223,6 +245,7 @@ function initializePalette() {
     if (!selectedPalette) {
         selectedPalette = colorPalettes[0]; // Use first palette as default
     }
+    updateTextColors();
 }
 
 function setup() {
@@ -247,6 +270,7 @@ function generateDoormat(seed) {
     
     // Select random palette
     selectedPalette = random(colorPalettes);
+    updateTextColors();
     
     // Generate stripe data
     generateStripeData();
@@ -355,13 +379,9 @@ function drawStripe(stripe) {
             
             // Modify color for text pixels (vertical lines use weft thickness)
             if (isTextPixel) {
-                // Determine background brightness to choose text color
                 const bgBrightness = (r + g + b) / 3;
-                if (bgBrightness < 100) { // dark background -> light text
-                    r = g = b = 255;
-                } else {
-                    r = g = b = 0; // light background -> dark text
-                }
+                let tc = bgBrightness < 128 ? lightTextColor : darkTextColor;
+                r = red(tc); g = green(tc); b = blue(tc);
             }
             
             r = constrain(r, 0, 255);
@@ -412,11 +432,8 @@ function drawStripe(stripe) {
             // Modify color for text pixels (horizontal lines use warp thickness)
             if (isTextPixel) {
                 const bgBrightness = (r + g + b) / 3;
-                if (bgBrightness < 100) {
-                    r = g = b = 255;
-                } else {
-                    r = g = b = 0;
-                }
+                let tc = bgBrightness < 128 ? lightTextColor : darkTextColor;
+                r = red(tc); g = green(tc); b = blue(tc);
             }
             
             r = constrain(r, 0, 255);
@@ -690,6 +707,7 @@ function generateDoormat(seed) {
             noiseSeed(seed);
             
             selectedPalette = random(colorPalettes);
+            updateTextColors();
             generateStripeData();
             redraw();
         };
@@ -701,6 +719,7 @@ function generateDoormat(seed) {
     noiseSeed(seed);
     
     selectedPalette = random(colorPalettes);
+    updateTextColors();
     generateStripeData();
     if (typeof redraw === 'function') {
         redraw();
@@ -711,7 +730,8 @@ function generateDoormat(seed) {
 
 // Text embedding functions
 function addTextToDoormatInSketch(text) {
-    doormatText = text.toUpperCase();
+    const clean = text.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, MAX_CHARS);
+    doormatText = clean;
     generateTextData();
     redraw();
 }
@@ -791,7 +811,17 @@ function generateCharacterPixels(char, x, y, width, height) {
         'X': ["10001","10001","01010","00100","01010","10001","10001"],
         'Y': ["10001","10001","01010","00100","00100","00100","00100"],
         'Z': ["11111","00001","00010","00100","01000","10000","11111"],
-        ' ': ["00000","00000","00000","00000","00000","00000","00000"]
+        ' ': ["00000","00000","00000","00000","00000","00000","00000"],
+        '0': ["01110","10001","10011","10101","11001","10001","01110"],
+        '1': ["00100","01100","00100","00100","00100","00100","01110"],
+        '2': ["01110","10001","00001","00010","00100","01000","11111"],
+        '3': ["11110","00001","00001","01110","00001","00001","11110"],
+        '4': ["00010","00110","01010","10010","11111","00010","00010"],
+        '5': ["11111","10000","10000","11110","00001","00001","11110"],
+        '6': ["01110","10000","10000","11110","10001","10001","01110"],
+        '7': ["11111","00001","00010","00100","01000","01000","01000"],
+        '8': ["01110","10001","10001","01110","10001","10001","01110"],
+        '9': ["01110","10001","10001","01111","00001","00001","01110"]
     };
     
     const charDef = charMap[char] || charMap[' '];
