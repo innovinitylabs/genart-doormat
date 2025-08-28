@@ -6,9 +6,7 @@ let doormatHeight = 600;
 let fringeLength = 30;
 let currentSeed = 42;
 let warpThickness = 2; // Default warp thread thickness
-let weftThickness = 8; // Default weft thread thickness
-let warpSpacing = 3; // Default warp spacing
-let weftSpacing = 9; // Default weft spacing
+let weftThickness = 2; // Default weft thread thickness
 
 // Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
@@ -141,9 +139,6 @@ function draw() {
         drawStripe(stripe);
     }
     
-    // Draw selvedge edges (inside translated context)
-    drawSelvedgeEdges();
-    
     // Add overall texture overlay
     drawTextureOverlay();
     
@@ -158,7 +153,8 @@ function draw() {
 
 function drawStripe(stripe) {
     // Create a proper plain weave structure like the diagram
-    // Use the global spacing variables that can be controlled by sliders
+    let warpSpacing = warpThickness + 1; // Space between warp threads
+    let weftSpacing = weftThickness + 1; // Space between weft threads
     
     // First, draw the warp threads (vertical) as the foundation
     for (let x = 0; x < doormatWidth; x += warpSpacing) {
@@ -293,25 +289,17 @@ function drawFringe() {
 function drawSelvedgeEdges() {
     // Left selvedge edge - flowing semicircular weft threads
     // Use the same spacing as the actual weft threads in drawStripe
+    let weftSpacing = weftThickness + 1;
     
-    // FIXED: Use relative coordinates like the weft threads (accounting for canvas translation)
-    for (let y = 0; y < doormatHeight; y += weftSpacing) {
-        // Find the stripe that contains this y position (using relative coordinates)
-        let currentStripe = null;
-        for (let stripe of stripeData) {
-            if (y >= stripe.y && y < stripe.y + stripe.height) {
-                currentStripe = stripe;
-                break;
-            }
-        }
-        
-        if (currentStripe) {
+    // Loop through each stripe and draw selvedge for each weft thread in that stripe
+    for (let stripe of stripeData) {
+        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
             // Get the color from the current stripe
-            let selvedgeColor = color(currentStripe.primaryColor);
+            let selvedgeColor = color(stripe.primaryColor);
             
             // Check if there's a secondary color for blending
-            if (currentStripe.secondaryColor && currentStripe.weaveType === 'mixed') {
-                let secondaryColor = color(currentStripe.secondaryColor);
+            if (stripe.secondaryColor && stripe.weaveType === 'mixed') {
+                let secondaryColor = color(stripe.secondaryColor);
                 // Blend the colors based on noise for variation
                 let blendFactor = noise(y * 0.1) * 0.5 + 0.5;
                 selvedgeColor = lerpColor(selvedgeColor, secondaryColor, blendFactor);
@@ -325,8 +313,8 @@ function drawSelvedgeEdges() {
             noStroke();
             
             let radius = weftThickness * 1.5; // Size based on weft thickness
-            let centerX = 0; // Left edge of the translated canvas (relative coordinates)
-            let centerY = y + weftThickness/2; // Align with the center of the weft thread
+            let centerX = fringeLength; // Center at mat edge
+            let centerY = fringeLength + y + weftThickness/2; // Convert to absolute coordinates
             
             // Draw the semicircle (flowing from left to right)
             arc(centerX, centerY, radius * 2, radius * 2, HALF_PI, -HALF_PI);
@@ -338,23 +326,14 @@ function drawSelvedgeEdges() {
     }
     
     // Right selvedge edge - flowing semicircular weft threads
-    for (let y = 0; y < doormatHeight; y += weftSpacing) {
-        // Find the stripe that contains this y position (using relative coordinates)
-        let currentStripe = null;
-        for (let stripe of stripeData) {
-            if (y >= stripe.y && y < stripe.y + stripe.height) {
-                currentStripe = stripe;
-                break;
-            }
-        }
-        
-        if (currentStripe) {
+    for (let stripe of stripeData) {
+        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
             // Get the color from the current stripe
-            let selvedgeColor = color(currentStripe.primaryColor);
+            let selvedgeColor = color(stripe.primaryColor);
             
             // Check if there's a secondary color for blending
-            if (currentStripe.secondaryColor && currentStripe.weaveType === 'mixed') {
-                let secondaryColor = color(currentStripe.secondaryColor);
+            if (stripe.secondaryColor && stripe.weaveType === 'mixed') {
+                let secondaryColor = color(stripe.secondaryColor);
                 // Blend the colors based on noise for variation
                 let blendFactor = noise(y * 0.1) * 0.5 + 0.5;
                 selvedgeColor = lerpColor(selvedgeColor, secondaryColor, blendFactor);
@@ -368,8 +347,8 @@ function drawSelvedgeEdges() {
             noStroke();
             
             let radius = weftThickness * 1.5; // Size based on weft thickness
-            let centerX = doormatWidth; // Right edge of the translated canvas (relative coordinates)
-            let centerY = y + weftThickness/2; // Align with the center of the weft thread
+            let centerX = fringeLength + doormatWidth; // Center at mat edge
+            let centerY = fringeLength + y + weftThickness/2; // Convert to absolute coordinates
             
             // Draw the semicircle (flowing from right to left)
             arc(centerX, centerY, radius * 2, radius * 2, -HALF_PI, HALF_PI);
@@ -470,22 +449,8 @@ function updateWeftThicknessInSketch(thickness) {
     redraw();
 }
 
-// Function to update warp spacing from HTML slider
-function updateWarpSpacingInSketch(spacing) {
-    warpSpacing = spacing;
-    redraw();
-}
-
-// Function to update weft spacing from HTML slider
-function updateWeftSpacingInSketch(spacing) {
-    weftSpacing = spacing;
-    redraw();
-}
-
 // Make the functions globally available
 if (typeof window !== 'undefined') {
     window.updateWarpThicknessInSketch = updateWarpThicknessInSketch;
     window.updateWeftThicknessInSketch = updateWeftThicknessInSketch;
-    window.updateWarpSpacingInSketch = updateWarpSpacingInSketch;
-    window.updateWeftSpacingInSketch = updateWeftSpacingInSketch;
 }
