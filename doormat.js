@@ -1,12 +1,13 @@
 // Generative Doormat Art - P5.js
 // Inspired by traditional woven doormats with stripes and fringe
 
-let doormatWidth = 400;
-let doormatHeight = 600;
+let doormatWidth = 600;
+let doormatHeight = 400;
 let fringeLength = 30;
 let currentSeed = 42;
 let warpThickness = 2; // Default warp thread thickness
 let weftThickness = 8; // Default weft thread thickness
+let pixelDensity = 2; // 2x DPI for high quality output
 
 // Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
@@ -74,6 +75,7 @@ let stripeData = [];
 function setup() {
     let canvas = createCanvas(doormatWidth + (fringeLength * 2), doormatHeight + (fringeLength * 2));
     canvas.parent('canvas-container');
+    pixelDensity(pixelDensity); // Set 2x DPI for high quality
     noLoop();
 }
 
@@ -130,6 +132,12 @@ function generateStripeData() {
 function draw() {
     background(245, 245, 220); // Beige background
     
+    // Rotate canvas 90 degrees clockwise
+    push();
+    translate(width/2, height/2);
+    rotate(PI/2);
+    translate(-height/2, -width/2);
+    
     // Draw the main doormat area
     push();
     translate(fringeLength, fringeLength);
@@ -149,6 +157,8 @@ function draw() {
     
     // Draw border
     drawBorder();
+    
+    pop(); // End rotation
 }
 
 function drawStripe(stripe) {
@@ -342,7 +352,7 @@ function drawSelvedgeEdges() {
             // To increase hole size: change 0.4 to a larger value (e.g., 0.6, 0.8)
             // To decrease hole size: change 0.4 to a smaller value (e.g., 0.2, 0.3)
             noFill();
-            arc(centerX, centerY, radius * 0.4, radius * 0.4, HALF_PI, -HALF_PI);
+            arc(centerX, centerY, radius * 1, radius * 1, HALF_PI, -HALF_PI);
         }
     }
     
