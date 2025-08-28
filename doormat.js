@@ -214,6 +214,8 @@ const colorPalettes = [
 
 let selectedPalette;
 let stripeData = [];
+let doormatText = ""; // Text to embed in the doormat
+let textData = []; // Text positioning and character data
 
 function setup() {
     // Create canvas with swapped dimensions for 90-degree rotation
@@ -312,10 +314,30 @@ function drawStripe(stripe) {
         for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
             let warpColor = color(stripe.primaryColor);
             
+            // Check if this position should be modified for text
+            let isTextPixel = false;
+            if (textData.length > 0) {
+                for (let textPixel of textData) {
+                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
+                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
+                        isTextPixel = true;
+                        break;
+                    }
+                }
+            }
+            
             // Add subtle variation to warp threads
             let r = red(warpColor) + random(-15, 15);
             let g = green(warpColor) + random(-15, 15);
             let b = blue(warpColor) + random(-15, 15);
+            
+            // Modify color for text pixels
+            if (isTextPixel) {
+                // Make text pixels darker/more prominent
+                r = r * 0.3;
+                g = g * 0.3;
+                b = b * 0.3;
+            }
             
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
@@ -335,6 +357,18 @@ function drawStripe(stripe) {
         for (let x = 0; x < doormatWidth; x += warpSpacing) {
             let weftColor = color(stripe.primaryColor);
             
+            // Check if this position should be modified for text
+            let isTextPixel = false;
+            if (textData.length > 0) {
+                for (let textPixel of textData) {
+                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
+                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
+                        isTextPixel = true;
+                        break;
+                    }
+                }
+            }
+            
             // Add variation based on weave type
             if (stripe.weaveType === 'mixed' && stripe.secondaryColor) {
                 if (noise(x * 0.1, y * 0.1) > 0.5) {
@@ -349,6 +383,14 @@ function drawStripe(stripe) {
             let r = red(weftColor) + random(-20, 20);
             let g = green(weftColor) + random(-20, 20);
             let b = blue(weftColor) + random(-20, 20);
+            
+            // Modify color for text pixels
+            if (isTextPixel) {
+                // Make text pixels darker/more prominent
+                r = r * 0.3;
+                g = g * 0.3;
+                b = b * 0.3;
+            }
             
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
@@ -642,8 +684,103 @@ function updateWeftThicknessInSketch(thickness) {
     redraw();
 }
 
+// Text embedding functions
+function addTextToDoormatInSketch(text) {
+    doormatText = text.toUpperCase();
+    generateTextData();
+    redraw();
+}
+
+function clearTextFromDoormat() {
+    doormatText = "";
+    textData = [];
+    redraw();
+}
+
+function generateTextData() {
+    textData = [];
+    if (!doormatText) return;
+    
+    // Simple 5x7 font grid for each character
+    const charWidth = 6;
+    const charHeight = 8;
+    const spacing = 2;
+    
+    // Calculate text dimensions
+    const textWidth = doormatText.length * (charWidth + spacing);
+    const textHeight = charHeight;
+    
+    // Center the text on the doormat
+    const startX = (doormatWidth - textWidth) / 2;
+    const startY = (doormatHeight - textHeight) / 2;
+    
+    // Generate character data
+    for (let i = 0; i < doormatText.length; i++) {
+        const char = doormatText.charAt(i);
+        const charX = startX + i * (charWidth + spacing);
+        
+        // Generate pixel positions for this character
+        const charPixels = generateCharacterPixels(char, charX, startY, charWidth, charHeight);
+        textData.push(...charPixels);
+    }
+}
+
+function generateCharacterPixels(char, x, y, width, height) {
+    const pixels = [];
+    
+    // Simple character definitions (5x7 grid)
+    const charMap = {
+        'A': [[0,1,1,1,0], [1,0,0,0,1], [1,0,0,0,1], [1,1,1,1,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1]],
+        'B': [[1,1,1,1,0], [1,0,0,0,1], [1,0,0,0,1], [1,1,1,1,0], [1,0,0,0,1], [1,0,0,0,1], [1,1,1,1,0]],
+        'C': [[0,1,1,1,0], [1,0,0,0,1], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,1], [0,1,1,1,0]],
+        'D': [[1,1,1,1,0], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,1,1,1,0]],
+        'E': [[1,1,1,1,1], [1,0,0,0,0], [1,0,0,0,0], [1,1,1,1,0], [1,0,0,0,0], [1,0,0,0,0], [1,1,1,1,1]],
+        'F': [[1,1,1,1,1], [1,0,0,0,0], [1,0,0,0,0], [1,1,1,1,0], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0]],
+        'G': [[0,1,1,1,0], [1,0,0,0,1], [1,0,0,0,0], [1,0,1,1,1], [1,0,0,0,1], [1,0,0,0,1], [0,1,1,1,0]],
+        'H': [[1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,1,1,1,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1]],
+        'I': [[1,1,1], [0,1,0], [0,1,0], [0,1,0], [0,1,0], [0,1,0], [1,1,1]],
+        'J': [[0,0,1,1,1], [0,0,0,1,0], [0,0,0,1,0], [0,0,0,1,0], [1,0,0,1,0], [1,0,0,1,0], [0,1,1,0,0]],
+        'K': [[1,0,0,0,1], [1,0,0,1,0], [1,0,1,0,0], [1,1,0,0,0], [1,0,1,0,0], [1,0,0,1,0], [1,0,0,0,1]],
+        'L': [[1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0], [1,1,1,1,1]],
+        'M': [[1,0,0,0,1], [1,1,0,1,1], [1,0,1,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1]],
+        'N': [[1,0,0,0,1], [1,1,0,0,1], [1,0,1,0,1], [1,0,0,1,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1]],
+        'O': [[0,1,1,1,0], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [0,1,1,1,0]],
+        'P': [[1,1,1,1,0], [1,0,0,0,1], [1,0,0,0,1], [1,1,1,1,0], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0]],
+        'Q': [[0,1,1,1,0], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,1,0,1], [1,0,0,1,1], [0,1,1,1,1]],
+        'R': [[1,1,1,1,0], [1,0,0,0,1], [1,0,0,0,1], [1,1,1,1,0], [1,0,1,0,0], [1,0,0,1,0], [1,0,0,0,1]],
+        'S': [[0,1,1,1,0], [1,0,0,0,1], [1,0,0,0,0], [0,1,1,1,0], [0,0,0,0,1], [1,0,0,0,1], [0,1,1,1,0]],
+        'T': [[1,1,1,1,1], [0,0,1,0,0], [0,0,1,0,0], [0,0,1,0,0], [0,0,1,0,0], [0,0,1,0,0], [0,0,1,0,0]],
+        'U': [[1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [0,1,1,1,0]],
+        'V': [[1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [0,1,0,1,0], [0,1,0,1,0], [0,0,1,0,0]],
+        'W': [[1,0,0,0,1], [1,0,0,0,1], [1,0,0,0,1], [1,0,1,0,1], [1,0,1,0,1], [1,1,0,1,1], [1,0,0,0,1]],
+        'X': [[1,0,0,0,1], [0,1,0,1,0], [0,0,1,0,0], [0,0,1,0,0], [0,0,1,0,0], [0,1,0,1,0], [1,0,0,0,1]],
+        'Y': [[1,0,0,0,1], [0,1,0,1,0], [0,0,1,0,0], [0,0,1,0,0], [0,0,1,0,0], [0,0,1,0,0], [0,0,1,0,0]],
+        'Z': [[1,1,1,1,1], [0,0,0,0,1], [0,0,0,1,0], [0,0,1,0,0], [0,1,0,0,0], [1,0,0,0,0], [1,1,1,1,1]],
+        ' ': [[0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]]
+    };
+    
+    const charDef = charMap[char] || charMap[' '];
+    
+    for (let row = 0; row < charDef.length; row++) {
+        for (let col = 0; col < charDef[row].length; col++) {
+            if (charDef[row][col] === 1) {
+                pixels.push({
+                    x: x + col,
+                    y: y + row,
+                    width: 1,
+                    height: 1
+                });
+            }
+        }
+    }
+    
+    return pixels;
+}
+
 // Make the functions globally available
 if (typeof window !== 'undefined') {
     window.updateWarpThicknessInSketch = updateWarpThicknessInSketch;
     window.updateWeftThicknessInSketch = updateWeftThicknessInSketch;
+    window.addTextToDoormatInSketch = addTextToDoormatInSketch;
+    window.clearTextFromDoormat = clearTextFromDoormat;
 }

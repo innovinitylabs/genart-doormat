@@ -63,6 +63,15 @@
             width: 100px;
         }
         
+        .text-input {
+            padding: 8px;
+            border: 2px solid #8B4513;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 200px;
+            margin: 0 10px;
+        }
+        
         .slider-controls {
             margin: 15px 0;
             display: flex;
@@ -139,6 +148,12 @@
             <button onclick="generateFromSeed()">Use Seed</button>
         </div>
         
+        <div class="controls">
+            <input type="text" id="textInput" class="text-input" placeholder="Enter text for doormat" maxlength="20">
+            <button onclick="addTextToDoormat()">Add Text</button>
+            <button onclick="clearText()">Clear Text</button>
+        </div>
+        
         <div class="slider-controls">
             <div class="slider-group">
                 <label for="warpThickness">Warp Thickness: <span id="warpThicknessValue">2</span></label>
@@ -159,6 +174,7 @@
             • Click "Generate New Doormat" for a random pattern<br>
             • Enter a seed number and click "Use Seed" for reproducible results<br>
             • Adjust warp (vertical) and weft (horizontal) thread thickness separately<br>
+            • Enter text to embed it into the doormat pattern (max 20 characters)<br>
             • Click "Save as Image" to download your doormat
         </p>
     </div>
@@ -194,6 +210,20 @@
             document.getElementById('weftThicknessValue').textContent = thickness;
             if (typeof window.updateWeftThicknessInSketch === 'function') {
                 window.updateWeftThicknessInSketch(parseInt(thickness));
+            }
+        }
+        
+        function addTextToDoormat() {
+            const text = document.getElementById('textInput').value.trim();
+            if (text && typeof window.addTextToDoormatInSketch === 'function') {
+                window.addTextToDoormatInSketch(text);
+            }
+        }
+        
+        function clearText() {
+            document.getElementById('textInput').value = '';
+            if (typeof window.clearTextFromDoormat === 'function') {
+                window.clearTextFromDoormat();
             }
         }
         
