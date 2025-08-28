@@ -306,7 +306,7 @@ function drawSelvedgeEdges() {
             // Check if this is the last weft thread
             if (stripe === stripeData[stripeData.length - 1] && y + weftSpacing >= stripe.y + stripe.height) {
                 isLastWeft = true;
-                break;
+                continue; // Skip this last weft thread instead of breaking
             }
             
             // Get the color from the current stripe
@@ -359,7 +359,7 @@ function drawSelvedgeEdges() {
             // Check if this is the last weft thread
             if (stripe === stripeData[stripeData.length - 1] && y + weftSpacing >= stripe.y + stripe.height) {
                 isLastWeftRight = true;
-                break;
+                continue; // Skip this last weft thread instead of breaking
             }
             
             // Get the color from the current stripe
