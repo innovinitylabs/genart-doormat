@@ -150,31 +150,20 @@ function draw() {
 }
 
 function drawStripe(stripe) {
-    // More realistic thread sizes for cloth-like appearance
-    let weftSize = 2; // Height of individual weft threads
-    let warpSize = 2; // Width of individual warp threads
+    // Create a proper plain weave structure like the diagram
+    let warpSpacing = 3; // Space between warp threads
+    let weftSpacing = 3; // Space between weft threads
+    let threadThickness = 2; // Thickness of individual threads
     
-    // Draw the base stripe with weft threads (horizontal)
-    for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSize) {
-        for (let x = 0; x < doormatWidth; x += warpSize) {
-            let baseColor = color(stripe.primaryColor);
+    // First, draw the warp threads (vertical) as the foundation
+    for (let x = 0; x < doormatWidth; x += warpSpacing) {
+        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
+            let warpColor = color(stripe.primaryColor);
             
-            // Add variation based on weave type
-            if (stripe.weaveType === 'mixed' && stripe.secondaryColor) {
-                // Randomly mix primary and secondary colors
-                if (noise(x * 0.1, y * 0.1) > 0.5) {
-                    baseColor = color(stripe.secondaryColor);
-                }
-            } else if (stripe.weaveType === 'textured') {
-                // Add noise-based brightness variation
-                let noiseVal = noise(x * 0.05, y * 0.05);
-                baseColor = lerpColor(color(stripe.primaryColor), color(255), noiseVal * 0.2);
-            }
-            
-            // Add more realistic fabric irregularities
-            let r = red(baseColor) + random(-20, 20);
-            let g = green(baseColor) + random(-20, 20);
-            let b = blue(baseColor) + random(-20, 20);
+            // Add subtle variation to warp threads
+            let r = red(warpColor) + random(-15, 15);
+            let g = green(warpColor) + random(-15, 15);
+            let b = blue(warpColor) + random(-15, 15);
             
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
@@ -183,80 +172,94 @@ function drawStripe(stripe) {
             fill(r, g, b);
             noStroke();
             
-            // Draw individual weft thread segment with slight curve
-            let threadCurve = sin(x * 0.1) * 0.5;
-            rect(x, y + threadCurve, warpSize, weftSize);
+            // Draw warp thread with slight curve for natural look
+            let warpCurve = sin(y * 0.05) * 0.5;
+            rect(x + warpCurve, y, threadThickness, weftSpacing);
         }
     }
     
-    // Draw warp threads (vertical) that are visible through the weave
-    for (let x = 0; x < doormatWidth; x += warpSize * 2) {
-        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSize) {
-            // Only show warp threads occasionally to create the woven effect
-            if (random() < 0.3) {
-                let warpColor = color(stripe.primaryColor);
-                
-                // Make warp threads slightly darker
-                let r = red(warpColor) * 0.8;
-                let g = green(warpColor) * 0.8;
-                let b = blue(warpColor) * 0.8;
-                
-                fill(r, g, b, 150); // Semi-transparent
-                noStroke();
-                
-                // Draw thin vertical warp thread
-                let warpCurve = cos(y * 0.1) * 0.3;
-                rect(x + warpCurve, y, 1, weftSize);
+    // Now draw the weft threads (horizontal) that interlace with warp
+    for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
+        for (let x = 0; x < doormatWidth; x += warpSpacing) {
+            let weftColor = color(stripe.primaryColor);
+            
+            // Add variation based on weave type
+            if (stripe.weaveType === 'mixed' && stripe.secondaryColor) {
+                if (noise(x * 0.1, y * 0.1) > 0.5) {
+                    weftColor = color(stripe.secondaryColor);
+                }
+            } else if (stripe.weaveType === 'textured') {
+                let noiseVal = noise(x * 0.05, y * 0.05);
+                weftColor = lerpColor(color(stripe.primaryColor), color(255), noiseVal * 0.15);
             }
+            
+            // Add fabric irregularities
+            let r = red(weftColor) + random(-20, 20);
+            let g = green(weftColor) + random(-20, 20);
+            let b = blue(weftColor) + random(-20, 20);
+            
+            r = constrain(r, 0, 255);
+            g = constrain(g, 0, 255);
+            b = constrain(b, 0, 255);
+            
+            fill(r, g, b);
+            noStroke();
+            
+            // Draw weft thread with slight curve
+            let weftCurve = cos(x * 0.05) * 0.5;
+            rect(x, y + weftCurve, warpSpacing, threadThickness);
         }
     }
     
-    // Add subtle texture overlay for cloth-like appearance
-    for (let x = 0; x < doormatWidth; x += 4) {
-        for (let y = stripe.y; y < stripe.y + stripe.height; y += 4) {
-            let noiseVal = noise(x * 0.02, y * 0.02);
-            if (noiseVal > 0.6) {
-                fill(255, 255, 255, 30); // Subtle highlight
-                noStroke();
-                ellipse(x, y, 1, 1);
-            } else if (noiseVal < 0.4) {
-                fill(0, 0, 0, 20); // Subtle shadow
-                noStroke();
-                ellipse(x, y, 1, 1);
-            }
+    // Add the interlacing effect - make some threads appear to go over/under
+    for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing * 2) {
+        for (let x = 0; x < doormatWidth; x += warpSpacing * 2) {
+            // Create shadow effect for threads that appear to go under
+            fill(0, 0, 0, 40);
+            noStroke();
+            rect(x + 1, y + 1, warpSpacing - 2, weftSpacing - 2);
+        }
+    }
+    
+    // Add subtle highlights for threads that appear to go over
+    for (let y = stripe.y + weftSpacing; y < stripe.y + stripe.height; y += weftSpacing * 2) {
+        for (let x = warpSpacing; x < doormatWidth; x += warpSpacing * 2) {
+            fill(255, 255, 255, 30);
+            noStroke();
+            rect(x, y, warpSpacing - 1, weftSpacing - 1);
         }
     }
 }
 
 function drawTextureOverlay() {
-    // Add more realistic fabric texture overlay
+    // Add texture that matches the plain weave diagram
     push();
-    blendMode(OVERLAY);
+    blendMode(MULTIPLY);
     
-    // Create subtle fabric grain
-    for (let x = 0; x < doormatWidth; x += 3) {
-        for (let y = 0; y < doormatHeight; y += 3) {
-            let noiseVal = noise(x * 0.01, y * 0.01);
-            let grainIntensity = map(noiseVal, 0, 1, -30, 30);
+    // Create subtle hatching effect like in the diagram
+    for (let x = 0; x < doormatWidth; x += 2) {
+        for (let y = 0; y < doormatHeight; y += 2) {
+            let noiseVal = noise(x * 0.02, y * 0.02);
+            let hatchingIntensity = map(noiseVal, 0, 1, 0, 50);
             
-            fill(255 + grainIntensity, 255 + grainIntensity, 255 + grainIntensity, 40);
+            fill(0, 0, 0, hatchingIntensity);
             noStroke();
-            rect(x, y, 3, 3);
+            rect(x, y, 2, 2);
         }
     }
     
-    // Add subtle weave pattern
-    for (let x = 0; x < doormatWidth; x += 8) {
-        for (let y = 0; y < doormatHeight; y += 8) {
-            let weaveNoise = noise(x * 0.05, y * 0.05);
-            if (weaveNoise > 0.7) {
-                fill(255, 255, 255, 20);
+    // Add subtle relief effect to show the bumpy, cloth-like surface
+    for (let x = 0; x < doormatWidth; x += 6) {
+        for (let y = 0; y < doormatHeight; y += 6) {
+            let reliefNoise = noise(x * 0.03, y * 0.03);
+            if (reliefNoise > 0.6) {
+                fill(255, 255, 255, 25);
                 noStroke();
-                rect(x, y, 8, 8);
-            } else if (weaveNoise < 0.3) {
-                fill(0, 0, 0, 15);
+                rect(x, y, 6, 6);
+            } else if (reliefNoise < 0.4) {
+                fill(0, 0, 0, 20);
                 noStroke();
-                rect(x, y, 8, 8);
+                rect(x, y, 6, 6);
             }
         }
     }
@@ -265,11 +268,14 @@ function drawTextureOverlay() {
 }
 
 function drawFringe() {
-    // Top fringe
+    // Top fringe (warp ends)
     drawFringeSection(fringeLength, 0, doormatWidth, fringeLength, 'top');
     
-    // Bottom fringe
+    // Bottom fringe (warp ends)
     drawFringeSection(fringeLength, fringeLength + doormatHeight, doormatWidth, fringeLength, 'bottom');
+    
+    // Draw selvedge edges (weft loops) on left and right sides
+    drawSelvedgeEdges();
     
     // Add subtle shadow under the doormat
     push();
@@ -277,6 +283,36 @@ function drawFringe() {
     noStroke();
     rect(fringeLength + 5, fringeLength + doormatHeight + 5, doormatWidth - 10, 10);
     pop();
+}
+
+function drawSelvedgeEdges() {
+    // Left selvedge edge
+    for (let y = fringeLength; y < fringeLength + doormatHeight; y += 3) {
+        let selvedgeColor = random(selectedPalette.colors);
+        let r = red(color(selvedgeColor)) * 0.8;
+        let g = green(color(selvedgeColor)) * 0.8;
+        let b = blue(color(selvedgeColor)) * 0.8;
+        
+        fill(r, g, b);
+        noStroke();
+        
+        // Draw looped weft thread around the edge
+        ellipse(fringeLength - 2, y, 4, 3);
+    }
+    
+    // Right selvedge edge
+    for (let y = fringeLength; y < fringeLength + doormatHeight; y += 3) {
+        let selvedgeColor = random(selectedPalette.colors);
+        let r = red(color(selvedgeColor)) * 0.8;
+        let g = green(color(selvedgeColor)) * 0.8;
+        let b = blue(color(selvedgeColor)) * 0.8;
+        
+        fill(r, g, b);
+        noStroke();
+        
+        // Draw looped weft thread around the edge
+        ellipse(fringeLength + doormatWidth + 2, y, 4, 3);
+    }
 }
 
 function drawFringeSection(x, y, w, h, side) {
