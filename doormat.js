@@ -288,7 +288,10 @@ function drawFringe() {
 
 function drawSelvedgeEdges() {
     // Left selvedge edge - flowing semicircular weft threads
-    for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftThickness + 1) {
+    // Use the same spacing as the actual weft threads in drawStripe
+    let weftSpacing = weftThickness + 1;
+    
+    for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftSpacing) {
         // Find the stripe that contains this y position
         let currentStripe = null;
         for (let stripe of stripeData) {
@@ -319,7 +322,7 @@ function drawSelvedgeEdges() {
             
             let radius = weftThickness * 1.5; // Size based on weft thickness
             let centerX = fringeLength; // Center at mat edge
-            let centerY = y;
+            let centerY = y + weftThickness/2; // Align with the center of the weft thread
             
             // Draw the semicircle (flowing from left to right)
             arc(centerX, centerY, radius * 2, radius * 2, HALF_PI, -HALF_PI);
@@ -331,7 +334,7 @@ function drawSelvedgeEdges() {
     }
     
     // Right selvedge edge - flowing semicircular weft threads
-    for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftThickness + 1) {
+    for (let y = fringeLength; y < fringeLength + doormatHeight; y += weftSpacing) {
         // Find the stripe that contains this y position
         let currentStripe = null;
         for (let stripe of stripeData) {
@@ -362,7 +365,7 @@ function drawSelvedgeEdges() {
             
             let radius = weftThickness * 1.5; // Size based on weft thickness
             let centerX = fringeLength + doormatWidth; // Center at mat edge
-            let centerY = y;
+            let centerY = y + weftThickness/2; // Align with the center of the weft thread
             
             // Draw the semicircle (flowing from right to left)
             arc(centerX, centerY, radius * 2, radius * 2, -HALF_PI, HALF_PI);
