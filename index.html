@@ -68,6 +68,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 15px;
+        }
+        
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 8px;
         }
         
@@ -131,8 +138,14 @@
         </div>
         
         <div class="slider-controls">
-            <label for="threadThickness">Thread Thickness: <span id="threadThicknessValue">2</span></label>
-            <input type="range" id="threadThickness" min="1" max="8" value="2" step="1" oninput="updateThreadThickness()">
+            <div class="slider-group">
+                <label for="warpThickness">Warp Thickness: <span id="warpThicknessValue">2</span></label>
+                <input type="range" id="warpThickness" min="1" max="8" value="2" step="1" oninput="updateWarpThickness()">
+            </div>
+            <div class="slider-group">
+                <label for="weftThickness">Weft Thickness: <span id="weftThicknessValue">2</span></label>
+                <input type="range" id="weftThickness" min="1" max="8" value="2" step="1" oninput="updateWeftThickness()">
+            </div>
         </div>
         
         <div class="canvas-container" id="canvas-container">
@@ -143,7 +156,7 @@
             <strong>Instructions:</strong><br>
             • Click "Generate New Doormat" for a random pattern<br>
             • Enter a seed number and click "Use Seed" for reproducible results<br>
-            • Adjust thread thickness with the slider for different textures<br>
+            • Adjust warp (vertical) and weft (horizontal) thread thickness separately<br>
             • Click "Save as Image" to download your doormat
         </p>
     </div>
@@ -166,11 +179,19 @@
             saveCanvas('doormat-' + Date.now(), 'png');
         }
         
-        function updateThreadThickness() {
-            const thickness = document.getElementById('threadThickness').value;
-            document.getElementById('threadThicknessValue').textContent = thickness;
-            if (typeof window.updateThreadThicknessInSketch === 'function') {
-                window.updateThreadThicknessInSketch(parseInt(thickness));
+        function updateWarpThickness() {
+            const thickness = document.getElementById('warpThickness').value;
+            document.getElementById('warpThicknessValue').textContent = thickness;
+            if (typeof window.updateWarpThicknessInSketch === 'function') {
+                window.updateWarpThicknessInSketch(parseInt(thickness));
+            }
+        }
+        
+        function updateWeftThickness() {
+            const thickness = document.getElementById('weftThickness').value;
+            document.getElementById('weftThicknessValue').textContent = thickness;
+            if (typeof window.updateWeftThicknessInSketch === 'function') {
+                window.updateWeftThicknessInSketch(parseInt(thickness));
             }
         }
         

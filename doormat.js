@@ -5,7 +5,8 @@ let doormatWidth = 400;
 let doormatHeight = 600;
 let fringeLength = 30;
 let currentSeed = 42;
-let threadThickness = 2; // Default thread thickness
+let warpThickness = 2; // Default warp thread thickness
+let weftThickness = 2; // Default weft thread thickness
 
 // Color palettes inspired by traditional doormats - more muted and realistic
 const colorPalettes = [
@@ -152,8 +153,8 @@ function draw() {
 
 function drawStripe(stripe) {
     // Create a proper plain weave structure like the diagram
-    let warpSpacing = threadThickness + 1; // Space between warp threads
-    let weftSpacing = threadThickness + 1; // Space between weft threads
+    let warpSpacing = warpThickness + 1; // Space between warp threads
+    let weftSpacing = weftThickness + 1; // Space between weft threads
     
     // First, draw the warp threads (vertical) as the foundation
     for (let x = 0; x < doormatWidth; x += warpSpacing) {
@@ -174,7 +175,7 @@ function drawStripe(stripe) {
             
             // Draw warp thread with slight curve for natural look
             let warpCurve = sin(y * 0.05) * 0.5;
-            rect(x + warpCurve, y, threadThickness, weftSpacing);
+            rect(x + warpCurve, y, warpThickness, weftSpacing);
         }
     }
     
@@ -207,7 +208,7 @@ function drawStripe(stripe) {
             
             // Draw weft thread with slight curve
             let weftCurve = cos(x * 0.05) * 0.5;
-            rect(x, y + weftCurve, warpSpacing, threadThickness);
+            rect(x, y + weftCurve, warpSpacing, weftThickness);
         }
     }
     
@@ -392,13 +393,20 @@ function generateDoormat(seed) {
     }
 }
 
-// Function to update thread thickness from HTML slider
-function updateThreadThicknessInSketch(thickness) {
-    threadThickness = thickness;
+// Function to update warp thickness from HTML slider
+function updateWarpThicknessInSketch(thickness) {
+    warpThickness = thickness;
     redraw();
 }
 
-// Make the function globally available
+// Function to update weft thickness from HTML slider
+function updateWeftThicknessInSketch(thickness) {
+    weftThickness = thickness;
+    redraw();
+}
+
+// Make the functions globally available
 if (typeof window !== 'undefined') {
-    window.updateThreadThicknessInSketch = updateThreadThicknessInSketch;
+    window.updateWarpThicknessInSketch = updateWarpThicknessInSketch;
+    window.updateWeftThicknessInSketch = updateWeftThicknessInSketch;
 }
