@@ -207,7 +207,7 @@ const colorPalettes = [
     {
         name: "Sunset Glow",
         colors: [
-            '#FF6347', '#FF4500', '#FF8C00', '#FFA500', '#FFD700', '#FF69B4', '#FF1493', '#DC143C'
+            '#FF6347', '#FF4500', '#FF8C00', '#FFA500', '#FFD700', '#DC143C', '#8B0000', '#2F2F2F'
         ]
     },
     
@@ -232,7 +232,7 @@ const colorPalettes = [
     {
         name: "Gujarat",
         colors: [
-            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+            '#FF4500', '#FF6347', '#FFD700', '#FFA500', '#DC143C', '#4B0082', '#32CD32', '#FFFFFF'
         ]
     },
     // Punjab - warm, harvest colors
@@ -246,7 +246,7 @@ const colorPalettes = [
     {
         name: "Bengal",
         colors: [
-            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#00CED1', '#87CEEB', '#4682B4', '#000080'
+            '#228B22', '#32CD32', '#90EE90', '#F5DEB3', '#DEB887', '#8B4513', '#4682B4', '#000080'
         ]
     },
     // Kashmir - cool, mountain colors
@@ -371,11 +371,11 @@ const colorPalettes = [
             '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#00CED1', '#87CEEB', '#4682B4', '#000080'
         ]
     },
-    // Chera Dynasty - western, trade colors
+    // Chera Dynasty - western coast, spice trade colors
     {
         name: "Chera Dynasty",
         colors: [
-            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+            '#228B22', '#32CD32', '#90EE90', '#8B4513', '#A0522D', '#FFD700', '#00CED1', '#000080'
         ]
     },
     // Pallava Empire - architectural, stone colors
@@ -418,6 +418,13 @@ const colorPalettes = [
         name: "Modern Tamil",
         colors: [
             '#2F4F4F', '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3', '#F5F5F5', '#FFFFFF'
+        ]
+    },
+    // Jamakalam - traditional Tamil floor mat colors
+    {
+        name: "Jamakalam",
+        colors: [
+            '#8B0000', '#DC143C', '#FFD700', '#FFA500', '#228B22', '#32CD32', '#4B0082', '#000000'
         ]
     },
     
@@ -566,7 +573,7 @@ const colorPalettes = [
     {
         name: "Malabar Trogon",
         colors: [
-            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#00CED1', '#87CEEB', '#4682B4', '#000080'
+            '#8B0000', '#DC143C', '#FFD700', '#FFA500', '#228B22', '#32CD32', '#000000', '#FFFFFF'
         ]
     },
     // Nilgiri Flycatcher - mountain, cool colors
@@ -849,9 +856,44 @@ function generateStripeData() {
         initializePalette();
     }
     
+    // Decide stripe density pattern for this doormat
+    let densityType = random();
+    let minHeight, maxHeight;
+    
+    if (densityType < 0.2) {
+        // 20% chance: High density (many thin stripes)
+        minHeight = 15;
+        maxHeight = 35;
+    } else if (densityType < 0.4) {
+        // 20% chance: Low density (fewer thick stripes) 
+        minHeight = 50;
+        maxHeight = 90;
+    } else {
+        // 60% chance: Mixed density (varied stripe sizes)
+        minHeight = 20;
+        maxHeight = 80;
+    }
+    
     while (currentY < totalHeight) {
-        // Random stripe height between 8 and 40 pixels
-        let stripeHeight = random(8, 40);
+        // Dynamic stripe height based on density type
+        let stripeHeight;
+        if (densityType >= 0.4) {
+            // Mixed density: add more randomization within the range
+            let variationType = random();
+            if (variationType < 0.3) {
+                // 30% thin stripes within mixed
+                stripeHeight = random(minHeight, minHeight + 20);
+            } else if (variationType < 0.6) {
+                // 30% medium stripes within mixed
+                stripeHeight = random(minHeight + 15, maxHeight - 15);
+            } else {
+                // 40% thick stripes within mixed
+                stripeHeight = random(maxHeight - 25, maxHeight);
+            }
+        } else {
+            // High/Low density: more consistent sizing
+            stripeHeight = random(minHeight, maxHeight);
+        }
         
         // Ensure we don't exceed the total height
         if (currentY + stripeHeight > totalHeight) {
@@ -860,11 +902,19 @@ function generateStripeData() {
         
         // Select colors for this stripe
         let primaryColor = random(selectedPalette.colors);
-        let hasSecondaryColor = random() < 0.3; // 30% chance of blended colors
+        let hasSecondaryColor = random() < 0.15; // 15% chance of blended colors (reduced from 30%)
         let secondaryColor = hasSecondaryColor ? random(selectedPalette.colors) : null;
         
-        // Determine weave pattern type
-        let weaveType = random(['solid', 'mixed', 'textured']);
+        // Determine weave pattern type with weighted probabilities
+        let weaveRand = random();
+        let weaveType;
+        if (weaveRand < 0.6) {          // 60% chance of solid (simple)
+            weaveType = 'solid';
+        } else if (weaveRand < 0.8) {   // 20% chance of textured 
+            weaveType = 'textured';
+        } else {                        // 20% chance of mixed (most complex)
+            weaveType = 'mixed';
+        }
         
         stripeData.push({
             y: currentY,
@@ -1533,7 +1583,7 @@ function calculateTraits() {
 
 function getPaletteRarity(paletteName) {
     // Define rarity tiers for different palette categories
-    const legendaryPalettes = ["Indian Flag", "Buddhist", "Maurya Empire", "Chola Dynasty", "Indigo Famine", "Bengal Famine"];
+    const legendaryPalettes = ["Indian Flag", "Buddhist", "Maurya Empire", "Chola Dynasty", "Indigo Famine", "Bengal Famine", "Jamakalam"];
     const epicPalettes = ["Peacock", "Flamingo", "Toucan", "Madras Checks", "Kanchipuram Silk", "Natural Dyes", "Bleeding Vintage"];
     const rarePalettes = ["Tamil Classical", "Sangam Era", "Pandya Dynasty", "Maratha Empire", "Rajasthani"];
     const uncommonPalettes = ["Tamil Nadu Temple", "Kerala Onam", "Chettinad Spice", "Chennai Monsoon", "Bengal Indigo"];
@@ -1582,12 +1632,12 @@ function calculateStripeComplexity() {
     // Normalize complexity score
     const normalizedComplexity = complexityScore / (stripeData.length * 3); // Max possible is 3 per stripe
     
-    // More nuanced classification
-    if (solidRatio > 0.8) return "Basic"; // Mostly solid
-    if (normalizedComplexity < 0.2) return "Simple";
-    if (normalizedComplexity < 0.4) return "Moderate";
-    if (normalizedComplexity < 0.6) return "Complex";
-    return "Very Complex";
+    // Much more strict classification
+    if (solidRatio > 0.9) return "Basic"; // Almost all solid
+    if (solidRatio > 0.75 && normalizedComplexity < 0.15) return "Simple"; // Mostly solid with minimal complexity
+    if (solidRatio > 0.6 && normalizedComplexity < 0.3) return "Moderate"; // Good amount of solid with some complexity
+    if (normalizedComplexity < 0.5) return "Complex"; // Significant complexity
+    return "Very Complex"; // High complexity
 }
 
 // Make the functions globally available
