@@ -173,6 +173,14 @@
             <!-- P5.js canvas will be inserted here -->
         </div>
         
+        <div class="palette-display" style="margin: 20px 0; text-align: center;">
+            <h3 style="margin: 0 0 10px 0; color: #333;">Current Color Palette</h3>
+            <div id="paletteName" style="font-weight: bold; color: #666; margin-bottom: 10px;">Loading...</div>
+            <div id="colorSwatches" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; max-width: 600px; margin: 0 auto;">
+                <!-- Color swatches will be displayed here -->
+            </div>
+        </div>
+        
         <p class="description">
             <strong>Instructions:</strong><br>
             • Click "Generate New Doormat" for a random pattern<br>
@@ -189,11 +197,31 @@
             const seed = Math.floor(Math.random() * 10000);
             document.getElementById('seedInput').value = seed;
             generateDoormat(seed);
+            
+            // Update palette display after a short delay to ensure the sketch has updated
+            setTimeout(() => {
+                if (typeof window.updatePaletteDisplay === 'function' && typeof window.getCurrentPalette === 'function') {
+                    const currentPalette = window.getCurrentPalette();
+                    if (currentPalette) {
+                        window.updatePaletteDisplay(currentPalette.name, currentPalette.colors);
+                    }
+                }
+            }, 100);
         }
         
         function generateFromSeed() {
             const seed = parseInt(document.getElementById('seedInput').value) || 42;
             generateDoormat(seed);
+            
+            // Update palette display after a short delay to ensure the sketch has updated
+            setTimeout(() => {
+                if (typeof window.updatePaletteDisplay === 'function' && typeof window.getCurrentPalette === 'function') {
+                    const currentPalette = window.getCurrentPalette();
+                    if (currentPalette) {
+                        window.updatePaletteDisplay(currentPalette.name, currentPalette.colors);
+                    }
+                }
+            }, 100);
         }
         
         function saveDoormat() {
@@ -325,10 +353,69 @@
             input.value = input.value.toUpperCase();
         }
         
+        // Function to update the palette display
+        function updatePaletteDisplay(paletteName, colors) {
+            const nameElement = document.getElementById('paletteName');
+            const swatchesElement = document.getElementById('colorSwatches');
+            
+            if (nameElement && swatchesElement) {
+                nameElement.textContent = paletteName;
+                
+                // Clear existing swatches
+                swatchesElement.innerHTML = '';
+                
+                // Create color swatches
+                colors.forEach(color => {
+                    const swatch = document.createElement('div');
+                    swatch.style.cssText = `
+                        width: 40px;
+                        height: 40px;
+                        background-color: ${color};
+                        border: 2px solid #333;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: transform 0.2s;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    `;
+                    
+                    // Add hover effect
+                    swatch.addEventListener('mouseenter', () => {
+                        swatch.style.transform = 'scale(1.1)';
+                    });
+                    
+                    swatch.addEventListener('mouseleave', () => {
+                        swatch.style.transform = 'scale(1)';
+                    });
+                    
+                    // Add click to copy functionality
+                    swatch.addEventListener('click', () => {
+                        navigator.clipboard.writeText(color).then(() => {
+                            // Show a brief "copied" message
+                            const originalColor = swatch.style.backgroundColor;
+                            swatch.style.backgroundColor = '#4CAF50';
+                            swatch.style.borderColor = '#4CAF50';
+                            setTimeout(() => {
+                                swatch.style.backgroundColor = originalColor;
+                                swatch.style.borderColor = '#333';
+                            }, 500);
+                        });
+                    });
+                    
+                    // Add tooltip with color code
+                    swatch.title = `Click to copy: ${color}`;
+                    
+                    swatchesElement.appendChild(swatch);
+                });
+            }
+        }
+        
         // Generate initial doormat
         window.addEventListener('load', () => {
             generateFromSeed();
         });
+        
+        // Make the function globally available for the P5.js sketch
+        window.updatePaletteDisplay = updatePaletteDisplay;
     </script>
 </body>
 </html>

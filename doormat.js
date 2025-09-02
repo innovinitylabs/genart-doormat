@@ -31,206 +31,593 @@ function updateTextColors() {
     darkTextColor  = lerpColor(color(darkest), color(0),   0.4);
 }
 
-// Color palettes inspired by traditional doormats - more muted and realistic
+// Comprehensive Color Palettes - Global, Indian, Tamil Cultural, and Natural Dye inspired
 const colorPalettes = [
-    // Muted Earthy palette
-    {
-        name: "Muted Earthy",
-        colors: [
-            '#8B7355', // Muted Brown
-            '#A0522D', // Sienna
-            '#CD853F', // Peru
-            '#DEB887', // Burlywood
-            '#D2B48C', // Tan
-            '#BC8F8F', // Rosy Brown
-            '#F5DEB3', // Wheat
-            '#F4E4BC'  // Cream
-        ]
-    },
-    // Muted Traditional palette
-    {
-        name: "Muted Traditional",
-        colors: [
-            '#8B2635', // Muted Red
-            '#556B2F', // Dark Olive Green
-            '#4B5D6B', // Muted Blue
-            '#B8860B', // Dark Goldenrod
-            '#654321', // Dark Brown
-            '#2F4F2F', // Dark Forest Green
-            '#2F4F4F', // Dark Slate Gray
-            '#F5F5DC'  // Beige
-        ]
-    },
-    // Muted Ocean palette
-    {
-        name: "Muted Ocean",
-        colors: [
-            '#5F7A7A', // Muted Teal
-            '#6B8E8E', // Dark Sea Green
-            '#4A6B7A', // Muted Blue
-            '#5F7A6B', // Muted Green
-            '#6B6B7A', // Muted Gray-Blue
-            '#4A5F6B', // Dark Slate
-            '#E8F0F0', // Light Gray
-            '#D4E6E6'  // Very Light Teal
-        ]
-    },
-    // Muted Sunset palette
-    {
-        name: "Muted Sunset",
-        colors: [
-            '#8B4513', // Saddle Brown
-            '#A0522D', // Sienna
-            '#CD853F', // Peru
-            '#D2691E', // Chocolate
-            '#8B0000', // Dark Red
-            '#A0522D', // Sienna
-            '#F5DEB3', // Wheat
-            '#F4E4BC'  // Cream
-        ]
-    },
-    // Vivid Mellow palette - energetic but slightly muted
-    {
-        name: "Vivid Mellow",
-        colors: [
-            '#E67E22', // Carrot Orange
-            '#D35400', // Pumpkin
-            '#E74C3C', // Alizarin Crimson
-            '#C0392B', // Pomegranate
-            '#8E44AD', // Wisteria
-            '#9B59B6', // Amethyst
-            '#3498DB', // Belize Hole
-            '#2980B9', // Midnight Blue
-            '#16A085', // Green Sea
-            '#1ABC9C', // Turquoise
-            '#F39C12', // Orange
-            '#F1C40F'  // Sunflower
-        ]
-    },
+    // ===== GLOBAL PALETTES (25) =====
+    
     // Classic Red & Black - most common doormat colors
     {
         name: "Classic Red & Black",
         colors: [
-            '#8B0000', // Dark Red
-            '#DC143C', // Crimson
-            '#B22222', // Fire Brick
-            '#000000', // Black
-            '#2F2F2F', // Dark Gray
-            '#696969', // Dim Gray
-            '#8B4513', // Saddle Brown
-            '#A0522D'  // Sienna
+            '#8B0000', '#DC143C', '#B22222', '#000000', '#2F2F2F', '#696969', '#8B4513', '#A0522D'
         ]
     },
     // Natural Jute & Hemp - eco-friendly doormat colors
     {
         name: "Natural Jute & Hemp",
         colors: [
-            '#F5DEB3', // Wheat
-            '#DEB887', // Burlywood
-            '#D2B48C', // Tan
-            '#BC8F8F', // Rosy Brown
-            '#8B7355', // Muted Brown
-            '#A0522D', // Sienna
-            '#654321', // Dark Brown
-            '#2F2F2F'  // Dark Gray
+            '#F5DEB3', '#DEB887', '#D2B48C', '#BC8F8F', '#8B7355', '#A0522D', '#654321', '#2F2F2F'
         ]
     },
     // Coastal Blue & White - beach house style
     {
         name: "Coastal Blue & White",
         colors: [
-            '#4682B4', // Steel Blue
-            '#5F9EA0', // Cadet Blue
-            '#87CEEB', // Sky Blue
-            '#B0E0E6', // Powder Blue
-            '#F8F8FF', // Ghost White
-            '#F0F8FF', // Alice Blue
-            '#E6E6FA', // Lavender
-            '#B0C4DE'  // Light Steel Blue
+            '#4682B4', '#5F9EA0', '#87CEEB', '#B0E0E6', '#F8F8FF', '#F0F8FF', '#E6E6FA', '#B0C4DE'
         ]
     },
     // Rustic Farmhouse - warm, earthy tones
     {
         name: "Rustic Farmhouse",
         colors: [
-            '#8B4513', // Saddle Brown
-            '#A0522D', // Sienna
-            '#CD853F', // Peru
-            '#D2691E', // Chocolate
-            '#F4A460', // Sandy Brown
-            '#DEB887', // Burlywood
-            '#F5DEB3', // Wheat
-            '#F4E4BC'  // Cream
+            '#8B4513', '#A0522D', '#CD853F', '#D2691E', '#F4A460', '#DEB887', '#F5DEB3', '#F4E4BC'
         ]
     },
     // Modern Gray & White - contemporary minimalist
     {
         name: "Modern Gray & White",
         colors: [
-            '#F5F5F5', // White Smoke
-            '#FFFFFF', // White
-            '#D3D3D3', // Light Gray
-            '#C0C0C0', // Silver
-            '#A9A9A9', // Dark Gray
-            '#808080', // Gray
-            '#696969', // Dim Gray
-            '#2F2F2F'  // Dark Gray
+            '#F5F5F5', '#FFFFFF', '#D3D3D3', '#C0C0C0', '#A9A9A9', '#808080', '#696969', '#2F2F2F'
         ]
     },
     // Autumn Harvest - warm fall colors
     {
         name: "Autumn Harvest",
         colors: [
-            '#8B4513', // Saddle Brown
-            '#D2691E', // Chocolate
-            '#CD853F', // Peru
-            '#F4A460', // Sandy Brown
-            '#8B0000', // Dark Red
-            '#B22222', // Fire Brick
-            '#FF8C00', // Dark Orange
-            '#FFA500'  // Orange
+            '#8B4513', '#D2691E', '#CD853F', '#F4A460', '#8B0000', '#B22222', '#FF8C00', '#FFA500'
         ]
     },
     // Spring Garden - fresh, vibrant colors
     {
         name: "Spring Garden",
         colors: [
-            '#228B22', // Forest Green
-            '#32CD32', // Lime Green
-            '#90EE90', // Light Green
-            '#98FB98', // Pale Green
-            '#FF69B4', // Hot Pink
-            '#FFB6C1', // Light Pink
-            '#87CEEB', // Sky Blue
-            '#F0E68C'  // Khaki
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#FF69B4', '#FFB6C1', '#87CEEB', '#F0E68C'
         ]
     },
     // Industrial Metal - urban, modern look
     {
         name: "Industrial Metal",
         colors: [
-            '#2F4F4F', // Dark Slate Gray
-            '#696969', // Dim Gray
-            '#808080', // Gray
-            '#A9A9A9', // Dark Gray
-            '#C0C0C0', // Silver
-            '#D3D3D3', // Light Gray
-            '#F5F5F5', // White Smoke
-            '#000000'  // Black
+            '#2F4F4F', '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3', '#F5F5F5', '#000000'
         ]
     },
     // Mediterranean - warm, sun-baked colors
     {
         name: "Mediterranean",
         colors: [
-            '#FF6347', // Tomato
-            '#FF4500', // Orange Red
-            '#FF8C00', // Dark Orange
-            '#FFA500', // Orange
-            '#F4A460', // Sandy Brown
-            '#DEB887', // Burlywood
-            '#87CEEB', // Sky Blue
-            '#4682B4'  // Steel Blue
+            '#FF6347', '#FF4500', '#FF8C00', '#FFA500', '#F4A460', '#DEB887', '#87CEEB', '#4682B4'
+        ]
+    },
+    // Scandinavian - clean, light colors
+    {
+        name: "Scandinavian",
+        colors: [
+            '#FFFFFF', '#F8F9FA', '#E9ECEF', '#DEE2E6', '#CED4DA', '#ADB5BD', '#6C757D', '#495057'
+        ]
+    },
+    // Nordic Forest - deep greens and browns
+    {
+        name: "Nordic Forest",
+        colors: [
+            '#2D5016', '#3A5F0B', '#4A7C59', '#5D8B66', '#6B8E23', '#8FBC8F', '#9ACD32', '#ADFF2F'
+        ]
+    },
+    // Desert Sunset - warm, sandy tones
+    {
+        name: "Desert Sunset",
+        colors: [
+            '#CD853F', '#DEB887', '#F4A460', '#D2B48C', '#BC8F8F', '#8B4513', '#A0522D', '#D2691E'
+        ]
+    },
+    // Arctic Ice - cool, icy colors
+    {
+        name: "Arctic Ice",
+        colors: [
+            '#F0F8FF', '#E6E6FA', '#B0C4DE', '#87CEEB', '#B0E0E6', '#F0FFFF', '#E0FFFF', '#F5F5F5'
+        ]
+    },
+    // Tropical Paradise - vibrant, warm colors
+    {
+        name: "Tropical Paradise",
+        colors: [
+            '#FF6347', '#FF4500', '#FF8C00', '#FFA500', '#32CD32', '#90EE90', '#98FB98', '#00CED1'
+        ]
+    },
+    // Vintage Retro - muted, nostalgic colors
+    {
+        name: "Vintage Retro",
+        colors: [
+            '#8B4513', '#A0522D', '#CD853F', '#D2691E', '#BC8F8F', '#8B7355', '#F5DEB3', '#F4E4BC'
+        ]
+    },
+    // Art Deco - elegant, sophisticated colors
+    {
+        name: "Art Deco",
+        colors: [
+            '#000000', '#2F2F2F', '#696969', '#8B4513', '#A0522D', '#CD853F', '#F5DEB3', '#FFFFFF'
+        ]
+    },
+    // Bohemian - eclectic, artistic colors
+    {
+        name: "Bohemian",
+        colors: [
+            '#8E44AD', '#9B59B6', '#E67E22', '#D35400', '#E74C3C', '#C0392B', '#16A085', '#1ABC9C'
+        ]
+    },
+    // Minimalist - clean, simple colors
+    {
+        name: "Minimalist",
+        colors: [
+            '#FFFFFF', '#F5F5F5', '#E0E0E0', '#CCCCCC', '#999999', '#666666', '#333333', '#000000'
+        ]
+    },
+    // Corporate - professional, business colors
+    {
+        name: "Corporate",
+        colors: [
+            '#2F4F4F', '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3', '#F5F5F5', '#FFFFFF'
+        ]
+    },
+    // Luxury - rich, premium colors
+    {
+        name: "Luxury",
+        colors: [
+            '#000000', '#2F2F2F', '#8B4513', '#A0522D', '#CD853F', '#D2691E', '#F5DEB3', '#FFD700'
+        ]
+    },
+    // Pastel Dreams - soft, gentle colors
+    {
+        name: "Pastel Dreams",
+        colors: [
+            '#FFB6C1', '#FFC0CB', '#FFE4E1', '#F0E68C', '#98FB98', '#90EE90', '#87CEEB', '#E6E6FA'
+        ]
+    },
+    // Earth Tones - natural, organic colors
+    {
+        name: "Earth Tones",
+        colors: [
+            '#8B4513', '#A0522D', '#CD853F', '#D2691E', '#F4A460', '#DEB887', '#D2B48C', '#BC8F8F'
+        ]
+    },
+    // Ocean Depths - deep, marine colors
+    {
+        name: "Ocean Depths",
+        colors: [
+            '#000080', '#191970', '#4169E1', '#4682B4', '#5F9EA0', '#87CEEB', '#B0E0E6', '#E0FFFF'
+        ]
+    },
+    // Mountain Mist - cool, natural colors
+    {
+        name: "Mountain Mist",
+        colors: [
+            '#2F4F4F', '#4A5D6B', '#5F7A7A', '#6B8E8E', '#87CEEB', '#B0C4DE', '#E6E6FA', '#F0F8FF'
+        ]
+    },
+    // Sunset Glow - warm, radiant colors
+    {
+        name: "Sunset Glow",
+        colors: [
+            '#FF6347', '#FF4500', '#FF8C00', '#FFA500', '#FFD700', '#FF69B4', '#FF1493', '#DC143C'
+        ]
+    },
+    
+    // ===== INDIAN CULTURAL PALETTES (18) =====
+    
+    // Rajasthani - vibrant, royal colors
+    {
+        name: "Rajasthani",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Mughal - rich, imperial colors
+    {
+        name: "Mughal",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF8C00', '#FFD700', '#228B22', '#006400'
+        ]
+    },
+    // Kerala - coastal, tropical colors
+    {
+        name: "Kerala",
+        colors: [
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#00CED1', '#87CEEB', '#4682B4', '#000080'
+        ]
+    },
+    // Gujarat - colorful, festive colors
+    {
+        name: "Gujarat",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Punjab - warm, harvest colors
+    {
+        name: "Punjab",
+        colors: [
+            '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500', '#8B0000', '#228B22', '#006400'
+        ]
+    },
+    // Bengal - monsoon, lush colors
+    {
+        name: "Bengal",
+        colors: [
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#00CED1', '#87CEEB', '#4682B4', '#000080'
+        ]
+    },
+    // Kashmir - cool, mountain colors
+    {
+        name: "Kashmir",
+        colors: [
+            '#87CEEB', '#B0E0E6', '#E0FFFF', '#F0F8FF', '#E6E6FA', '#B0C4DE', '#4682B4', '#000080'
+        ]
+    },
+    // Maharashtra - earthy, warm colors
+    {
+        name: "Maharashtra",
+        colors: [
+            '#8B4513', '#A0522D', '#CD853F', '#D2691E', '#F4A460', '#DEB887', '#D2B48C', '#BC8F8F'
+        ]
+    },
+    // Tamil Nadu - traditional, cultural colors
+    {
+        name: "Tamil Nadu",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Karnataka - forest, nature colors
+    {
+        name: "Karnataka",
+        colors: [
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#8B4513', '#A0522D', '#CD853F', '#D2691E'
+        ]
+    },
+    // Andhra Pradesh - coastal, vibrant colors
+    {
+        name: "Andhra Pradesh",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#00CED1', '#87CEEB', '#4682B4', '#000080'
+        ]
+    },
+    // Telangana - modern, urban colors
+    {
+        name: "Telangana",
+        colors: [
+            '#2F4F4F', '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3', '#F5F5F5', '#FFFFFF'
+        ]
+    },
+    // Odisha - tribal, earthy colors
+    {
+        name: "Odisha",
+        colors: [
+            '#8B4513', '#A0522D', '#CD853F', '#D2691E', '#F4A460', '#DEB887', '#D2B48C', '#BC8F8F'
+        ]
+    },
+    // Madhya Pradesh - central, balanced colors
+    {
+        name: "Madhya Pradesh",
+        colors: [
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#8B4513', '#A0522D', '#CD853F', '#D2691E'
+        ]
+    },
+    // Uttar Pradesh - northern, traditional colors
+    {
+        name: "Uttar Pradesh",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Bihar - eastern, cultural colors
+    {
+        name: "Bihar",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // West Bengal - eastern, artistic colors
+    {
+        name: "West Bengal",
+        colors: [
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#00CED1', '#87CEEB', '#4682B4', '#000080'
+        ]
+    },
+    // Assam - northeastern, natural colors
+    {
+        name: "Assam",
+        colors: [
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#8B4513', '#A0522D', '#CD853F', '#D2691E'
+        ]
+    },
+    // Himachal Pradesh - mountain, cool colors
+    {
+        name: "Himachal Pradesh",
+        colors: [
+            '#87CEEB', '#B0E0E6', '#E0FFFF', '#F0F8FF', '#E6E6FA', '#B0C4DE', '#4682B4', '#000080'
+        ]
+    },
+    
+    // ===== TAMIL CULTURAL PALETTES (11) =====
+    
+    // Tamil Classical - traditional, ancient colors
+    {
+        name: "Tamil Classical",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Sangam Era - literary, cultural colors
+    {
+        name: "Sangam Era",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Chola Dynasty - royal, imperial colors
+    {
+        name: "Chola Dynasty",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF8C00', '#FFD700', '#228B22', '#006400'
+        ]
+    },
+    // Pandya Kingdom - southern, coastal colors
+    {
+        name: "Pandya Kingdom",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#00CED1', '#87CEEB', '#4682B4', '#000080'
+        ]
+    },
+    // Chera Dynasty - western, trade colors
+    {
+        name: "Chera Dynasty",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Pallava Empire - architectural, stone colors
+    {
+        name: "Pallava Empire",
+        colors: [
+            '#8B4513', '#A0522D', '#CD853F', '#D2691E', '#F4A460', '#DEB887', '#D2B48C', '#BC8F8F'
+        ]
+    },
+    // Vijayanagara - golden, prosperous colors
+    {
+        name: "Vijayanagara",
+        colors: [
+            '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500', '#8B0000', '#228B22', '#006400'
+        ]
+    },
+    // Nayak Dynasty - artistic, temple colors
+    {
+        name: "Nayak Dynasty",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Maratha Rule - warrior, strong colors
+    {
+        name: "Maratha Rule",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF8C00', '#FFD700', '#228B22', '#006400'
+        ]
+    },
+    // British Colonial - mixed, hybrid colors
+    {
+        name: "British Colonial",
+        colors: [
+            '#2F4F4F', '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3', '#F5F5F5', '#FFFFFF'
+        ]
+    },
+    // Modern Tamil - contemporary, urban colors
+    {
+        name: "Modern Tamil",
+        colors: [
+            '#2F4F4F', '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3', '#F5F5F5', '#FFFFFF'
+        ]
+    },
+    
+    // ===== NATURAL DYE PALETTES (8) =====
+    
+    // Indigo Dye - deep blue, natural colors
+    {
+        name: "Indigo Dye",
+        colors: [
+            '#000080', '#191970', '#4169E1', '#4682B4', '#5F9EA0', '#87CEEB', '#B0E0E6', '#E0FFFF'
+        ]
+    },
+    // Madder Root - red, earthy colors
+    {
+        name: "Madder Root",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF6347', '#CD5C5C', '#F08080', '#FA8072'
+        ]
+    },
+    // Turmeric - golden, warm colors
+    {
+        name: "Turmeric",
+        colors: [
+            '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500', '#DAA520', '#B8860B', '#CD853F'
+        ]
+    },
+    // Henna - reddish-brown, natural colors
+    {
+        name: "Henna",
+        colors: [
+            '#8B4513', '#A0522D', '#CD853F', '#D2691E', '#F4A460', '#DEB887', '#D2B48C', '#BC8F8F'
+        ]
+    },
+    // Pomegranate - deep red, rich colors
+    {
+        name: "Pomegranate",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF6347', '#CD5C5C', '#F08080', '#FA8072'
+        ]
+    },
+    // Neem - green, natural colors
+    {
+        name: "Neem",
+        colors: [
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#8B4513', '#A0522D', '#CD853F', '#D2691E'
+        ]
+    },
+    // Saffron - golden, precious colors
+    {
+        name: "Saffron",
+        colors: [
+            '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500', '#DAA520', '#B8860B', '#CD853F'
+        ]
+    },
+    // Marigold - bright, cheerful colors
+    {
+        name: "Marigold",
+        colors: [
+            '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500', '#FF1493', '#FF69B4', '#FFB6C1'
+        ]
+    },
+    
+    // ===== MADRAS CHECKS & TAMIL NADU INSPIRED PALETTES (8) =====
+    
+    // Madras Checks - traditional plaid colors
+    {
+        name: "Madras Checks",
+        colors: [
+            '#8B0000', '#DC143C', '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#228B22', '#006400'
+        ]
+    },
+    // Tamil Nadu Temple - sacred, vibrant colors
+    {
+        name: "Tamil Nadu Temple",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Kanchipuram Silk - luxurious, traditional colors
+    {
+        name: "Kanchipuram Silk",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF8C00', '#FFD700', '#228B22', '#006400'
+        ]
+    },
+    // Thanjavur Art - classical, artistic colors
+    {
+        name: "Thanjavur Art",
+        colors: [
+            '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500', '#8B0000', '#228B22', '#006400'
+        ]
+    },
+    // Chettinad Architecture - heritage, warm colors
+    {
+        name: "Chettinad Architecture",
+        colors: [
+            '#8B4513', '#A0522D', '#CD853F', '#D2691E', '#F4A460', '#DEB887', '#D2B48C', '#BC8F8F'
+        ]
+    },
+    // Madurai Meenakshi - divine, colorful palette
+    {
+        name: "Madurai Meenakshi",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
+        ]
+    },
+    // Coimbatore Cotton - natural, earthy colors
+    {
+        name: "Coimbatore Cotton",
+        colors: [
+            '#F5DEB3', '#DEB887', '#D2B48C', '#BC8F8F', '#8B7355', '#A0522D', '#654321', '#2F2F2F'
+        ]
+    },
+    // Salem Silk - traditional, refined colors
+    {
+        name: "Salem Silk",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF8C00', '#FFD700', '#228B22', '#006400'
+        ]
+    },
+    
+    // ===== WESTERN GHATS BIRDS PALETTES (6) =====
+    
+    // Indian Peacock - majestic, iridescent colors
+    {
+        name: "Indian Peacock",
+        colors: [
+            '#000080', '#191970', '#4169E1', '#4682B4', '#00CED1', '#40E0D0', '#48D1CC', '#20B2AA'
+        ]
+    },
+    // Flamingo - tropical, pink-orange colors
+    {
+        name: "Flamingo",
+        colors: [
+            '#FF69B4', '#FF1493', '#FFB6C1', '#FFC0CB', '#FF6347', '#FF4500', '#FF8C00', '#FFA500'
+        ]
+    },
+    // Toucan - vibrant, tropical colors
+    {
+        name: "Toucan",
+        colors: [
+            '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500', '#000000', '#FFFFFF', '#FF1493'
+        ]
+    },
+    // Malabar Trogon - forest, jewel colors
+    {
+        name: "Malabar Trogon",
+        colors: [
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#00CED1', '#87CEEB', '#4682B4', '#000080'
+        ]
+    },
+    // Nilgiri Flycatcher - mountain, cool colors
+    {
+        name: "Nilgiri Flycatcher",
+        colors: [
+            '#87CEEB', '#B0E0E6', '#E0FFFF', '#F0F8FF', '#E6E6FA', '#B0C4DE', '#4682B4', '#000080'
+        ]
+    },
+    // Malabar Parakeet - forest, green colors
+    {
+        name: "Malabar Parakeet",
+        colors: [
+            '#228B22', '#32CD32', '#90EE90', '#98FB98', '#8B4513', '#A0522D', '#CD853F', '#D2691E'
+        ]
+    },
+    
+    // ===== HISTORICAL DYNASTY & CULTURAL PALETTES (4) =====
+    
+    // Pandya Dynasty - southern, maritime colors
+    {
+        name: "Pandya Dynasty",
+        colors: [
+            '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#00CED1', '#87CEEB', '#4682B4', '#000080'
+        ]
+    },
+    // Maratha Empire - warrior, strong colors
+    {
+        name: "Maratha Empire",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF8C00', '#FFD700', '#228B22', '#006400'
+        ]
+    },
+    // Maurya Empire - imperial, ancient colors
+    {
+        name: "Maurya Empire",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF8C00', '#FFD700', '#228B22', '#006400'
+        ]
+    },
+    // Buddhist - peaceful, spiritual colors
+    {
+        name: "Buddhist",
+        colors: [
+            '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#228B22', '#32CD32', '#90EE90', '#98FB98'
         ]
     }
 ];
@@ -956,4 +1343,5 @@ function generateCharacterPixels(char, x, y, width, height) {
 if (typeof window !== 'undefined') {
     window.addTextToDoormatInSketch = addTextToDoormatInSketch;
     window.clearTextFromDoormat = clearTextFromDoormat;
+    window.getCurrentPalette = () => selectedPalette;
 }
