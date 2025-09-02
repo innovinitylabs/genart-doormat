@@ -713,9 +713,9 @@ function generateCharacterPixels() { return []; }`;
                 .replace(/\s*\*\s*/g, '*') // Remove spaces around multiply
                 .replace(/\s*\.\s*/g, '.') // Remove spaces around dots
                 
-                // Be careful with these operators that can break syntax
-                .replace(/([^<>=!])\s*<\s*/g, '$1<') // Remove spaces around < but not <=, <<, etc.
-                .replace(/\s*>\s*([^>=])/g, '>$1') // Remove spaces around > but not >=, >>, etc.
+                // Very conservative approach - avoid problematic operators entirely
+                // Skip: minus (-), divide (/), comparison (<, >), colon (:), question (?)
+                // These can break negative numbers, comments, templates, and ternary operators
                 
                 // Final cleanup
                 .trim();
@@ -740,7 +740,7 @@ function generateCharacterPixels() { return []; }`;
                 'lightTextColor': 'ஒ',
                 'darkTextColor': 'ஓ',
                 
-                // Common variables in loops and functions
+                // Stripe and weaving variables
                 'primaryColor': 'ம',
                 'secondaryColor': 'ய',
                 'warpColor': 'ர',
@@ -764,6 +764,32 @@ function generateCharacterPixels() { return []; }`;
                 'curlIntensity': 'ொ',
                 'threadLength': 'ோ',
                 'reliefNoise': 'ௌ',
+                
+                // Missing long variables you mentioned
+                'weaveType': 'ᄀ',
+                'warpVariation': 'ᄁ',
+                'height': 'ᄂ',
+                'totalWidth': 'ᄃ',
+                'totalHeight': 'ᄄ',
+                'characterMap': 'ᄅ',
+                'fringeStrands': 'ᄆ',
+                'strandWidth': 'ᄇ',
+                'threadCount': 'ᄈ',
+                'threadSpacing': 'ᄉ',
+                'startAngle': 'ᄊ',
+                'endAngle': 'ᄋ',
+                'centerX': 'ᄌ',
+                'centerY': 'ᄍ',
+                'strandX': 'ᄎ',
+                'threadX': 'ᄏ',
+                'threadY': 'ᄐ',
+                'detailRadius': 'ᄑ',
+                'detailAngle': 'ᄒ',
+                'shadowOffset': 'ᄓ',
+                'hatchingIntensity': 'ᄔ',
+                'bgBrightness': 'ᄕ',
+                'warpCurve': 'ᄖ',
+                'weftCurve': 'ᄗ',
                 
                 // Function names (be careful with these)
                 'drawStripe': 'ஔ',
