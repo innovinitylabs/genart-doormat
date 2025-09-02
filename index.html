@@ -751,30 +751,27 @@ function generateCharacterPixels() { return []; }`;
             // Create ultra-compressed NFT HTML with minimal structure
             const traitsText = Object.entries(traits).map(entry => entry[0] + ':' + entry[1]).join('|');
             
-            const html = [
-                '<!DOCTYPE html>',
-                '<html>',
-                '<head>',
-                '<meta charset="UTF-8">',
-                '<title>NFT#' + seed + '</title>',
-                '<style>',
-                'body{margin:0;padding:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:Arial,sans-serif}',
-                'canvas{border-radius:8px;box-shadow:0 4px 8px rgba(255,255,255,0.1)}',
-                '.i{position:absolute;top:10px;left:10px;color:#fff;font-size:10px;opacity:0.7}',
-                '.t{position:absolute;top:10px;right:10px;color:#fff;font-size:8px;opacity:0.7;text-align:right}',
-                '</style>',
-                '<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>',
-                '</head>',
-                '<body>',
-                '<div class="i">S:' + seed + '|P:' + palette.name + '</div>',
-                '<div class="t">' + traitsText + '</div>',
-                '<div id="c"></div>',
-                '<script>' + obfuscatedCode + '</script>',
-                '</body>',
-                '</html>'
-            ].join('');
-            
-            return html;
+            // Use template literal to avoid string concatenation issues
+            return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>NFT#${seed}</title>
+<style>
+body{margin:0;padding:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:Arial,sans-serif}
+canvas{border-radius:8px;box-shadow:0 4px 8px rgba(255,255,255,0.1)}
+.i{position:absolute;top:10px;left:10px;color:#fff;font-size:10px;opacity:0.7}
+.t{position:absolute;top:10px;right:10px;color:#fff;font-size:8px;opacity:0.7;text-align:right}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+</head>
+<body>
+<div class="i">S:${seed}|P:${palette.name}</div>
+<div class="t">${traitsText}</div>
+<div id="c"></div>
+<script>${obfuscatedCode}</script>
+</body>
+</html>`;
         }
 
         async function exportNFT() {
