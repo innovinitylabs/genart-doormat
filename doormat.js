@@ -220,13 +220,7 @@ const colorPalettes = [
             '#FF4500', '#FF6347', '#FF8C00', '#FFD700', '#FF1493', '#8B0000', '#4B0082', '#000080'
         ]
     },
-    // Mughal - rich, imperial colors
-    {
-        name: "Mughal",
-        colors: [
-            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF8C00', '#FFD700', '#228B22', '#006400'
-        ]
-    },
+
     // Kerala - coastal, tropical colors
     {
         name: "Kerala",
@@ -820,8 +814,9 @@ function generateDoormat(seed) {
     randomSeed(seed);
     noiseSeed(seed);
     
-    // Set random warp thickness between 1 and 2
-    warpThickness = random([1, 2]);
+    // Set random warp thickness between 1 and 6
+    warpThickness = random([1, 2, 3, 4, 5, 6]);
+    console.log("Generated warp thickness:", warpThickness);
     
     // Select random palette
     selectedPalette = random(colorPalettes);
@@ -832,6 +827,16 @@ function generateDoormat(seed) {
     
     // Redraw the doormat
     redraw();
+    
+    // Update traits after everything is generated
+    if (typeof window !== 'undefined' && typeof window.updateTraitsFromSketch === 'function') {
+        console.log("Calling updateTraitsFromSketch from generateDoormat");
+        setTimeout(() => {
+            window.updateTraitsFromSketch();
+        }, 100);
+    } else {
+        console.log("updateTraitsFromSketch function not available");
+    }
 }
 
 function generateStripeData() {
@@ -1506,9 +1511,89 @@ function generateCharacterPixels(char, x, y, width, height) {
     return pixels;
 }
 
+// Trait calculation functions
+function calculateTraits() {
+    const traits = {
+        // Text traits
+        textLines: doormatTextRows.length,
+        totalCharacters: doormatTextRows.reduce((sum, row) => sum + row.length, 0),
+        
+        // Palette traits
+        paletteName: selectedPalette ? selectedPalette.name : "Unknown",
+        paletteRarity: getPaletteRarity(selectedPalette ? selectedPalette.name : ""),
+        
+        // Visual traits
+        stripeCount: stripeData.length,
+        stripeComplexity: calculateStripeComplexity()
+    };
+    
+    console.log("Calculated traits:", traits);
+    return traits;
+}
+
+function getPaletteRarity(paletteName) {
+    // Define rarity tiers for different palette categories
+    const legendaryPalettes = ["Indian Flag", "Buddhist", "Maurya Empire", "Chola Dynasty", "Indigo Famine", "Bengal Famine"];
+    const epicPalettes = ["Peacock", "Flamingo", "Toucan", "Madras Checks", "Kanchipuram Silk", "Natural Dyes", "Bleeding Vintage"];
+    const rarePalettes = ["Tamil Classical", "Sangam Era", "Pandya Dynasty", "Maratha Empire", "Rajasthani"];
+    const uncommonPalettes = ["Tamil Nadu Temple", "Kerala Onam", "Chettinad Spice", "Chennai Monsoon", "Bengal Indigo"];
+    
+    if (legendaryPalettes.includes(paletteName)) return "Legendary";
+    if (epicPalettes.includes(paletteName)) return "Epic";
+    if (rarePalettes.includes(paletteName)) return "Rare";
+    if (uncommonPalettes.includes(paletteName)) return "Uncommon";
+    return "Common";
+}
+
+function calculateStripeComplexity() {
+    if (!stripeData || stripeData.length === 0) return "Basic";
+    
+    let complexityScore = 0;
+    let mixedCount = 0;
+    let texturedCount = 0;
+    let solidCount = 0;
+    let secondaryColorCount = 0;
+    
+    // Count different pattern types
+    for (let stripe of stripeData) {
+        if (stripe.weaveType === 'mixed') {
+            mixedCount++;
+            complexityScore += 2; // Mixed weave adds more complexity
+        } else if (stripe.weaveType === 'textured') {
+            texturedCount++;
+            complexityScore += 1.5; // Textured adds medium complexity
+        } else {
+            solidCount++;
+            // Solid adds no complexity
+        }
+        
+        if (stripe.secondaryColor) {
+            secondaryColorCount++;
+            complexityScore += 1; // Secondary colors add complexity
+        }
+    }
+    
+    // Calculate ratios
+    const mixedRatio = mixedCount / stripeData.length;
+    const texturedRatio = texturedCount / stripeData.length;
+    const solidRatio = solidCount / stripeData.length;
+    const secondaryRatio = secondaryColorCount / stripeData.length;
+    
+    // Normalize complexity score
+    const normalizedComplexity = complexityScore / (stripeData.length * 3); // Max possible is 3 per stripe
+    
+    // More nuanced classification
+    if (solidRatio > 0.8) return "Basic"; // Mostly solid
+    if (normalizedComplexity < 0.2) return "Simple";
+    if (normalizedComplexity < 0.4) return "Moderate";
+    if (normalizedComplexity < 0.6) return "Complex";
+    return "Very Complex";
+}
+
 // Make the functions globally available
 if (typeof window !== 'undefined') {
     window.addTextToDoormatInSketch = addTextToDoormatInSketch;
     window.clearTextFromDoormat = clearTextFromDoormat;
     window.getCurrentPalette = () => selectedPalette;
+    window.calculateTraits = calculateTraits;
 }
