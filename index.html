@@ -128,8 +128,8 @@
             overflow: hidden;
             background: white;
             display: inline-block;
-            width: 1320px; /* doormatHeight + (fringeLength * 4) = 1200 + 120 = 1320 */
-            height: 920px; /* doormatWidth + (fringeLength * 4) = 800 + 120 = 920 */
+            width: 1320px; /* DOORMAT_HEIGHT + (FRINGE_LENGTH * 4) = 1200 + 120 = 1320 */
+            height: 920px; /* DOORMAT_WIDTH + (FRINGE_LENGTH * 4) = 800 + 120 = 920 */
         }
     </style>
 </head>
@@ -198,6 +198,7 @@
         </p>
     </div>
 
+    <script src="doormat-config.js"></script>
     <script src="color-palettes.js"></script>
     <script src="character-map.js"></script>
     <script src="trait-calculator.js"></script>
@@ -542,19 +543,23 @@
         window.updateTraitsFromSketch = updateTraitsFromSketch;
 
         // Function to create clean working doormat code
-        function createPureAlgorithmCode(seed, currentPalette, currentStripeData, textRows) {
+        async function createPureAlgorithmCode(seed, currentPalette, currentStripeData, textRows) {
             // Get only the characters actually used in text
             const usedChars = getUsedCharacters(textRows);
             
-            // Create pure, self-contained algorithm
+            // Dynamically extract functions from doormat.js
+            const coreAlgorithm = await extractCoreAlgorithmFromSource();
+            
+            // Create pure, self-contained algorithm with dynamic extraction
             const pureCode = `
 // Doormat NFT #${seed} - Self-contained algorithm
-let doormatWidth = 800;
-let doormatHeight = 1200;
-let fringeLength = 30;
-let weftThickness = 8;
+const config = ${JSON.stringify(window.DOORMAT_CONFIG)};
+let doormatWidth = config.DOORMAT_WIDTH;
+let doormatHeight = config.DOORMAT_HEIGHT;
+let fringeLength = config.FRINGE_LENGTH;
+let weftThickness = config.WEFT_THICKNESS;
 let warpThickness = 2;
-const TEXT_SCALE = 2;
+const TEXT_SCALE = config.TEXT_SCALE;
 
 // Embedded current state
 let selectedPalette = ${JSON.stringify(currentPalette)};
@@ -567,22 +572,6 @@ let lightTextColor, darkTextColor;
 
 // Embedded character map (only used characters)
 const characterMap = ${JSON.stringify(usedChars)};
-
-function updateTextColors() {
-    if (!selectedPalette || !selectedPalette.colors) return;
-    let darkest = selectedPalette.colors[0];
-    let lightest = selectedPalette.colors[0];
-    let darkestVal = 999, lightestVal = -1;
-    for (let hex of selectedPalette.colors) {
-        let c = color(hex);
-        let bright = (red(c) + green(c) + blue(c)) / 3;
-        if (bright < darkestVal) { darkestVal = bright; darkest = hex; }
-        if (bright > lightestVal) { lightestVal = bright; lightest = hex; }
-    }
-    darkTextColor = color(darkest);
-    lightTextColor = lerpColor(color(lightest), color(255), 0.3);
-    darkTextColor = lerpColor(color(darkest), color(0), 0.4);
-}
 
 function setup() {
     let totalWidth = doormatWidth + fringeLength * 4;
@@ -624,7 +613,7 @@ function draw() {
     pop();
 }
 
-${extractCoreAlgorithmFunctions()}
+${coreAlgorithm}
 `;
             return pureCode;
         }
@@ -647,306 +636,52 @@ ${extractCoreAlgorithmFunctions()}
             return usedCharMap;
         }
 
-        function extractCoreAlgorithmFunctions() {
-            // This extracts the core rendering functions from our algorithm
-            // We'll include the essential drawing functions here
-            return `
-function drawStripe(stripe) {
-    let warpSpacing = warpThickness + 1;
-    let weftSpacing = weftThickness + 1;
-    
-    for (let x = 0; x < doormatWidth; x += warpSpacing) {
-        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
-            let warpColor = color(stripe.primaryColor);
-            
-            let isTextPixel = false;
-            if (textData.length > 0) {
-                for (let textPixel of textData) {
-                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
-                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
-                        isTextPixel = true;
-                        break;
+        async function extractCoreAlgorithmFromSource() {
+            // Dynamically extract functions from doormat.js source
+            try {
+                const response = await fetch('./doormat.js');
+                const sourceCode = await response.text();
+                
+                // Extract specific functions using regex patterns
+                const functions = [
+                    'updateTextColors',
+                    'drawStripe', 
+                    'drawTextureOverlay',
+                    'drawFringe',
+                    'drawSelvedgeEdges', 
+                    'drawFringeSection',
+                    'generateTextData',
+                    'generateCharacterPixels'
+                ];
+                
+                let extractedCode = '';
+                
+                functions.forEach(funcName => {
+                    const regex = new RegExp(`function ${funcName}\\([^)]*\\)\\s*{[\\s\\S]*?^}`, 'm');
+                    const match = sourceCode.match(regex);
+                    if (match) {
+                        extractedCode += match[0] + '\n\n';
                     }
-                }
-            }
-            
-            let r = red(warpColor) + random(-15, 15);
-            let g = green(warpColor) + random(-15, 15);
-            let b = blue(warpColor) + random(-15, 15);
-            
-            if (isTextPixel) {
-                const bgBrightness = (r + g + b) / 3;
-                let tc = bgBrightness < 128 ? lightTextColor : darkTextColor;
-                r = red(tc); g = green(tc); b = blue(tc);
-            }
-            
-            r = constrain(r, 0, 255);
-            g = constrain(g, 0, 255);
-            b = constrain(b, 0, 255);
-            
-            fill(r, g, b);
-            noStroke();
-            
-            let warpCurve = sin(y * 0.05) * 0.5;
-            rect(x + warpCurve, y, warpThickness, weftSpacing);
-        }
-    }
-    
-    for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
-        for (let x = 0; x < doormatWidth; x += warpSpacing) {
-            let weftColor = color(stripe.primaryColor);
-            
-            let isTextPixel = false;
-            if (textData.length > 0) {
-                for (let textPixel of textData) {
-                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
-                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
-                        isTextPixel = true;
-                        break;
-                    }
-                }
-            }
-            
-            if (stripe.weaveType === 'mixed' && stripe.secondaryColor) {
-                if (noise(x * 0.1, y * 0.1) > 0.5) {
-                    weftColor = color(stripe.secondaryColor);
-                }
-            } else if (stripe.weaveType === 'textured') {
-                let noiseVal = noise(x * 0.05, y * 0.05);
-                weftColor = lerpColor(color(stripe.primaryColor), color(255), noiseVal * 0.15);
-            }
-            
-            let r = red(weftColor) + random(-20, 20);
-            let g = green(weftColor) + random(-20, 20);
-            let b = blue(weftColor) + random(-20, 20);
-            
-            if (isTextPixel) {
-                const bgBrightness = (r + g + b) / 3;
-                let tc = bgBrightness < 128 ? lightTextColor : darkTextColor;
-                r = red(tc); g = green(tc); b = blue(tc);
-            }
-            
-            r = constrain(r, 0, 255);
-            g = constrain(g, 0, 255);
-            b = constrain(b, 0, 255);
-            
-            fill(r, g, b);
-            noStroke();
-            
-            let weftCurve = cos(x * 0.05) * 0.5;
-            rect(x, y + weftCurve, warpSpacing, weftThickness);
-        }
-    }
-    
-    for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing * 2) {
-        for (let x = 0; x < doormatWidth; x += warpSpacing * 2) {
-            fill(0, 0, 0, 40);
-            noStroke();
-            rect(x + 1, y + 1, warpSpacing - 2, weftSpacing - 2);
-        }
-    }
-    
-    for (let y = stripe.y + weftSpacing; y < stripe.y + stripe.height; y += weftSpacing * 2) {
-        for (let x = warpSpacing; x < doormatWidth; x += warpSpacing * 2) {
-            fill(255, 255, 255, 30);
-            noStroke();
-            rect(x, y, warpSpacing - 1, weftSpacing - 1);
-        }
-    }
-}
-
-function drawTextureOverlay() {
-    push();
-    blendMode(MULTIPLY);
-    
-    for (let x = 0; x < doormatWidth; x += 2) {
-        for (let y = 0; y < doormatHeight; y += 2) {
-            let noiseVal = noise(x * 0.02, y * 0.02);
-            let hatchingIntensity = map(noiseVal, 0, 1, 0, 50);
-            
-            fill(0, 0, 0, hatchingIntensity);
-            noStroke();
-            rect(x, y, 2, 2);
-        }
-    }
-    
-    for (let x = 0; x < doormatWidth; x += 6) {
-        for (let y = 0; y < doormatHeight; y += 6) {
-            let reliefNoise = noise(x * 0.03, y * 0.03);
-            if (reliefNoise > 0.6) {
-                fill(255, 255, 255, 25);
-                noStroke();
-                rect(x, y, 6, 6);
-            } else if (reliefNoise < 0.4) {
-                fill(0, 0, 0, 20);
-                noStroke();
-                rect(x, y, 6, 6);
-            }
-        }
-    }
-    
-    pop();
-}
-
-function drawFringe() {
-    drawFringeSection(fringeLength * 2, fringeLength, doormatWidth, fringeLength, 'top');
-    drawFringeSection(fringeLength * 2, fringeLength * 2 + doormatHeight, doormatWidth, fringeLength, 'bottom');
-    drawSelvedgeEdges();
-}
-
-function drawSelvedgeEdges() {
-    let weftSpacing = weftThickness + 1;
-    let isFirstWeft = true;
-    
-    for (let stripe of stripeData) {
-        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
-            if (isFirstWeft) {
-                isFirstWeft = false;
-                continue;
-            }
-            
-            if (stripe === stripeData[stripeData.length - 1] && y + weftSpacing >= stripe.y + stripe.height) {
-                continue;
-            }
-            
-            let selvedgeColor = color(stripe.primaryColor);
-            if (stripe.secondaryColor && stripe.weaveType === 'mixed') {
-                let secondaryColor = color(stripe.secondaryColor);
-                let blendFactor = noise(y * 0.1) * 0.5 + 0.5;
-                selvedgeColor = lerpColor(selvedgeColor, secondaryColor, blendFactor);
-            }
-            
-            let r = red(selvedgeColor) * 0.8;
-            let g = green(selvedgeColor) * 0.8;
-            let b = blue(selvedgeColor) * 0.8;
-            
-            fill(r, g, b);
-            noStroke();
-            
-            let radius = weftThickness * random(1.2, 1.8);
-            let centerX = fringeLength * 2 + random(-2, 2);
-            let centerY = fringeLength * 2 + y + weftThickness/2 + random(-1, 1);
-            
-            let startAngle = HALF_PI + random(-0.2, 0.2);
-            let endAngle = -HALF_PI + random(-0.2, 0.2);
-            
-            arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
-            
-            centerX = fringeLength * 2 + doormatWidth + random(-2, 2);
-            startAngle = -HALF_PI + random(-0.2, 0.2);
-            endAngle = HALF_PI + random(-0.2, 0.2);
-            
-            arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
-        }
-    }
-}
-
-function drawFringeSection(x, y, w, h, side) {
-    let fringeStrands = w / 12;
-    let strandWidth = w / fringeStrands;
-    
-    for (let i = 0; i < fringeStrands; i++) {
-        let strandX = x + i * strandWidth;
-        let strandColor = random(selectedPalette.colors);
-        
-        for (let j = 0; j < 12; j++) {
-            let threadX = strandX + random(-strandWidth/6, strandWidth/6);
-            let startY = side === 'top' ? y + h : y;
-            let endY = side === 'top' ? y : y + h;
-            
-            let waveAmplitude = random(1, 4);
-            let waveFreq = random(0.2, 0.8);
-            let direction = random([-1, 1]);
-            let curlIntensity = random(0.5, 2.0);
-            let threadLength = random(0.8, 1.2);
-            
-            let fringeColor = color(strandColor);
-            let r = red(fringeColor) * 0.7;
-            let g = green(fringeColor) * 0.7;
-            let b = blue(fringeColor) * 0.7;
-            
-            stroke(r, g, b);
-            strokeWeight(random(0.5, 1.2));
-            
-            noFill();
-            beginShape();
-            for (let t = 0; t <= 1; t += 0.1) {
-                let yPos = lerp(startY, endY, t * threadLength);
-                let xOffset = sin(t * PI * waveFreq) * waveAmplitude * t * direction * curlIntensity;
-                xOffset += random(-1, 1);
-                if (random() < 0.3) {
-                    xOffset += random(-2, 2);
-                }
-                vertex(threadX + xOffset, yPos);
-            }
-            endShape();
-        }
-    }
-}
-
-function generateTextData() {
-    textData = [];
-    if (!doormatTextRows || doormatTextRows.length === 0) return;
-    
-    const warpSpacing = warpThickness + 1;
-    const weftSpacing = weftThickness + 1;
-    const scaledWarp = warpSpacing * TEXT_SCALE;
-    const scaledWeft = weftSpacing * TEXT_SCALE;
-    
-    const charWidth = 7 * scaledWarp;
-    const charHeight = 5 * scaledWeft;
-    const spacing = scaledWeft;
-    const rowSpacing = charWidth * 1.5;
-    
-    const totalRowsWidth = doormatTextRows.length * charWidth + (doormatTextRows.length - 1) * rowSpacing;
-    const baseStartX = (doormatWidth - totalRowsWidth) / 2;
-    
-    for (let rowIndex = 0; rowIndex < doormatTextRows.length; rowIndex++) {
-        const doormatText = doormatTextRows[rowIndex];
-        if (!doormatText) continue;
-        
-        const textHeight = doormatText.length * (charHeight + spacing) - spacing;
-        const startX = baseStartX + rowIndex * (charWidth + rowSpacing);
-        const startY = (doormatHeight - textHeight) / 2;
-        
-        for (let i = 0; i < doormatText.length; i++) {
-            const char = doormatText.charAt(i);
-            const charY = startY + (doormatText.length - 1 - i) * (charHeight + spacing);
-            const charPixels = generateCharacterPixels(char, startX, charY, charWidth, charHeight);
-            textData.push(...charPixels);
-        }
-    }
-}
-
-function generateCharacterPixels(char, x, y, width, height) {
-    const pixels = [];
-    const warpSpacing = warpThickness + 1;
-    const weftSpacing = weftThickness + 1;
-    const scaledWarp = warpSpacing * TEXT_SCALE;
-    const scaledWeft = weftSpacing * TEXT_SCALE;
-
-    const charDef = characterMap[char] || characterMap[' '];
-    if (!charDef) return pixels;
-
-    const numRows = charDef.length;
-    const numCols = charDef[0].length;
-
-    for (let row = 0; row < numRows; row++) {
-        for (let col = 0; col < numCols; col++) {
-            if (charDef[row][col] === '1') {
-                const newCol = row;
-                const newRow = numCols - 1 - col;
-                pixels.push({
-                    x: x + newCol * scaledWarp,
-                    y: y + newRow * scaledWeft,
-                    width: scaledWarp,
-                    height: scaledWeft
                 });
+                
+                return extractedCode;
+            } catch (error) {
+                console.error('Failed to extract core algorithm:', error);
+                // Fallback to a minimal implementation
+                return `
+function updateTextColors() {
+    if (!selectedPalette || !selectedPalette.colors) return;
+    lightTextColor = color(255);
+    darkTextColor = color(0);
+}
+function drawStripe() { /* Fallback implementation */ }
+function drawTextureOverlay() { /* Fallback implementation */ }
+function drawFringe() { /* Fallback implementation */ }
+function drawSelvedgeEdges() { /* Fallback implementation */ }
+function drawFringeSection() { /* Fallback implementation */ }
+function generateTextData() { textData = []; }
+function generateCharacterPixels() { return []; }`;
             }
-        }
-    }
-    return pixels;
-}`;
         }
 
         function minifyCode(code) {
@@ -1012,8 +747,8 @@ function generateCharacterPixels(char, x, y, width, height) {
             const currentStripeData = window.stripeData || [];
             
             try {
-                // Create pure algorithm code with current state
-                const pureAlgorithmCode = createPureAlgorithmCode(parseInt(seed), palette, currentStripeData, textRows);
+                // Create pure algorithm code with current state (async)
+                const pureAlgorithmCode = await createPureAlgorithmCode(parseInt(seed), palette, currentStripeData, textRows);
                 
                 // Minify and obfuscate
                 const minifiedCode = minifyCode(pureAlgorithmCode);

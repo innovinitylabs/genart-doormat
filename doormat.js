@@ -1,14 +1,15 @@
 // Generative Doormat Art - P5.js
 // Inspired by traditional woven doormats with stripes and fringe
 
-let doormatWidth = 800;
-let doormatHeight = 1200;
-let fringeLength = 30;
+// Use shared configuration constants
+let doormatWidth = window.DOORMAT_CONFIG?.DOORMAT_WIDTH || 800;
+let doormatHeight = window.DOORMAT_CONFIG?.DOORMAT_HEIGHT || 1200;
+let fringeLength = window.DOORMAT_CONFIG?.FRINGE_LENGTH || 30;
 let currentSeed = 42;
 let warpThickness = 2; // Will be set randomly
-let weftThickness = 8; // Default weft thread thickness
-const TEXT_SCALE = 2; // scale factor
-const MAX_CHARS = 11;
+let weftThickness = window.DOORMAT_CONFIG?.WEFT_THICKNESS || 8;
+let TEXT_SCALE = window.DOORMAT_CONFIG?.TEXT_SCALE || 2;
+let MAX_CHARS = window.DOORMAT_CONFIG?.MAX_CHARS || 11;
 
 // Text colors (chosen from palette)
 let lightTextColor;

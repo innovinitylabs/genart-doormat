@@ -9,8 +9,9 @@ function addTextToDoormatInSketch(textRows) {
     }
     
     // Clean each text row
+    const maxChars = window.DOORMAT_CONFIG?.MAX_CHARS || 11;
     window.doormatTextRows = textRows.map(text => 
-        text.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 11) // MAX_CHARS = 11
+        text.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, maxChars)
     ).filter(text => text.length > 0); // Remove empty rows
     
     // Call the generator to update text data and redraw
