@@ -707,15 +707,13 @@ function generateCharacterPixels() { return []; }`;
                 .replace(/\[\s*/g, '[') // Remove space after opening brackets
                 .replace(/\s*\]/g, ']') // Remove space before closing brackets
                 
-                // Conservative operator spacing optimizations
+                // Ultra-conservative operator spacing - only the safest ones
                 .replace(/\s*=\s*/g, '=') // Remove spaces around equals
-                .replace(/\s*\+\s*/g, '+') // Remove spaces around plus
-                .replace(/\s*\*\s*/g, '*') // Remove spaces around multiply
                 .replace(/\s*\.\s*/g, '.') // Remove spaces around dots
                 
-                // Very conservative approach - avoid problematic operators entirely
-                // Skip: minus (-), divide (/), comparison (<, >), colon (:), question (?)
-                // These can break negative numbers, comments, templates, and ternary operators
+                // Skip ALL other operators to prevent any syntax breaking
+                // Avoid: +, -, *, /, <, >, :, ?, !, &, |, etc.
+                // Even + can break in some contexts, so being extra safe
                 
                 // Final cleanup
                 .trim();
@@ -790,6 +788,48 @@ function generateCharacterPixels() { return []; }`;
                 'bgBrightness': 'ᄕ',
                 'warpCurve': 'ᄖ',
                 'weftCurve': 'ᄗ',
+                
+                // Additional long variables we missed - using 2-letter Tamil combinations
+                'threadR': 'கஅ',
+                'threadG': 'கஆ', 
+                'threadB': 'கஇ',
+                'detailX': 'கஈ',
+                'detailY': 'கஉ',
+                'detailAlpha': 'கஊ',
+                'detailR': 'கஎ',
+                'detailG': 'கஏ',
+                'detailB': 'கஐ',
+                'threadStartAngle': 'கஒ',
+                'threadEndAngle': 'கஓ',
+                'direction': 'கஔ',
+                'waveFreq': 'கங',
+                'spacing': 'கச',
+                'rowSpacing': 'கஜ',
+                'totalRowsWidth': 'கஞ',
+                'baseStartX': 'கட',
+                'textWidth': 'கண',
+                'textHeight': 'கத',
+                'startY': 'கந',
+                'charY': 'கப',
+                'charPixels': 'கம',
+                'doormatText': 'கய',
+                'pixels': 'கர',
+                'charDef': 'கல',
+                'numRows': 'கவ',
+                'numCols': 'கஶ',
+                'newCol': 'கஷ',
+                'newRow': 'கஸ',
+                'yPos': 'கஹ',
+                'xOffset': 'கா',
+                'isFirstWeft': 'கி',
+                'isLastWeft': 'கீ',
+                'isFirstWeftRight': 'கு',
+                'isLastWeftRight': 'கூ',
+                'darkest': 'கெ',
+                'lightest': 'கே',
+                'darkestVal': 'கை',
+                'lightestVal': 'கொ',
+                'bright': 'கோ',
                 
                 // Function names (be careful with these)
                 'drawStripe': 'ஔ',
