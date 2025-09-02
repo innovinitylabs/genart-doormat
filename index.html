@@ -689,46 +689,29 @@ function generateCharacterPixels() { return []; }`;
         }
 
         function minifyCode(code) {
-            // Conservative but effective minification
+            // Very conservative minification to prevent syntax errors
             return code
                 // Remove all comments
                 .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
                 .replace(/\/\/.*$/gm, '') // Remove // comments
                 
-                // Remove excessive whitespace but preserve syntax
+                // Remove excessive whitespace but preserve necessary spaces
                 .replace(/\s+/g, ' ') // Replace multiple whitespace with single space
                 .replace(/;\s*}/g, ';}') // Remove space before closing braces
-                .replace(/{\s*/g, '{') // Remove space after opening braces
-                .replace(/}\s*/g, '}') // Remove space after closing braces
                 .replace(/,\s*/g, ',') // Remove space after commas
-                .replace(/;\s*/g, ';') // Remove space after semicolons
-                .replace(/\(\s*/g, '(') // Remove space after opening parentheses
-                .replace(/\s*\)/g, ')') // Remove space before closing parentheses
-                .replace(/\[\s*/g, '[') // Remove space after opening brackets
-                .replace(/\s*\]/g, ']') // Remove space before closing brackets
                 
-                // Safe optimizations
-                .replace(/let\s+/g, 'let') // Keep 'let' but remove extra space
-                .replace(/const\s+/g, 'const') // Keep 'const' but remove extra space
-                .replace(/function\s+/g, 'function') // Keep 'function' but remove extra space
-                .replace(/return\s+/g, 'return') // Keep 'return' but remove extra space
-                
-                // Final cleanup
+                // Final cleanup - very minimal
                 .trim();
         }
 
         function obfuscateWithTamilLetters(code) {
-            // Tamil letters for variable obfuscation
+            // Tamil letters for variable obfuscation - using simpler approach
             const tamilLetters = ['அ','ஆ','இ','ஈ','உ','ஊ','எ','ஏ','ஐ','ஒ','ஓ','ஔ','க','ங','ச','ஜ','ஞ','ட','ண','த','ந','ப','ம','ய','ர','ல','வ','ஶ','ஷ','ஸ','ஹ'];
             
-            // Common variable names to obfuscate
+            // Only obfuscate the most important variables to avoid syntax errors
             const variables = [
                 'doormatWidth', 'doormatHeight', 'fringeLength', 'weftThickness', 'warpThickness',
-                'selectedPalette', 'stripeData', 'doormatTextRows', 'textData', 'lightTextColor', 'darkTextColor',
-                'drawStripe', 'drawTextureOverlay', 'drawFringe', 'drawSelvedgeEdges', 'drawFringeSection',
-                'generateTextData', 'generateCharacterPixels', 'updateTextColors',
-                'warpSpacing', 'weftSpacing', 'isTextPixel', 'warpColor', 'weftColor', 'selvedgeColor',
-                'fringeColor', 'charWidth', 'charHeight', 'scaledWarp', 'scaledWeft'
+                'selectedPalette', 'stripeData', 'doormatTextRows', 'textData', 'lightTextColor', 'darkTextColor'
             ];
             
             let obfuscatedCode = code;
