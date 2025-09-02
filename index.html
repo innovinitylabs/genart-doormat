@@ -707,20 +707,15 @@ function generateCharacterPixels() { return []; }`;
                 .replace(/\[\s*/g, '[') // Remove space after opening brackets
                 .replace(/\s*\]/g, ']') // Remove space before closing brackets
                 
-                // Safe operator spacing optimizations
+                // Conservative operator spacing optimizations
                 .replace(/\s*=\s*/g, '=') // Remove spaces around equals
                 .replace(/\s*\+\s*/g, '+') // Remove spaces around plus
-                .replace(/\s*-\s*/g, '-') // Remove spaces around minus
                 .replace(/\s*\*\s*/g, '*') // Remove spaces around multiply
-                .replace(/\s*\/\s*/g, '/') // Remove spaces around divide
-                .replace(/\s*<\s*/g, '<') // Remove spaces around less than
-                .replace(/\s*>\s*/g, '>') // Remove spaces around greater than
-                .replace(/\s*!\s*/g, '!') // Remove spaces around not
-                
-                // Remove spaces around dots and question marks
                 .replace(/\s*\.\s*/g, '.') // Remove spaces around dots
-                .replace(/\s*\?\s*/g, '?') // Remove spaces around question marks
-                .replace(/\s*:\s*/g, ':') // Remove spaces around colons
+                
+                // Be careful with these operators that can break syntax
+                .replace(/([^<>=!])\s*<\s*/g, '$1<') // Remove spaces around < but not <=, <<, etc.
+                .replace(/\s*>\s*([^>=])/g, '>$1') // Remove spaces around > but not >=, >>, etc.
                 
                 // Final cleanup
                 .trim();
