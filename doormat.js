@@ -795,6 +795,9 @@ let stripeData = [];
 let doormatTextRows = []; // Array of text rows to embed in the doormat
 let textData = []; // Text positioning and character data
 
+// Make stripeData globally available for NFT export
+window.stripeData = stripeData;
+
 // Initialize with a default palette
 function initializePalette() {
     if (!selectedPalette) {

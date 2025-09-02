@@ -15,23 +15,23 @@
             flex-direction: column;
             align-items: center;
         }
-        
+
         .container {
             text-align: center;
             max-width: 1400px;
         }
-        
+
         h1 {
             color: #333;
             margin-bottom: 10px;
         }
-        
+
         .description {
             color: #666;
             margin-bottom: 20px;
             line-height: 1.4;
         }
-        
+
         .controls {
             margin: 20px 0;
             display: flex;
@@ -39,7 +39,7 @@
             justify-content: center;
             flex-wrap: wrap;
         }
-        
+
         button {
             padding: 10px 20px;
             font-size: 14px;
@@ -50,11 +50,11 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        
+
         button:hover {
             background-color: #A0522D;
         }
-        
+
         .seed-input {
             padding: 8px;
             border: 2px solid #8B4513;
@@ -62,7 +62,7 @@
             font-size: 14px;
             width: 100px;
         }
-        
+
         .text-input {
             padding: 8px;
             border: 2px solid #8B4513;
@@ -71,7 +71,7 @@
             width: 200px;
             margin: 0 10px;
         }
-        
+
         .slider-controls {
             margin: 15px 0;
             display: flex;
@@ -79,20 +79,20 @@
             align-items: center;
             gap: 15px;
         }
-        
+
         .slider-group {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
         }
-        
+
         .slider-controls label {
             color: #333;
             font-weight: bold;
             font-size: 14px;
         }
-        
+
         .slider-controls input[type="range"] {
             width: 200px;
             height: 6px;
@@ -101,7 +101,7 @@
             border-radius: 3px;
             -webkit-appearance: none;
         }
-        
+
         .slider-controls input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -111,7 +111,7 @@
             border-radius: 50%;
             cursor: pointer;
         }
-        
+
         .slider-controls input[type="range"]::-moz-range-thumb {
             width: 18px;
             height: 18px;
@@ -120,7 +120,7 @@
             cursor: pointer;
             border: none;
         }
-        
+
         .canvas-container {
             margin: 20px 0;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -140,14 +140,15 @@
             A P5.js generative art piece inspired by traditional woven doormats.<br>
             Each generation creates unique stripe patterns, colors, and textures with fringe details.
         </p>
-        
+
         <div class="controls">
             <button onclick="generateNew()">Generate New Doormat</button>
             <button onclick="saveDoormat()">Save as Image</button>
             <input type="number" id="seedInput" class="seed-input" placeholder="Seed" value="42">
             <button onclick="generateFromSeed()">Use Seed</button>
+            <button onclick="exportNFT()">Export NFT</button>
         </div>
-        
+
         <div class="controls">
             <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
                 <div style="display: flex; gap: 5px; align-items: center;">
@@ -166,13 +167,13 @@
                 </div>
             </div>
         </div>
-        
 
-        
+
+
         <div class="canvas-container" id="canvas-container">
             <!-- P5.js canvas will be inserted here -->
         </div>
-        
+
         <div class="palette-display" style="margin: 20px 0; text-align: center;">
             <h3 style="margin: 0 0 10px 0; color: #333;">Current Color Palette</h3>
             <div id="paletteName" style="font-weight: bold; color: #666; margin-bottom: 10px;">Loading...</div>
@@ -180,14 +181,14 @@
                 <!-- Color swatches will be displayed here -->
             </div>
         </div>
-        
+
         <div class="traits-display" style="margin: 20px 0; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;">
             <h3 style="margin: 0 0 15px 0; color: #333;">NFT Traits</h3>
             <div id="traitsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: left;">
                 <!-- Traits will be displayed here -->
             </div>
         </div>
-        
+
         <p class="description">
             <strong>Instructions:</strong><br>
             • Click "Generate New Doormat" for a random pattern<br>
@@ -196,15 +197,15 @@
             • Click "Save as Image" to download your doormat
         </p>
     </div>
-    
+
     <script src="doormat.js"></script>
-    
+
     <script>
         function generateNew() {
             const seed = Math.floor(Math.random() * 10000);
             document.getElementById('seedInput').value = seed;
             generateDoormat(seed);
-            
+
             // Update palette and traits display after a short delay to ensure the sketch has updated
             setTimeout(() => {
                 if (typeof window.updatePaletteDisplay === 'function' && typeof window.getCurrentPalette === 'function') {
@@ -217,11 +218,11 @@
                 updateTraitsFromSketch();
             }, 150);
         }
-        
+
         function generateFromSeed() {
             const seed = parseInt(document.getElementById('seedInput').value) || 42;
             generateDoormat(seed);
-            
+
             // Update palette and traits display after a short delay to ensure the sketch has updated
             setTimeout(() => {
                 if (typeof window.updatePaletteDisplay === 'function' && typeof window.getCurrentPalette === 'function') {
@@ -234,13 +235,13 @@
                 updateTraitsFromSketch();
             }, 150);
         }
-        
+
         function saveDoormat() {
             saveCanvas('doormat-' + Date.now(), 'png');
         }
-        
 
-        
+
+
         function addTextToDoormat() {
             const textRows = [];
             for (let i = 1; i <= 5; i++) {
@@ -256,9 +257,9 @@
                 window.addTextToDoormatInSketch(textRows);
             }
         }
-        
+
         let currentRowCount = 1; // Track how many rows are currently visible
-        
+
         function toggleAdditionalRows() {
             if (currentRowCount < 5) {
                 addRow();
@@ -268,11 +269,11 @@
                 additionalRows.innerHTML = '';
                 additionalRows.style.display = 'none';
                 currentRowCount = 1;
-                
+
                 const toggleBtn = document.getElementById('toggleRowsBtn');
                 toggleBtn.textContent = '+ Add More Rows';
                 toggleBtn.style.backgroundColor = '#4CAF50';
-                
+
                 // Clear all additional row inputs
                 for (let i = 2; i <= 5; i++) {
                     const input = document.getElementById('textInput' + i);
@@ -280,53 +281,53 @@
                 }
             }
         }
-        
+
         function addRow() {
             if (currentRowCount >= 5) return; // Maximum 5 rows
-            
+
             currentRowCount++;
             const additionalRows = document.getElementById('additionalRows');
-            
+
             // Create new row element
             const newRow = document.createElement('div');
             newRow.style.display = 'flex';
             newRow.style.gap = '5px';
             newRow.style.alignItems = 'center';
             newRow.id = 'row' + currentRowCount;
-            
+
             newRow.innerHTML = `
                 <label style="font-size: 12px; width: 60px;">Row ${currentRowCount}:</label>
                 <input type="text" id="textInput${currentRowCount}" class="text-input" placeholder="Enter text (A-Z, 0-9, space)" maxlength="11" oninput="validateTextInput(this)">
                 <button onclick="removeRow(${currentRowCount})" style="background-color: #f44336; font-size: 10px; padding: 4px 8px;">×</button>
             `;
-            
+
             additionalRows.appendChild(newRow);
             additionalRows.style.display = 'block';
-            
+
             // Update button text
             updateAddRowButton();
         }
-        
+
         function removeRow(rowNumber) {
             if (rowNumber <= 1) return; // Can't remove first row
-            
+
             const rowElement = document.getElementById('row' + rowNumber);
             if (rowElement) {
                 rowElement.remove();
                 currentRowCount--;
-                
+
                 // Clear the input value
                 const input = document.getElementById('textInput' + rowNumber);
                 if (input) input.value = '';
-                
+
                 // Update button text and hide container if no additional rows
                 updateAddRowButton();
             }
         }
-        
+
         function updateAddRowButton() {
             const toggleBtn = document.getElementById('toggleRowsBtn');
-            
+
             if (currentRowCount >= 5) {
                 toggleBtn.textContent = '− Hide All Rows';
                 toggleBtn.style.backgroundColor = '#f44336';
@@ -335,46 +336,46 @@
                 toggleBtn.style.backgroundColor = '#4CAF50';
             }
         }
-        
+
         function clearText() {
             // Clear all input values
             for (let i = 1; i <= 5; i++) {
                 const input = document.getElementById('textInput' + i);
                 if (input) input.value = '';
             }
-            
+
             // Remove all additional rows and reset to single row
             const additionalRows = document.getElementById('additionalRows');
             additionalRows.innerHTML = '';
             additionalRows.style.display = 'none';
-            
+
             // Reset row count and button
             currentRowCount = 1;
             updateAddRowButton();
-            
+
             if (typeof window.clearTextFromDoormat === 'function') {
                 window.clearTextFromDoormat();
             }
         }
-        
+
         function validateTextInput(input) {
             // Remove any characters that are not A-Z, 0-9, or space
             input.value = input.value.replace(/[^A-Za-z0-9\s]/g, '');
             // Convert to uppercase
             input.value = input.value.toUpperCase();
         }
-        
+
         // Function to update the palette display
         function updatePaletteDisplay(paletteName, colors) {
             const nameElement = document.getElementById('paletteName');
             const swatchesElement = document.getElementById('colorSwatches');
-            
+
             if (nameElement && swatchesElement) {
                 nameElement.textContent = paletteName;
-                
+
                 // Clear existing swatches
                 swatchesElement.innerHTML = '';
-                
+
                 // Create color swatches
                 colors.forEach(color => {
                     const swatch = document.createElement('div');
@@ -388,16 +389,16 @@
                         transition: transform 0.2s;
                         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
                     `;
-                    
+
                     // Add hover effect
                     swatch.addEventListener('mouseenter', () => {
                         swatch.style.transform = 'scale(1.1)';
                     });
-                    
+
                     swatch.addEventListener('mouseleave', () => {
                         swatch.style.transform = 'scale(1)';
                     });
-                    
+
                     // Add click to copy functionality
                     swatch.addEventListener('click', () => {
                         navigator.clipboard.writeText(color).then(() => {
@@ -411,23 +412,23 @@
                             }, 500);
                         });
                     });
-                    
+
                     // Add tooltip with color code
                     swatch.title = `Click to copy: ${color}`;
-                    
+
                     swatchesElement.appendChild(swatch);
                 });
             }
         }
-        
+
         // Function to update the traits display
         function updateTraitsDisplay(traits) {
             const traitsContainer = document.getElementById('traitsContainer');
-            
+
             if (traitsContainer && traits) {
                 // Clear existing traits
                 traitsContainer.innerHTML = '';
-                
+
                 // Create trait cards
                 const traitItems = [
                     { label: 'Text Lines', value: traits.textLines, rarity: getTextLinesRarity(traits.textLines) },
@@ -437,7 +438,7 @@
                     { label: 'Stripe Count', value: traits.stripeCount, rarity: getStripeCountRarity(traits.stripeCount) },
                     { label: 'Stripe Complexity', value: traits.stripeComplexity, rarity: getStripeComplexityRarity(traits.stripeComplexity) }
                 ];
-                
+
                 traitItems.forEach(trait => {
                     const traitCard = document.createElement('div');
                     traitCard.style.cssText = `
@@ -449,20 +450,20 @@
                         flex-direction: column;
                         gap: 5px;
                     `;
-                    
+
                     const rarityColor = getRarityColor(trait.rarity);
-                    
+
                     traitCard.innerHTML = `
                         <div style="font-weight: bold; color: #333; font-size: 14px;">${trait.label}</div>
                         <div style="color: #666; font-size: 16px;">${trait.value}</div>
                         <div style="color: ${rarityColor}; font-weight: bold; font-size: 12px; text-transform: uppercase;">${trait.rarity}</div>
                     `;
-                    
+
                     traitsContainer.appendChild(traitCard);
                 });
             }
         }
-        
+
         // Helper functions for rarity calculation
         function getTextLinesRarity(lines) {
             if (lines >= 5) return "Legendary";
@@ -471,7 +472,7 @@
             if (lines >= 2) return "Uncommon";
             return "Common";
         }
-        
+
         function getCharacterRarity(chars) {
             if (chars >= 40) return "Legendary";
             if (chars >= 30) return "Epic";
@@ -479,7 +480,7 @@
             if (chars >= 10) return "Uncommon";
             return "Common";
         }
-        
+
         function getStripeComplexityRarity(complexity) {
             switch(complexity) {
                 case 'Very Complex': return "Legendary";
@@ -490,7 +491,7 @@
                 default: return "Common";
             }
         }
-        
+
         function getStripeCountRarity(count) {
             if (count >= 40) return "Legendary";
             if (count >= 32) return "Epic";
@@ -498,7 +499,7 @@
             if (count >= 18) return "Uncommon";
             return "Common";
         }
-        
+
         function getRarityColor(rarity) {
             switch(rarity) {
                 case 'Legendary': return '#ff6b35';
@@ -509,7 +510,7 @@
                 default: return '#666';
             }
         }
-        
+
         // Function to update traits from the sketch
         function updateTraitsFromSketch() {
             console.log("updateTraitsFromSketch called");
@@ -522,7 +523,7 @@
                 console.log("calculateTraits function not found");
             }
         }
-        
+
         // Generate initial doormat
         window.addEventListener('load', () => {
             generateFromSeed();
@@ -531,10 +532,184 @@
                 updateTraitsFromSketch();
             }, 200);
         });
-        
+
         // Make the functions globally available for the P5.js sketch
         window.updatePaletteDisplay = updatePaletteDisplay;
         window.updateTraitsFromSketch = updateTraitsFromSketch;
+
+        // Function to extract only the essential functions from doormat.js for current state
+        function createMinimalDoormatCode(currentPalette, currentStripeData, textRows) {
+            const minimalCode = `
+// Essential doormat code for NFT
+let doormatWidth=800,doormatHeight=1200,fringeLength=30,weftThickness=8;
+let selectedPalette=${JSON.stringify(currentPalette)};
+let stripeData=${JSON.stringify(currentStripeData)};
+let doormatTextRows=${JSON.stringify(textRows)};
+
+function setup(){
+    let totalWidth=doormatWidth+fringeLength*4;
+    let totalHeight=doormatHeight+fringeLength*4;
+    createCanvas(totalHeight,totalWidth);
+    pixelDensity(1);
+    noLoop();
+    
+    // Set random seed for consistent generation
+    randomSeed(seed);
+    noiseSeed(seed);
+    
+    // Generate stripes if empty
+    if(stripeData.length === 0){
+        generateStripeData();
+    }
+    
+    // Generate the doormat
+    generateDoormat();
+}
+
+function generateStripeData(){
+    stripeData = [];
+    let currentY = 0;
+    let totalHeight = doormatHeight;
+    
+    while(currentY < totalHeight){
+        let stripeHeight = random(20, 80);
+        if(currentY + stripeHeight > totalHeight){
+            stripeHeight = totalHeight - currentY;
+        }
+        
+        let primaryColor = selectedPalette.colors[floor(random(selectedPalette.colors.length))];
+        stripeData.push({
+            y: currentY,
+            height: stripeHeight,
+            colors: [primaryColor],
+            weaveType: 'solid'
+        });
+        
+        currentY += stripeHeight;
+        if(currentY >= totalHeight) break;
+    }
+}
+
+function generateDoormat(){
+    background(26);
+    
+    // Save the current transformation matrix
+    push();
+    
+    // Move to center and rotate 90 degrees
+    translate(width/2,height/2);
+    rotate(PI/2);
+    translate(-height/2,-width/2);
+    
+    // Draw the doormat content
+    drawStripes();
+    if(doormatTextRows.length>0){
+        drawText();
+    }
+    drawFringe();
+    
+    // Restore transformation matrix
+    pop();
+}
+
+function drawStripes(){
+    stripeData.forEach(stripe=>{
+        fill(stripe.colors[0]);
+        noStroke();
+        rect(fringeLength,stripe.y+fringeLength,doormatWidth,stripe.height);
+    });
+}
+
+function drawText(){
+    doormatTextRows.forEach((text,rowIndex)=>{
+        let startY=fringeLength+150+rowIndex*100;
+        for(let i=0;i<text.length;i++){
+            let charX=fringeLength+100+i*50;
+            fill(255);
+            rect(charX,startY,40,70);
+        }
+    });
+}
+
+function drawFringe(){
+    stroke(selectedPalette.colors[0]);
+    strokeWeight(2);
+    for(let i=0;i<50;i++){
+        let x=random(fringeLength,fringeLength+doormatWidth);
+        line(x,0,x,fringeLength);
+        line(x,fringeLength+doormatHeight,x,fringeLength+doormatHeight+fringeLength);
+    }
+}`;
+
+            return minimalCode.replace(/\s+/g, ' ').trim();
+        }
+
+        async function exportNFT() {
+            // Get current state
+            const seed = document.getElementById('seedInput').value;
+            const textRows = [];
+            for (let i = 1; i <= 5; i++) {
+                const input = document.getElementById('textInput' + i);
+                if (input && input.value.trim()) {
+                    textRows.push(input.value.trim());
+                }
+            }
+            
+            // Get current palette and traits
+            const palette = window.getCurrentPalette();
+            const traits = window.calculateTraits();
+            
+            // Get current stripe data from the live sketch
+            const currentStripeData = window.stripeData || [];
+            
+            try {
+                // Create minimal doormat code with current state
+                const minimalDoormatCode = createMinimalDoormatCode(palette, currentStripeData, textRows);
+                
+                // Create self-contained NFT HTML with P5.js from CDN
+                let nftHTML = '<!DOCTYPE html>';
+                nftHTML += '<html><head><meta charset="UTF-8">';
+                nftHTML += '<title>Doormat NFT #' + seed + '</title>';
+                nftHTML += '<style>';
+                nftHTML += 'body{margin:0;padding:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:Arial,sans-serif}';
+                nftHTML += 'canvas{border-radius:8px;box-shadow:0 4px 8px rgba(255,255,255,0.1)}';
+                nftHTML += '.info{position:absolute;top:10px;left:10px;color:#fff;font-size:10px;opacity:0.7}';
+                nftHTML += '.traits{position:absolute;top:10px;right:10px;color:#fff;font-size:8px;opacity:0.7;text-align:right}';
+                nftHTML += '</style>';
+                nftHTML += '<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></' + 'script>';
+                nftHTML += '</head><body>';
+                nftHTML += '<div class="info">Seed: ' + seed + '<br>Palette: ' + palette.name + '</div>';
+                nftHTML += '<div class="traits">';
+                nftHTML += Object.entries(traits).map(function(entry) { return entry[0] + ': ' + entry[1]; }).join('<br>');
+                nftHTML += '</div>';
+                
+                // Embed minimal doormat code
+                nftHTML += '<script>';
+                nftHTML += 'let seed=' + seed + ';';
+                nftHTML += minimalDoormatCode;
+                nftHTML += '</' + 'script>';
+                
+                nftHTML += '</body></html>';
+                
+                // Download the self-contained file
+                const blob = new Blob([nftHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'doormat-nft-' + seed + '.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('NFT file size:', Math.round(nftHTML.length / 1024) + 'KB');
+                alert('NFT HTML exported! File size: ' + Math.round(nftHTML.length / 1024) + 'KB - ready for on-chain storage.');
+                
+            } catch (error) {
+                console.error('Export failed:', error);
+                alert('Export failed: ' + error.message);
+            }
+        }
     </script>
 </body>
 </html>
