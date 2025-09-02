@@ -590,7 +590,7 @@ const colorPalettes = [
         ]
     },
     
-    // ===== HISTORICAL DYNASTY & CULTURAL PALETTES (4) =====
+    // ===== HISTORICAL DYNASTY & CULTURAL PALETTES (6) =====
     
     // Pandya Dynasty - southern, maritime colors
     {
@@ -610,14 +610,181 @@ const colorPalettes = [
     {
         name: "Maurya Empire",
         colors: [
-            '#8B0000', '#DC143C', '#B22222', '#FF4500', '#FF8C00', '#FFD700', '#228B22', '#006400'
+            '#000080', '#191970', '#4169E1', '#4682B4', '#FFD700', '#FFA500', '#8B4513', '#A0522D'
         ]
     },
     // Buddhist - peaceful, spiritual colors
     {
         name: "Buddhist",
         colors: [
-            '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#228B22', '#32CD32', '#90EE90', '#98FB98'
+            '#FFD700', '#FFA500', '#8B4513', '#A0522D', '#228B22', '#32CD32', '#90EE90', '#FFFFFF'
+        ]
+    },
+    
+    // ===== FAMINE & HISTORICAL PERIOD PALETTES (2) =====
+    
+    // Indigo Famine - colonial, oppressive colors
+    {
+        name: "Indigo Famine",
+        colors: [
+            '#000080', '#191970', '#4169E1', '#4682B4', '#2F4F4F', '#696969', '#808080', '#A9A9A9'
+        ]
+    },
+    // Bengal Famine - tragic, somber colors
+    {
+        name: "Bengal Famine",
+        colors: [
+            '#8B0000', '#DC143C', '#B22222', '#2F4F4F', '#696969', '#808080', '#A9A9A9', '#000000'
+        ]
+    },
+    
+    // ===== MADRAS GENERATOR GLOBAL PALETTES (20) =====
+    
+    // Natural Dyes - authentic traditional colors
+    {
+        name: "Natural Dyes",
+        colors: [
+            '#405BAA', '#B33A3A', '#D9A43B', '#1F1E1D', '#5A7A5A', '#8C5832', '#A48E7F', '#FAF1E3'
+        ]
+    },
+    // Expanded Traditional - extended Madras palette
+    {
+        name: "Expanded Traditional",
+        colors: [
+            '#405BAA', '#B33A3A', '#D9A43B', '#5A7A5A', '#8C5832', '#A48E7F', '#1F1E1D', '#FAF1E3'
+        ]
+    },
+    // Bleeding Vintage - aged, worn Madras colors
+    {
+        name: "Bleeding Vintage",
+        colors: [
+            '#3A62B3', '#C13D3D', '#D9A43B', '#7DAC9B', '#D87BA1', '#7A4E8A', '#F2E4BE', '#1F1E1D'
+        ]
+    },
+    // Warm Tamil Madras - warm South Indian tones
+    {
+        name: "Warm Tamil Madras",
+        colors: [
+            '#C13D3D', '#F5C03A', '#3E5F9A', '#88B0D3', '#ADC178', '#E77F37', '#FAF3EB', '#F2E4BE'
+        ]
+    },
+    // Classic Red-Green - traditional Madras contrast
+    {
+        name: "Classic Red-Green",
+        colors: [
+            '#cc0033', '#ffee88', '#004477', '#ffffff', '#e63946', '#f1faee', '#a8dadc', '#457b9d'
+        ]
+    },
+    // Vintage Tamil 04 - retro South Indian style
+    {
+        name: "Vintage Tamil",
+        colors: [
+            '#e63946', '#f1faee', '#a8dadc', '#457b9d', '#ffd700', '#b8860b', '#8b0000', '#f7c873'
+        ]
+    },
+    // Sunset Pondicherry - French colonial colors
+    {
+        name: "Sunset Pondicherry",
+        colors: [
+            '#ffb347', '#ff6961', '#6a0572', '#fff8e7', '#1d3557', '#e63946', '#f7cac9', '#92a8d1'
+        ]
+    },
+    // Chennai Monsoon - rainy season palette
+    {
+        name: "Chennai Monsoon",
+        colors: [
+            '#1d3557', '#457b9d', '#a8dadc', '#f1faee', '#ffd700', '#e94f37', '#393e41', '#3f88c5'
+        ]
+    },
+    // Kanchipuram Gold - luxurious silk colors
+    {
+        name: "Kanchipuram Gold",
+        colors: [
+            '#ffd700', '#b8860b', '#8b0000', '#fff8e7', '#cc0033', '#004477', '#e63946', '#f1faee'
+        ]
+    },
+    // Madras Summer - hot season vibes
+    {
+        name: "Madras Summer",
+        colors: [
+            '#f7c873', '#e94f37', '#393e41', '#3f88c5', '#fff8e7', '#ffb347', '#ff6961', '#1d3557'
+        ]
+    },
+    // Pondy Pastel - soft colonial colors
+    {
+        name: "Pondy Pastel",
+        colors: [
+            '#f7cac9', '#92a8d1', '#034f84', '#f7786b', '#fff8e7', '#393e41', '#ffb347', '#e94f37'
+        ]
+    },
+    // Tamil Sunrise - morning light palette
+    {
+        name: "Tamil Sunrise",
+        colors: [
+            '#ffb347', '#ff6961', '#fff8e7', '#1d3557', '#e63946', '#f7c873', '#e94f37', '#393e41'
+        ]
+    },
+    // Chettinad Spice - aromatic spice colors
+    {
+        name: "Chettinad Spice",
+        colors: [
+            '#d72631', '#a2d5c6', '#077b8a', '#5c3c92', '#f4f4f4', '#ffd700', '#8b0000', '#1a2634'
+        ]
+    },
+    // Kerala Onam - festival celebration colors
+    {
+        name: "Kerala Onam",
+        colors: [
+            '#fff8e7', '#ffd700', '#e94f37', '#393e41', '#3f88c5', '#f7c873', '#ffb347', '#ff6961'
+        ]
+    },
+    // Bengal Indigo - traditional dye colors
+    {
+        name: "Bengal Indigo",
+        colors: [
+            '#1a2634', '#3f88c5', '#f7c873', '#e94f37', '#fff8e7', '#ffd700', '#393e41', '#1d3557'
+        ]
+    },
+    // Goa Beach - coastal vacation colors
+    {
+        name: "Goa Beach",
+        colors: [
+            '#f7cac9', '#f7786b', '#034f84', '#fff8e7', '#393e41', '#ffb347', '#e94f37', '#3f88c5'
+        ]
+    },
+    // Sri Lankan Tea - island tea plantation colors
+    {
+        name: "Sri Lankan Tea",
+        colors: [
+            '#a8dadc', '#457b9d', '#e63946', '#f1faee', '#fff8e7', '#ffd700', '#8b0000', '#1d3557'
+        ]
+    },
+    // African Madras - continental connection colors
+    {
+        name: "African Madras",
+        colors: [
+            '#ffb347', '#e94f37', '#393e41', '#3f88c5', '#ffd700', '#f7c873', '#ff6961', '#1d3557'
+        ]
+    },
+    // Mumbai Monsoon - western coastal rains
+    {
+        name: "Mumbai Monsoon",
+        colors: [
+            '#1d3557', '#457b9d', '#a8dadc', '#f1faee', '#ffd700', '#e94f37', '#393e41', '#3f88c5'
+        ]
+    },
+    // Ivy League - academic prestige colors
+    {
+        name: "Ivy League",
+        colors: [
+            '#002147', '#a6192e', '#f4f4f4', '#ffd700', '#005a9c', '#00356b', '#ffffff', '#8c1515'
+        ]
+    },
+    // Indian Flag - national pride colors
+    {
+        name: "Indian Flag",
+        colors: [
+            '#ff9933', '#ffffff', '#138808', '#000080', '#cc0033', '#004477', '#ffd700', '#8b0000'
         ]
     }
 ];
