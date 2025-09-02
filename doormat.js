@@ -627,29 +627,35 @@ function drawSelvedgeEdges() {
 }
 
 function drawTexturedSelvedgeArc(centerX, centerY, radius, startAngle, endAngle, r, g, b, side) {
-    // Draw a realistic textured selvedge arc made of individual threads
-    let threadCount = max(3, floor(radius / 2)); // Number of threads based on radius
+    // Draw a realistic textured selvedge arc with visible woven texture
+    let threadCount = max(6, floor(radius / 1.2)); // More threads for visible texture
     let threadSpacing = radius / threadCount;
     
-    // Draw base semicircle with main color - more transparent
-    fill(r, g, b, 180); // Reduced from 255 to 180 for transparency
-    noStroke();
-    arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
-    
-    // Add individual thread texture
+    // Draw individual thread arcs to create visible woven texture
     for (let i = 0; i < threadCount; i++) {
         let threadRadius = radius - (i * threadSpacing);
-        let threadAlpha = map(i, 0, threadCount, 255, 100); // Fade towards center
         
-        // Vary thread color slightly for texture
-        let threadR = r + random(-20, 20);
-        let threadG = g + random(-20, 20);
-        let threadB = b + random(-20, 20);
-        threadR = constrain(threadR, 0, 255);
-        threadG = constrain(threadG, 0, 255);
-        threadB = constrain(threadB, 0, 255);
+        // Create distinct thread colors for visible texture
+        let threadR, threadG, threadB;
         
-        fill(threadR, threadG, threadB, threadAlpha * 0.7); // Make threads more transparent
+        if (i % 2 === 0) {
+            // Lighter threads
+            threadR = constrain(r + 25, 0, 255);
+            threadG = constrain(g + 25, 0, 255);
+            threadB = constrain(b + 25, 0, 255);
+        } else {
+            // Darker threads
+            threadR = constrain(r - 20, 0, 255);
+            threadG = constrain(g - 20, 0, 255);
+            threadB = constrain(b - 20, 0, 255);
+        }
+        
+        // Add some random variation for natural look
+        threadR = constrain(threadR + random(-10, 10), 0, 255);
+        threadG = constrain(threadG + random(-10, 10), 0, 255);
+        threadB = constrain(threadB + random(-10, 10), 0, 255);
+        
+        fill(threadR, threadG, threadB, 88); // More transparent for better blending
         
         // Draw individual thread arc with slight position variation
         let threadX = centerX + random(-1, 1);
@@ -660,25 +666,51 @@ function drawTexturedSelvedgeArc(centerX, centerY, radius, startAngle, endAngle,
         arc(threadX, threadY, threadRadius * 2, threadRadius * 2, threadStartAngle, threadEndAngle);
     }
     
-    // Add subtle shadow for depth - more transparent
-    fill(r * 0.7, g * 0.7, b * 0.7, 50); // Reduced from 80 to 50
+    // Add a few more detailed texture layers
+    for (let i = 0; i < 3; i++) {
+        let detailRadius = radius * (0.3 + i * 0.2);
+        let detailAlpha = 180 - (i * 40);
+        
+        // Create contrast for visibility
+        let detailR = constrain(r + (i % 2 === 0 ? 15 : -15), 0, 255);
+        let detailG = constrain(g + (i % 2 === 0 ? 15 : -15), 0, 255);
+        let detailB = constrain(b + (i % 2 === 0 ? 15 : -15), 0, 255);
+        
+        fill(detailR, detailG, detailB, detailAlpha * 0.7); // More transparent detail layers
+        
+        let detailX = centerX + random(-0.5, 0.5);
+        let detailY = centerY + random(-0.5, 0.5);
+        let detailStartAngle = startAngle + random(-0.05, 0.05);
+        let detailEndAngle = endAngle + random(-0.05, 0.05);
+        
+        arc(detailX, detailY, detailRadius * 2, detailRadius * 2, detailStartAngle, detailEndAngle);
+    }
+    
+    // Add subtle shadow for depth
+            fill(r * 0.6, g * 0.6, b * 0.6, 70); // More transparent shadow
     let shadowOffset = side === 'left' ? 1 : -1;
     arc(centerX + shadowOffset, centerY + 1, radius * 2, radius * 2, startAngle, endAngle);
     
     // Add small transparent hole in the center
     noFill();
-    arc(centerX, centerY, radius * 0.6, radius * 0.6, startAngle, endAngle);
+    arc(centerX, centerY, radius * 0.5, radius * 0.5, startAngle, endAngle);
     
-    // Add some small texture details - tiny bumps and irregularities
-    for (let i = 0; i < 5; i++) {
+    // Add visible texture details - small bumps and knots
+    for (let i = 0; i < 8; i++) {
         let detailAngle = random(startAngle, endAngle);
-        let detailRadius = radius * random(0.3, 0.8);
+        let detailRadius = radius * random(0.2, 0.7);
         let detailX = centerX + cos(detailAngle) * detailRadius;
         let detailY = centerY + sin(detailAngle) * detailRadius;
         
-        fill(r * 0.9, g * 0.9, b * 0.9, 40); // Reduced from 60 to 40 for more transparency
+        // Alternate between light and dark for visible contrast
+        if (i % 2 === 0) {
+            fill(r + 20, g + 20, b + 20, 120); // More transparent light bumps
+        } else {
+            fill(r - 15, g - 15, b - 15, 120); // More transparent dark bumps
+        }
+        
         noStroke();
-        ellipse(detailX, detailY, random(1, 3), random(1, 3));
+        ellipse(detailX, detailY, random(1.5, 3.5), random(1.5, 3.5));
     }
 }
 
