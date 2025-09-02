@@ -689,7 +689,7 @@ function generateCharacterPixels() { return []; }`;
         }
 
         function minifyCode(code) {
-            // Very conservative minification to prevent syntax errors
+            // Enhanced but safe minification for maximum space savings
             return code
                 // Remove all comments
                 .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
@@ -698,32 +698,97 @@ function generateCharacterPixels() { return []; }`;
                 // Remove excessive whitespace but preserve necessary spaces
                 .replace(/\s+/g, ' ') // Replace multiple whitespace with single space
                 .replace(/;\s*}/g, ';}') // Remove space before closing braces
+                .replace(/{\s*/g, '{') // Remove space after opening braces
+                .replace(/}\s*/g, '}') // Remove space after closing braces
                 .replace(/,\s*/g, ',') // Remove space after commas
+                .replace(/;\s*/g, ';') // Remove space after semicolons
+                .replace(/\(\s*/g, '(') // Remove space after opening parentheses
+                .replace(/\s*\)/g, ')') // Remove space before closing parentheses
+                .replace(/\[\s*/g, '[') // Remove space after opening brackets
+                .replace(/\s*\]/g, ']') // Remove space before closing brackets
                 
-                // Final cleanup - very minimal
+                // Safe operator spacing optimizations
+                .replace(/\s*=\s*/g, '=') // Remove spaces around equals
+                .replace(/\s*\+\s*/g, '+') // Remove spaces around plus
+                .replace(/\s*-\s*/g, '-') // Remove spaces around minus
+                .replace(/\s*\*\s*/g, '*') // Remove spaces around multiply
+                .replace(/\s*\/\s*/g, '/') // Remove spaces around divide
+                .replace(/\s*<\s*/g, '<') // Remove spaces around less than
+                .replace(/\s*>\s*/g, '>') // Remove spaces around greater than
+                .replace(/\s*!\s*/g, '!') // Remove spaces around not
+                
+                // Remove spaces around dots and question marks
+                .replace(/\s*\.\s*/g, '.') // Remove spaces around dots
+                .replace(/\s*\?\s*/g, '?') // Remove spaces around question marks
+                .replace(/\s*:\s*/g, ':') // Remove spaces around colons
+                
+                // Final cleanup
                 .trim();
         }
 
         function obfuscateWithTamilLetters(code) {
-            // Tamil letters for variable obfuscation - using simpler approach
-            const tamilLetters = ['அ','ஆ','இ','ஈ','உ','ஊ','எ','ஏ','ஐ','ஒ','ஓ','ஔ','க','ங','ச','ஜ','ஞ','ட','ண','த','ந','ப','ம','ய','ர','ல','வ','ஶ','ஷ','ஸ','ஹ'];
+            // Tamil letters for variable obfuscation
+            const tamilLetters = ['அ','ஆ','இ','ஈ','உ','ஊ','எ','ஏ','ஐ','ஒ','ஓ','ஔ','க','ங','ச','ஜ','ஞ','ட','ண','த','ந','ப','ம','ய','ர','ல','வ','ஶ','ஷ','ஸ','ஹ','ா','ி','ீ','ு','ூ','ெ','ே','ை','ொ','ோ','ௌ'];
             
-            // Only obfuscate the most important variables to avoid syntax errors
-            const variables = [
-                'doormatWidth', 'doormatHeight', 'fringeLength', 'weftThickness', 'warpThickness',
-                'selectedPalette', 'stripeData', 'doormatTextRows', 'textData', 'lightTextColor', 'darkTextColor'
-            ];
+            // Comprehensive list of variables to obfuscate using dictionary replacement
+            const obfuscationMap = {
+                // Core variables
+                'doormatWidth': 'அ',
+                'doormatHeight': 'ஆ', 
+                'fringeLength': 'இ',
+                'weftThickness': 'ஈ',
+                'warpThickness': 'உ',
+                'selectedPalette': 'ஊ',
+                'stripeData': 'எ',
+                'doormatTextRows': 'ஏ',
+                'textData': 'ஐ',
+                'lightTextColor': 'ஒ',
+                'darkTextColor': 'ஓ',
+                
+                // Common variables in loops and functions
+                'primaryColor': 'ம',
+                'secondaryColor': 'ய',
+                'warpColor': 'ர',
+                'weftColor': 'ல',
+                'selvedgeColor': 'வ',
+                'fringeColor': 'ஶ',
+                'isTextPixel': 'ப',
+                'warpSpacing': 'த',
+                'weftSpacing': 'ந',
+                'scaledWarp': 'ஷ',
+                'scaledWeft': 'ஸ',
+                'charWidth': 'ஹ',
+                'charHeight': 'ா',
+                'textPixel': 'ி',
+                'noiseVal': 'ீ',
+                'blendFactor': 'ு',
+                'threadRadius': 'ூ',
+                'threadColor': 'ெ',
+                'strandColor': 'ே',
+                'waveAmplitude': 'ை',
+                'curlIntensity': 'ொ',
+                'threadLength': 'ோ',
+                'reliefNoise': 'ௌ',
+                
+                // Function names (be careful with these)
+                'drawStripe': 'ஔ',
+                'drawTextureOverlay': 'க',
+                'drawFringe': 'ங',
+                'drawSelvedgeEdges': 'ச',
+                'drawFringeSection': 'ஜ',
+                'updateTextColors': 'ஞ',
+                'generateTextData': 'ட',
+                'generateCharacterPixels': 'ண'
+            };
             
             let obfuscatedCode = code;
-            let letterIndex = 0;
             
-            variables.forEach(variable => {
-                if (letterIndex < tamilLetters.length && obfuscatedCode.includes(variable)) {
-                    const tamilVar = tamilLetters[letterIndex];
-                    // Use word boundaries to avoid partial replacements
-                    const regex = new RegExp('\\b' + variable + '\\b', 'g');
-                    obfuscatedCode = obfuscatedCode.replace(regex, tamilVar);
-                    letterIndex++;
+            // Use simple string replacement instead of regex for better performance and safety
+            Object.entries(obfuscationMap).forEach(([original, replacement]) => {
+                if (obfuscatedCode.includes(original)) {
+                    // Use word boundary replacement to avoid partial matches
+                    const regex = new RegExp('\\b' + original + '\\b', 'g');
+                    obfuscatedCode = obfuscatedCode.replace(regex, replacement);
                 }
             });
             
