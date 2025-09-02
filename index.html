@@ -689,16 +689,44 @@ function generateCharacterPixels() { return []; }`;
         }
 
         function minifyCode(code) {
-            // Simple minification - remove comments, extra whitespace, and line breaks
+            // Aggressive minification for maximum size reduction
             return code
+                // Remove all comments
                 .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
                 .replace(/\/\/.*$/gm, '') // Remove // comments
-                .replace(/\s+/g, ' ') // Replace multiple whitespace with single space
-                .replace(/;\s*}/g, ';}') // Remove space before closing braces
+                
+                // Remove all unnecessary whitespace
+                .replace(/\s+/g, '') // Remove ALL whitespace (spaces, tabs, newlines)
+                .replace(/;}/g, '}') // Remove semicolons before closing braces
+                .replace(/,\s*}/g, '}') // Remove trailing commas
+                .replace(/,\s*]/g, ']') // Remove trailing commas in arrays
+                
+                // Optimize common patterns
+                .replace(/let\s+/g, '') // Remove 'let ' declarations
+                .replace(/const\s+/g, '') // Remove 'const ' declarations
+                .replace(/function\s+/g, '') // Remove 'function ' keyword
+                .replace(/return\s+/g, '') // Remove 'return ' keyword
+                .replace(/if\s*\(/g, 'if(') // Remove space after if
+                .replace(/for\s*\(/g, 'for(') // Remove space after for
+                .replace(/while\s*\(/g, 'while(') // Remove space after while
+                
+                // Remove unnecessary semicolons and spaces
+                .replace(/;\s*}/g, '}') // Remove semicolons before braces
                 .replace(/{\s*/g, '{') // Remove space after opening braces
                 .replace(/}\s*/g, '}') // Remove space after closing braces
                 .replace(/,\s*/g, ',') // Remove space after commas
-                .replace(/;\s*/g, ';') // Remove space after semicolons
+                .replace(/\(\s*/g, '(') // Remove space after opening parentheses
+                .replace(/\s*\)/g, ')') // Remove space before closing parentheses
+                .replace(/\[\s*/g, '[') // Remove space after opening brackets
+                .replace(/\s*\]/g, ']') // Remove space before closing brackets
+                
+                // Optimize specific patterns
+                .replace(/Math\./g, '') // Remove 'Math.' prefix (use global functions)
+                .replace(/window\./g, '') // Remove 'window.' prefix where safe
+                .replace(/typeof\s+/g, 'typeof') // Remove space after typeof
+                
+                // Final cleanup
+                .replace(/\s+/g, '') // Remove any remaining whitespace
                 .trim();
         }
 
@@ -732,6 +760,13 @@ function generateCharacterPixels() { return []; }`;
             return obfuscatedCode;
         }
 
+        function createCompressedNFTHTML(seed, palette, traits, obfuscatedCode) {
+            // Create ultra-compressed NFT HTML with minimal structure
+            const traitsText = Object.entries(traits).map(entry => entry[0] + ':' + entry[1]).join('|');
+            
+            return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>NFT#' + seed + '</title><style>body{margin:0;padding:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:Arial,sans-serif}canvas{border-radius:8px;box-shadow:0 4px 8px rgba(255,255,255,0.1)}.i{position:absolute;top:10px;left:10px;color:#fff;font-size:10px;opacity:0.7}.t{position:absolute;top:10px;right:10px;color:#fff;font-size:8px;opacity:0.7;text-align:right}</style><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script></head><body><div class="i">S:' + seed + '|P:' + palette.name + '</div><div class="t">' + traitsText + '</div><div id="c"></div><script>' + obfuscatedCode + '</script></body></html>';
+        }
+
         async function exportNFT() {
             // Get current state
             const seed = document.getElementById('seedInput').value;
@@ -758,30 +793,12 @@ function generateCharacterPixels() { return []; }`;
                 const minifiedCode = minifyCode(pureAlgorithmCode);
                 const obfuscatedCode = obfuscateWithTamilLetters(minifiedCode);
                 
-                // Create self-contained NFT HTML with P5.js from CDN  
-                let nftHTML = '<!DOCTYPE html>';
-                nftHTML += '<html><head><meta charset="UTF-8">';
-                nftHTML += '<title>Doormat NFT #' + seed + '</title>';
-                nftHTML += '<style>';
-                nftHTML += 'body{margin:0;padding:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;font-family:Arial,sans-serif}';
-                nftHTML += 'canvas{border-radius:8px;box-shadow:0 4px 8px rgba(255,255,255,0.1)}';
-                nftHTML += '.info{position:absolute;top:10px;left:10px;color:#fff;font-size:10px;opacity:0.7}';
-                nftHTML += '.traits{position:absolute;top:10px;right:10px;color:#fff;font-size:8px;opacity:0.7;text-align:right}';
-                nftHTML += '</style>';
-                nftHTML += '<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></' + 'script>';
-                nftHTML += '</head><body>';
-                nftHTML += '<div class="info">Seed: ' + seed + '<br>Palette: ' + palette.name + '</div>';
-                nftHTML += '<div class="traits">';
-                nftHTML += Object.entries(traits).map(function(entry) { return entry[0] + ': ' + entry[1]; }).join('<br>');
-                nftHTML += '</div>';
-                nftHTML += '<div id="canvas-container"></div>';
-                nftHTML += '<script>';
-                nftHTML += obfuscatedCode;
-                nftHTML += '</' + 'script>';
-                nftHTML += '</body></html>';
+                // Create ultra-compressed NFT HTML
+                const compressedHTML = createCompressedNFTHTML(seed, palette, traits, obfuscatedCode);
                 
                 // Download the self-contained file
-                const blob = new Blob([nftHTML], { type: 'text/html' });
+                const blob = new Blob([compressedHTML], { type: 'text/html' });
+                
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -791,8 +808,8 @@ function generateCharacterPixels() { return []; }`;
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
-                console.log('NFT file size:', Math.round(nftHTML.length / 1024) + 'KB');
-                alert('NFT HTML exported! File size: ' + Math.round(nftHTML.length / 1024) + 'KB - ready for on-chain storage.');
+                console.log('NFT file size:', Math.round(compressedHTML.length / 1024) + 'KB');
+                alert('NFT HTML exported! File size: ' + Math.round(compressedHTML.length / 1024) + 'KB - ready for on-chain storage.');
                 
             } catch (error) {
                 console.error('Export failed:', error);
