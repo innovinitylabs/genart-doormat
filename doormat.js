@@ -37,7 +37,7 @@ let stripeData = [];
 let doormatTextRows = []; // Array of text rows to embed in the doormat
 let textData = []; // Text positioning and character data
 
-// Make data globally available for NFT export and trait calculation
+// Initialize global data structures
 window.stripeData = stripeData;
 window.doormatTextRows = doormatTextRows;
 
@@ -63,7 +63,8 @@ function setup() {
     noLoop();
 }
 
-function generateDoormat(seed) {
+// Core generation function - no HTML dependencies
+function generateDoormatCore(seed) {
     currentSeed = seed;
     randomSeed(seed);
     noiseSeed(seed);
@@ -80,12 +81,15 @@ function generateDoormat(seed) {
     // Generate stripe data
     generateStripeData();
     
+    // Update global stripe data
+    window.stripeData = stripeData;
+    
     // Redraw the doormat
     redraw();
     
     // Update traits after everything is generated
     if (typeof window !== 'undefined' && typeof window.updateTraitsFromSketch === 'function') {
-        console.log("Calling updateTraitsFromSketch from generateDoormat");
+        console.log("Calling updateTraitsFromSketch from generateDoormatCore");
         setTimeout(() => {
             window.updateTraitsFromSketch();
         }, 100);
@@ -637,61 +641,29 @@ function drawBorder() {
     pop();
 }
 
-// Global function to be called from HTML
-function generateDoormat(seed) {
-    if (typeof window !== 'undefined') {
-        window.generateDoormat = function(seed) {
-            currentSeed = seed;
-            randomSeed(seed);
-            noiseSeed(seed);
-            
-            selectedPalette = random(colorPalettes);
-            updateTextColors();
-            generateStripeData();
-            redraw();
-        };
-    }
-    
-    // Call the function immediately if we're setting it up
-    currentSeed = seed;
-    randomSeed(seed);
-    noiseSeed(seed);
-    
-    selectedPalette = random(colorPalettes);
-    updateTextColors();
-    generateStripeData();
-    if (typeof redraw === 'function') {
-        redraw();
-    }
-}
+// Expose core generation function globally
+window.generateDoormatCore = generateDoormatCore;
 
 
 
-// Text embedding functions
-function addTextToDoormatInSketch(textRows) {
-    // Handle both single string and array of strings
-    if (typeof textRows === 'string') {
-        textRows = [textRows];
-    }
-    
-    // Clean each text row
-    doormatTextRows = textRows.map(text => 
-        text.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, MAX_CHARS)
-    ).filter(text => text.length > 0); // Remove empty rows
-    
+// Pure text data generation functions - no HTML dependencies
+function generateTextDataInSketch() {
     generateTextData();
-    redraw();
+    // Update the global reference
+    window.textData = textData;
 }
 
-function clearTextFromDoormat() {
-    doormatTextRows = [];
+function clearTextDataInSketch() {
     textData = [];
-    redraw();
+    // Update the global reference
+    window.textData = textData;
 }
 
 function generateTextData() {
     textData = [];
-    if (!doormatTextRows || doormatTextRows.length === 0) return;
+    // Use global doormatTextRows if available, otherwise use local
+    const textRows = window.doormatTextRows || doormatTextRows || [];
+    if (!textRows || textRows.length === 0) return;
     
     // Use actual thread spacing for text
     const warpSpacing = warpThickness + 1;
@@ -708,14 +680,14 @@ function generateTextData() {
     const rowSpacing = charWidth * 1.5; // Space between rows
     
     // Calculate total width needed for all rows
-    const totalRowsWidth = doormatTextRows.length * charWidth + (doormatTextRows.length - 1) * rowSpacing;
+    const totalRowsWidth = textRows.length * charWidth + (textRows.length - 1) * rowSpacing;
     
     // Calculate starting X position to center all rows
     const baseStartX = (doormatWidth - totalRowsWidth) / 2;
     
     // Generate text data for each row
-    for (let rowIndex = 0; rowIndex < doormatTextRows.length; rowIndex++) {
-        const doormatText = doormatTextRows[rowIndex];
+    for (let rowIndex = 0; rowIndex < textRows.length; rowIndex++) {
+        const doormatText = textRows[rowIndex];
         if (!doormatText) continue;
         
         // Calculate text dimensions for this row
@@ -771,10 +743,8 @@ function generateCharacterPixels(char, x, y, width, height) {
 
 // Trait calculation functions are now loaded from external file (trait-calculator.js)
 
-// Make the functions globally available
+// Expose pure generation functions globally
 if (typeof window !== 'undefined') {
-    window.addTextToDoormatInSketch = addTextToDoormatInSketch;
-    window.clearTextFromDoormat = clearTextFromDoormat;
-    window.getCurrentPalette = () => selectedPalette;
-    // calculateTraits is now loaded from trait-calculator.js
+    window.generateTextDataInSketch = generateTextDataInSketch;
+    window.clearTextDataInSketch = clearTextDataInSketch;
 }

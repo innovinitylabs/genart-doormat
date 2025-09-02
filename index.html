@@ -202,6 +202,7 @@
     <script src="character-map.js"></script>
     <script src="trait-calculator.js"></script>
     <script src="doormat.js"></script>
+    <script src="html-interface.js"></script>
 
     <script>
         function generateNew() {
@@ -541,19 +542,47 @@
         window.updateTraitsFromSketch = updateTraitsFromSketch;
 
         // Function to create clean working doormat code
-        function createCleanDoormatCode(currentPalette, currentStripeData, textRows) {
-            const seed = document.getElementById('seedInput').value;
+        function createPureAlgorithmCode(seed, currentPalette, currentStripeData, textRows) {
+            // Get only the characters actually used in text
+            const usedChars = getUsedCharacters(textRows);
             
-            // Create clean, working doormat code
-            const cleanCode = `
+            // Create pure, self-contained algorithm
+            const pureCode = `
+// Doormat NFT #${seed} - Self-contained algorithm
 let doormatWidth = 800;
 let doormatHeight = 1200;
 let fringeLength = 30;
 let weftThickness = 8;
+let warpThickness = 2;
+const TEXT_SCALE = 2;
+
+// Embedded current state
 let selectedPalette = ${JSON.stringify(currentPalette)};
 let stripeData = ${JSON.stringify(currentStripeData)};
 let doormatTextRows = ${JSON.stringify(textRows)};
 let textData = [];
+
+// Text colors
+let lightTextColor, darkTextColor;
+
+// Embedded character map (only used characters)
+const characterMap = ${JSON.stringify(usedChars)};
+
+function updateTextColors() {
+    if (!selectedPalette || !selectedPalette.colors) return;
+    let darkest = selectedPalette.colors[0];
+    let lightest = selectedPalette.colors[0];
+    let darkestVal = 999, lightestVal = -1;
+    for (let hex of selectedPalette.colors) {
+        let c = color(hex);
+        let bright = (red(c) + green(c) + blue(c)) / 3;
+        if (bright < darkestVal) { darkestVal = bright; darkest = hex; }
+        if (bright > lightestVal) { lightestVal = bright; lightest = hex; }
+    }
+    darkTextColor = color(darkest);
+    lightTextColor = lerpColor(color(lightest), color(255), 0.3);
+    darkTextColor = lerpColor(color(darkest), color(0), 0.4);
+}
 
 function setup() {
     let totalWidth = doormatWidth + fringeLength * 4;
@@ -565,78 +594,403 @@ function setup() {
     randomSeed(${seed});
     noiseSeed(${seed});
     
-    generateDoormat();
+    updateTextColors();
+    generateTextData();
+    
+    draw();
 }
 
-function generateDoormat() {
-    background(26);
+function draw() {
+    background(222, 222, 222);
     
     push();
     translate(width/2, height/2);
     rotate(PI/2);
     translate(-height/2, -width/2);
     
-    drawStripes();
-    if (doormatTextRows.length > 0) {
-        generateTextData();
-        drawText();
+    push();
+    translate(fringeLength * 2, fringeLength * 2);
+    
+    for (let stripe of stripeData) {
+        drawStripe(stripe);
     }
+    
+    drawTextureOverlay();
+    pop();
+    
     drawFringe();
     drawSelvedgeEdges();
     
     pop();
 }
 
-function drawStripes() {
-    stripeData.forEach(stripe => {
-        fill(stripe.colors[0]);
-        noStroke();
-        rect(fringeLength, stripe.y + fringeLength, doormatWidth, stripe.height);
-    });
+${extractCoreAlgorithmFunctions()}
+`;
+            return pureCode;
+        }
+
+        function getUsedCharacters(textRows) {
+            const used = new Set();
+            textRows.forEach(row => {
+                for (let char of row.toUpperCase()) {
+                    used.add(char);
+                }
+            });
+            used.add(' '); // Always include space
+            
+            const usedCharMap = {};
+            used.forEach(char => {
+                if (characterMap[char]) {
+                    usedCharMap[char] = characterMap[char];
+                }
+            });
+            return usedCharMap;
+        }
+
+        function extractCoreAlgorithmFunctions() {
+            // This extracts the core rendering functions from our algorithm
+            // We'll include the essential drawing functions here
+            return `
+function drawStripe(stripe) {
+    let warpSpacing = warpThickness + 1;
+    let weftSpacing = weftThickness + 1;
+    
+    for (let x = 0; x < doormatWidth; x += warpSpacing) {
+        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
+            let warpColor = color(stripe.primaryColor);
+            
+            let isTextPixel = false;
+            if (textData.length > 0) {
+                for (let textPixel of textData) {
+                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
+                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
+                        isTextPixel = true;
+                        break;
+                    }
+                }
+            }
+            
+            let r = red(warpColor) + random(-15, 15);
+            let g = green(warpColor) + random(-15, 15);
+            let b = blue(warpColor) + random(-15, 15);
+            
+            if (isTextPixel) {
+                const bgBrightness = (r + g + b) / 3;
+                let tc = bgBrightness < 128 ? lightTextColor : darkTextColor;
+                r = red(tc); g = green(tc); b = blue(tc);
+            }
+            
+            r = constrain(r, 0, 255);
+            g = constrain(g, 0, 255);
+            b = constrain(b, 0, 255);
+            
+            fill(r, g, b);
+            noStroke();
+            
+            let warpCurve = sin(y * 0.05) * 0.5;
+            rect(x + warpCurve, y, warpThickness, weftSpacing);
+        }
+    }
+    
+    for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
+        for (let x = 0; x < doormatWidth; x += warpSpacing) {
+            let weftColor = color(stripe.primaryColor);
+            
+            let isTextPixel = false;
+            if (textData.length > 0) {
+                for (let textPixel of textData) {
+                    if (x >= textPixel.x && x < textPixel.x + textPixel.width &&
+                        y >= textPixel.y && y < textPixel.y + textPixel.height) {
+                        isTextPixel = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (stripe.weaveType === 'mixed' && stripe.secondaryColor) {
+                if (noise(x * 0.1, y * 0.1) > 0.5) {
+                    weftColor = color(stripe.secondaryColor);
+                }
+            } else if (stripe.weaveType === 'textured') {
+                let noiseVal = noise(x * 0.05, y * 0.05);
+                weftColor = lerpColor(color(stripe.primaryColor), color(255), noiseVal * 0.15);
+            }
+            
+            let r = red(weftColor) + random(-20, 20);
+            let g = green(weftColor) + random(-20, 20);
+            let b = blue(weftColor) + random(-20, 20);
+            
+            if (isTextPixel) {
+                const bgBrightness = (r + g + b) / 3;
+                let tc = bgBrightness < 128 ? lightTextColor : darkTextColor;
+                r = red(tc); g = green(tc); b = blue(tc);
+            }
+            
+            r = constrain(r, 0, 255);
+            g = constrain(g, 0, 255);
+            b = constrain(b, 0, 255);
+            
+            fill(r, g, b);
+            noStroke();
+            
+            let weftCurve = cos(x * 0.05) * 0.5;
+            rect(x, y + weftCurve, warpSpacing, weftThickness);
+        }
+    }
+    
+    for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing * 2) {
+        for (let x = 0; x < doormatWidth; x += warpSpacing * 2) {
+            fill(0, 0, 0, 40);
+            noStroke();
+            rect(x + 1, y + 1, warpSpacing - 2, weftSpacing - 2);
+        }
+    }
+    
+    for (let y = stripe.y + weftSpacing; y < stripe.y + stripe.height; y += weftSpacing * 2) {
+        for (let x = warpSpacing; x < doormatWidth; x += warpSpacing * 2) {
+            fill(255, 255, 255, 30);
+            noStroke();
+            rect(x, y, warpSpacing - 1, weftSpacing - 1);
+        }
+    }
+}
+
+function drawTextureOverlay() {
+    push();
+    blendMode(MULTIPLY);
+    
+    for (let x = 0; x < doormatWidth; x += 2) {
+        for (let y = 0; y < doormatHeight; y += 2) {
+            let noiseVal = noise(x * 0.02, y * 0.02);
+            let hatchingIntensity = map(noiseVal, 0, 1, 0, 50);
+            
+            fill(0, 0, 0, hatchingIntensity);
+            noStroke();
+            rect(x, y, 2, 2);
+        }
+    }
+    
+    for (let x = 0; x < doormatWidth; x += 6) {
+        for (let y = 0; y < doormatHeight; y += 6) {
+            let reliefNoise = noise(x * 0.03, y * 0.03);
+            if (reliefNoise > 0.6) {
+                fill(255, 255, 255, 25);
+                noStroke();
+                rect(x, y, 6, 6);
+            } else if (reliefNoise < 0.4) {
+                fill(0, 0, 0, 20);
+                noStroke();
+                rect(x, y, 6, 6);
+            }
+        }
+    }
+    
+    pop();
+}
+
+function drawFringe() {
+    drawFringeSection(fringeLength * 2, fringeLength, doormatWidth, fringeLength, 'top');
+    drawFringeSection(fringeLength * 2, fringeLength * 2 + doormatHeight, doormatWidth, fringeLength, 'bottom');
+    drawSelvedgeEdges();
+}
+
+function drawSelvedgeEdges() {
+    let weftSpacing = weftThickness + 1;
+    let isFirstWeft = true;
+    
+    for (let stripe of stripeData) {
+        for (let y = stripe.y; y < stripe.y + stripe.height; y += weftSpacing) {
+            if (isFirstWeft) {
+                isFirstWeft = false;
+                continue;
+            }
+            
+            if (stripe === stripeData[stripeData.length - 1] && y + weftSpacing >= stripe.y + stripe.height) {
+                continue;
+            }
+            
+            let selvedgeColor = color(stripe.primaryColor);
+            if (stripe.secondaryColor && stripe.weaveType === 'mixed') {
+                let secondaryColor = color(stripe.secondaryColor);
+                let blendFactor = noise(y * 0.1) * 0.5 + 0.5;
+                selvedgeColor = lerpColor(selvedgeColor, secondaryColor, blendFactor);
+            }
+            
+            let r = red(selvedgeColor) * 0.8;
+            let g = green(selvedgeColor) * 0.8;
+            let b = blue(selvedgeColor) * 0.8;
+            
+            fill(r, g, b);
+            noStroke();
+            
+            let radius = weftThickness * random(1.2, 1.8);
+            let centerX = fringeLength * 2 + random(-2, 2);
+            let centerY = fringeLength * 2 + y + weftThickness/2 + random(-1, 1);
+            
+            let startAngle = HALF_PI + random(-0.2, 0.2);
+            let endAngle = -HALF_PI + random(-0.2, 0.2);
+            
+            arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
+            
+            centerX = fringeLength * 2 + doormatWidth + random(-2, 2);
+            startAngle = -HALF_PI + random(-0.2, 0.2);
+            endAngle = HALF_PI + random(-0.2, 0.2);
+            
+            arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
+        }
+    }
+}
+
+function drawFringeSection(x, y, w, h, side) {
+    let fringeStrands = w / 12;
+    let strandWidth = w / fringeStrands;
+    
+    for (let i = 0; i < fringeStrands; i++) {
+        let strandX = x + i * strandWidth;
+        let strandColor = random(selectedPalette.colors);
+        
+        for (let j = 0; j < 12; j++) {
+            let threadX = strandX + random(-strandWidth/6, strandWidth/6);
+            let startY = side === 'top' ? y + h : y;
+            let endY = side === 'top' ? y : y + h;
+            
+            let waveAmplitude = random(1, 4);
+            let waveFreq = random(0.2, 0.8);
+            let direction = random([-1, 1]);
+            let curlIntensity = random(0.5, 2.0);
+            let threadLength = random(0.8, 1.2);
+            
+            let fringeColor = color(strandColor);
+            let r = red(fringeColor) * 0.7;
+            let g = green(fringeColor) * 0.7;
+            let b = blue(fringeColor) * 0.7;
+            
+            stroke(r, g, b);
+            strokeWeight(random(0.5, 1.2));
+            
+            noFill();
+            beginShape();
+            for (let t = 0; t <= 1; t += 0.1) {
+                let yPos = lerp(startY, endY, t * threadLength);
+                let xOffset = sin(t * PI * waveFreq) * waveAmplitude * t * direction * curlIntensity;
+                xOffset += random(-1, 1);
+                if (random() < 0.3) {
+                    xOffset += random(-2, 2);
+                }
+                vertex(threadX + xOffset, yPos);
+            }
+            endShape();
+        }
+    }
 }
 
 function generateTextData() {
     textData = [];
-    doormatTextRows.forEach((text, rowIndex) => {
-        let startY = fringeLength + 150 + rowIndex * 100;
-        for (let i = 0; i < text.length; i++) {
-            let charX = fringeLength + 100 + i * 50;
-            textData.push({x: charX, y: startY, char: text[i]});
+    if (!doormatTextRows || doormatTextRows.length === 0) return;
+    
+    const warpSpacing = warpThickness + 1;
+    const weftSpacing = weftThickness + 1;
+    const scaledWarp = warpSpacing * TEXT_SCALE;
+    const scaledWeft = weftSpacing * TEXT_SCALE;
+    
+    const charWidth = 7 * scaledWarp;
+    const charHeight = 5 * scaledWeft;
+    const spacing = scaledWeft;
+    const rowSpacing = charWidth * 1.5;
+    
+    const totalRowsWidth = doormatTextRows.length * charWidth + (doormatTextRows.length - 1) * rowSpacing;
+    const baseStartX = (doormatWidth - totalRowsWidth) / 2;
+    
+    for (let rowIndex = 0; rowIndex < doormatTextRows.length; rowIndex++) {
+        const doormatText = doormatTextRows[rowIndex];
+        if (!doormatText) continue;
+        
+        const textHeight = doormatText.length * (charHeight + spacing) - spacing;
+        const startX = baseStartX + rowIndex * (charWidth + rowSpacing);
+        const startY = (doormatHeight - textHeight) / 2;
+        
+        for (let i = 0; i < doormatText.length; i++) {
+            const char = doormatText.charAt(i);
+            const charY = startY + (doormatText.length - 1 - i) * (charHeight + spacing);
+            const charPixels = generateCharacterPixels(char, startX, charY, charWidth, charHeight);
+            textData.push(...charPixels);
         }
-    });
-}
-
-function drawText() {
-    textData.forEach(item => {
-        fill(255);
-        noStroke();
-        rect(item.x, item.y, 40, 70);
-    });
-}
-
-function drawFringe() {
-    for (let i = 0; i < 50; i++) {
-        let x = random(fringeLength, fringeLength + doormatWidth);
-        let color = stripeData[floor(map(x - fringeLength, 0, doormatWidth, 0, stripeData.length))]?.colors[0] || selectedPalette.colors[0];
-        stroke(color);
-        strokeWeight(2);
-        line(x, 0, x, fringeLength);
-        line(x, fringeLength + doormatHeight, x, fringeLength + doormatHeight + fringeLength);
     }
 }
 
-function drawSelvedgeEdges() {
-    stripeData.forEach((stripe, i) => {
-        let y = stripe.y + fringeLength;
-        let color = stripe.colors[0];
-        stroke(color);
-        strokeWeight(2);
-        arc(fringeLength - 15, y + stripe.height/2, 30, 30, PI/2, 3*PI/2);
-        arc(fringeLength + doormatWidth + 15, y + stripe.height/2, 30, 30, -PI/2, PI/2);
-    });
-}`;
+function generateCharacterPixels(char, x, y, width, height) {
+    const pixels = [];
+    const warpSpacing = warpThickness + 1;
+    const weftSpacing = weftThickness + 1;
+    const scaledWarp = warpSpacing * TEXT_SCALE;
+    const scaledWeft = weftSpacing * TEXT_SCALE;
 
-            return cleanCode;
+    const charDef = characterMap[char] || characterMap[' '];
+    if (!charDef) return pixels;
+
+    const numRows = charDef.length;
+    const numCols = charDef[0].length;
+
+    for (let row = 0; row < numRows; row++) {
+        for (let col = 0; col < numCols; col++) {
+            if (charDef[row][col] === '1') {
+                const newCol = row;
+                const newRow = numCols - 1 - col;
+                pixels.push({
+                    x: x + newCol * scaledWarp,
+                    y: y + newRow * scaledWeft,
+                    width: scaledWarp,
+                    height: scaledWeft
+                });
+            }
+        }
+    }
+    return pixels;
+}`;
+        }
+
+        function minifyCode(code) {
+            // Simple minification - remove comments, extra whitespace, and line breaks
+            return code
+                .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
+                .replace(/\/\/.*$/gm, '') // Remove // comments
+                .replace(/\s+/g, ' ') // Replace multiple whitespace with single space
+                .replace(/;\s*}/g, ';}') // Remove space before closing braces
+                .replace(/{\s*/g, '{') // Remove space after opening braces
+                .replace(/}\s*/g, '}') // Remove space after closing braces
+                .replace(/,\s*/g, ',') // Remove space after commas
+                .replace(/;\s*/g, ';') // Remove space after semicolons
+                .trim();
+        }
+
+        function obfuscateWithTamilLetters(code) {
+            // Tamil letters for variable obfuscation
+            const tamilLetters = ['அ','ஆ','இ','ஈ','உ','ஊ','எ','ஏ','ஐ','ஒ','ஓ','ஔ','க','ங','ச','ஜ','ஞ','ட','ண','த','ந','ப','ம','ய','ர','ல','வ','ஶ','ஷ','ஸ','ஹ'];
+            
+            // Common variable names to obfuscate
+            const variables = [
+                'doormatWidth', 'doormatHeight', 'fringeLength', 'weftThickness', 'warpThickness',
+                'selectedPalette', 'stripeData', 'doormatTextRows', 'textData', 'lightTextColor', 'darkTextColor',
+                'drawStripe', 'drawTextureOverlay', 'drawFringe', 'drawSelvedgeEdges', 'drawFringeSection',
+                'generateTextData', 'generateCharacterPixels', 'updateTextColors',
+                'warpSpacing', 'weftSpacing', 'isTextPixel', 'warpColor', 'weftColor', 'selvedgeColor',
+                'fringeColor', 'charWidth', 'charHeight', 'scaledWarp', 'scaledWeft'
+            ];
+            
+            let obfuscatedCode = code;
+            let letterIndex = 0;
+            
+            variables.forEach(variable => {
+                if (letterIndex < tamilLetters.length && obfuscatedCode.includes(variable)) {
+                    const tamilVar = tamilLetters[letterIndex];
+                    // Use word boundaries to avoid partial replacements
+                    const regex = new RegExp('\\b' + variable + '\\b', 'g');
+                    obfuscatedCode = obfuscatedCode.replace(regex, tamilVar);
+                    letterIndex++;
+                }
+            });
+            
+            return obfuscatedCode;
         }
 
         async function exportNFT() {
@@ -658,8 +1012,12 @@ function drawSelvedgeEdges() {
             const currentStripeData = window.stripeData || [];
             
             try {
-                // Create clean working doormat code with current state
-                const cleanDoormatCode = createCleanDoormatCode(palette, currentStripeData, textRows);
+                // Create pure algorithm code with current state
+                const pureAlgorithmCode = createPureAlgorithmCode(parseInt(seed), palette, currentStripeData, textRows);
+                
+                // Minify and obfuscate
+                const minifiedCode = minifyCode(pureAlgorithmCode);
+                const obfuscatedCode = obfuscateWithTamilLetters(minifiedCode);
                 
                 // Create self-contained NFT HTML with P5.js from CDN  
                 let nftHTML = '<!DOCTYPE html>';
@@ -679,7 +1037,7 @@ function drawSelvedgeEdges() {
                 nftHTML += '</div>';
                 nftHTML += '<div id="canvas-container"></div>';
                 nftHTML += '<script>';
-                nftHTML += cleanDoormatCode;
+                nftHTML += obfuscatedCode;
                 nftHTML += '</' + 'script>';
                 nftHTML += '</body></html>';
                 
