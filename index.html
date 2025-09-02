@@ -650,6 +650,7 @@ ${coreAlgorithm}
                     'drawFringe',
                     'drawSelvedgeEdges', 
                     'drawFringeSection',
+                    'drawTexturedSelvedgeArc',
                     'generateTextData',
                     'generateCharacterPixels'
                 ];
@@ -657,10 +658,13 @@ ${coreAlgorithm}
                 let extractedCode = '';
                 
                 functions.forEach(funcName => {
-                    const regex = new RegExp(`function ${funcName}\\([^)]*\\)\\s*{[\\s\\S]*?^}`, 'm');
+                    // More robust regex to capture function definitions
+                    const regex = new RegExp(`function\\s+${funcName}\\s*\\([^)]*\\)\\s*{[\\s\\S]*?\\n}`, 'm');
                     const match = sourceCode.match(regex);
                     if (match) {
                         extractedCode += match[0] + '\n\n';
+                    } else {
+                        console.warn(`Function ${funcName} not found in source`);
                     }
                 });
                 
