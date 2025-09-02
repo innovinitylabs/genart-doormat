@@ -750,11 +750,5 @@ const colorPalettes = [
             '#002147', '#a6192e', '#f4f4f4', '#ffd700', '#005a9c', '#00356b', '#ffffff', '#8c1515'
         ]
     },
-    // Indian Flag - national pride colors
-    {
-        name: "Indian Flag",
-        colors: [
-            '#ff9933', '#ffffff', '#138808', '#000080', '#cc0033', '#004477', '#ffd700', '#8b0000'
-        ]
-    }
+
 ];
