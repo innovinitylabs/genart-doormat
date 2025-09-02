@@ -37,14 +37,16 @@ let stripeData = [];
 let doormatTextRows = []; // Array of text rows to embed in the doormat
 let textData = []; // Text positioning and character data
 
-// Make stripeData globally available for NFT export
+// Make data globally available for NFT export and trait calculation
 window.stripeData = stripeData;
+window.doormatTextRows = doormatTextRows;
 
 // Initialize with a default palette
 function initializePalette() {
     if (!selectedPalette) {
         selectedPalette = colorPalettes[0]; // Use first palette as default
     }
+    window.selectedPalette = selectedPalette; // Make globally available
     updateTextColors();
 }
 
@@ -72,6 +74,7 @@ function generateDoormat(seed) {
     
     // Select random palette
     selectedPalette = random(colorPalettes);
+    window.selectedPalette = selectedPalette; // Make globally available
     updateTextColors();
     
     // Generate stripe data
@@ -741,48 +744,8 @@ function generateCharacterPixels(char, x, y, width, height) {
     const scaledWarp = warpSpacing * TEXT_SCALE;
     const scaledWeft = weftSpacing * TEXT_SCALE;
 
-    // Character definitions (5x7 grid)
-    const charMap = {
-        'A': ["01110","10001","10001","11111","10001","10001","10001"],
-        'B': ["11110","10001","10001","11110","10001","10001","11110"],
-        'C': ["01111","10000","10000","10000","10000","10000","01111"],
-        'D': ["11110","10001","10001","10001","10001","10001","11110"],
-        'E': ["11111","10000","10000","11110","10000","10000","11111"],
-        'F': ["11111","10000","10000","11110","10000","10000","10000"],
-        'G': ["01111","10000","10000","10011","10001","10001","01111"],
-        'H': ["10001","10001","10001","11111","10001","10001","10001"],
-        'I': ["11111","00100","00100","00100","00100","00100","11111"],
-        'J': ["11111","00001","00001","00001","00001","10001","01110"],
-        'K': ["10001","10010","10100","11000","10100","10010","10001"],
-        'L': ["10000","10000","10000","10000","10000","10000","11111"],
-        'M': ["10001","11011","10101","10001","10001","10001","10001"],
-        'N': ["10001","11001","10101","10011","10001","10001","10001"],
-        'O': ["01110","10001","10001","10001","10001","10001","01110"],
-        'P': ["11110","10001","10001","11110","10000","10000","10000"],
-        'Q': ["01110","10001","10001","10001","10101","10010","01101"],
-        'R': ["11110","10001","10001","11110","10100","10010","10001"],
-        'S': ["01111","10000","10000","01110","00001","00001","11110"],
-        'T': ["11111","00100","00100","00100","00100","00100","00100"],
-        'U': ["10001","10001","10001","10001","10001","10001","01110"],
-        'V': ["10001","10001","10001","10001","10001","01010","00100"],
-        'W': ["10001","10001","10001","10001","10101","11011","10001"],
-        'X': ["10001","10001","01010","00100","01010","10001","10001"],
-        'Y': ["10001","10001","01010","00100","00100","00100","00100"],
-        'Z': ["11111","00001","00010","00100","01000","10000","11111"],
-        ' ': ["00000","00000","00000","00000","00000","00000","00000"],
-        '0': ["01110","10001","10011","10101","11001","10001","01110"],
-        '1': ["00100","01100","00100","00100","00100","00100","01110"],
-        '2': ["01110","10001","00001","00010","00100","01000","11111"],
-        '3': ["11110","00001","00001","01110","00001","00001","11110"],
-        '4': ["00010","00110","01010","10010","11111","00010","00010"],
-        '5': ["11111","10000","10000","11110","00001","00001","11110"],
-        '6': ["01110","10000","10000","11110","10001","10001","01110"],
-        '7': ["11111","00001","00010","00100","01000","01000","01000"],
-        '8': ["01110","10001","10001","01110","10001","10001","01110"],
-        '9': ["01110","10001","10001","01111","00001","00001","01110"]
-    };
-    
-    const charDef = charMap[char] || charMap[' '];
+    // Character definitions are now loaded from external file (character-map.js)
+    const charDef = characterMap[char] || characterMap[' '];
 
     const numRows = charDef.length;
     const numCols = charDef[0].length;
@@ -806,89 +769,12 @@ function generateCharacterPixels(char, x, y, width, height) {
     return pixels;
 }
 
-// Trait calculation functions
-function calculateTraits() {
-    const traits = {
-        // Text traits
-        textLines: doormatTextRows.length,
-        totalCharacters: doormatTextRows.reduce((sum, row) => sum + row.length, 0),
-        
-        // Palette traits
-        paletteName: selectedPalette ? selectedPalette.name : "Unknown",
-        paletteRarity: getPaletteRarity(selectedPalette ? selectedPalette.name : ""),
-        
-        // Visual traits
-        stripeCount: stripeData.length,
-        stripeComplexity: calculateStripeComplexity()
-    };
-    
-    console.log("Calculated traits:", traits);
-    return traits;
-}
-
-function getPaletteRarity(paletteName) {
-    // Define rarity tiers for different palette categories
-    const legendaryPalettes = ["Indian Flag", "Buddhist", "Maurya Empire", "Chola Dynasty", "Indigo Famine", "Bengal Famine", "Jamakalam"];
-    const epicPalettes = ["Peacock", "Flamingo", "Toucan", "Madras Checks", "Kanchipuram Silk", "Natural Dyes", "Bleeding Vintage"];
-    const rarePalettes = ["Tamil Classical", "Sangam Era", "Pandya Dynasty", "Maratha Empire", "Rajasthani"];
-    const uncommonPalettes = ["Tamil Nadu Temple", "Kerala Onam", "Chettinad Spice", "Chennai Monsoon", "Bengal Indigo"];
-    
-    if (legendaryPalettes.includes(paletteName)) return "Legendary";
-    if (epicPalettes.includes(paletteName)) return "Epic";
-    if (rarePalettes.includes(paletteName)) return "Rare";
-    if (uncommonPalettes.includes(paletteName)) return "Uncommon";
-    return "Common";
-}
-
-function calculateStripeComplexity() {
-    if (!stripeData || stripeData.length === 0) return "Basic";
-    
-    let complexityScore = 0;
-    let mixedCount = 0;
-    let texturedCount = 0;
-    let solidCount = 0;
-    let secondaryColorCount = 0;
-    
-    // Count different pattern types
-    for (let stripe of stripeData) {
-        if (stripe.weaveType === 'mixed') {
-            mixedCount++;
-            complexityScore += 2; // Mixed weave adds more complexity
-        } else if (stripe.weaveType === 'textured') {
-            texturedCount++;
-            complexityScore += 1.5; // Textured adds medium complexity
-        } else {
-            solidCount++;
-            // Solid adds no complexity
-        }
-        
-        if (stripe.secondaryColor) {
-            secondaryColorCount++;
-            complexityScore += 1; // Secondary colors add complexity
-        }
-    }
-    
-    // Calculate ratios
-    const mixedRatio = mixedCount / stripeData.length;
-    const texturedRatio = texturedCount / stripeData.length;
-    const solidRatio = solidCount / stripeData.length;
-    const secondaryRatio = secondaryColorCount / stripeData.length;
-    
-    // Normalize complexity score
-    const normalizedComplexity = complexityScore / (stripeData.length * 3); // Max possible is 3 per stripe
-    
-    // Much more strict classification
-    if (solidRatio > 0.9) return "Basic"; // Almost all solid
-    if (solidRatio > 0.75 && normalizedComplexity < 0.15) return "Simple"; // Mostly solid with minimal complexity
-    if (solidRatio > 0.6 && normalizedComplexity < 0.3) return "Moderate"; // Good amount of solid with some complexity
-    if (normalizedComplexity < 0.5) return "Complex"; // Significant complexity
-    return "Very Complex"; // High complexity
-}
+// Trait calculation functions are now loaded from external file (trait-calculator.js)
 
 // Make the functions globally available
 if (typeof window !== 'undefined') {
     window.addTextToDoormatInSketch = addTextToDoormatInSketch;
     window.clearTextFromDoormat = clearTextFromDoormat;
     window.getCurrentPalette = () => selectedPalette;
-    window.calculateTraits = calculateTraits;
+    // calculateTraits is now loaded from trait-calculator.js
 }
