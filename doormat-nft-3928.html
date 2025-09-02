@@ -1,0 +1,90 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Doormat NFT #3928</title><style>body{margin:0;padding:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;font-family:Arial,sans-serif}canvas{border-radius:8px;box-shadow:0 4px 8px rgba(255,255,255,0.1)}.info{position:absolute;top:10px;left:10px;color:#fff;font-size:10px;opacity:0.7}.traits{position:absolute;top:10px;right:10px;color:#fff;font-size:8px;opacity:0.7;text-align:right}</style><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script></head><body><div class="info">Seed: 3928<br>Palette: Maratha Empire</div><div class="traits">textLines: 1<br>totalCharacters: 2<br>paletteName: Maratha Empire<br>paletteRarity: Rare<br>stripeCount: 25<br>stripeComplexity: Complex</div><div id="canvas-container"></div><script>
+let doormatWidth = 800;
+let doormatHeight = 1200;
+let fringeLength = 30;
+let weftThickness = 8;
+let selectedPalette = {"name":"Maratha Empire","colors":["#8B0000","#DC143C","#B22222","#FF4500","#FF8C00","#FFD700","#228B22","#006400"]};
+let stripeData = [];
+let doormatTextRows = ["HI"];
+let textData = [];
+
+function setup() {
+    let totalWidth = doormatWidth + fringeLength * 4;
+    let totalHeight = doormatHeight + fringeLength * 4;
+    createCanvas(totalHeight, totalWidth);
+    pixelDensity(1);
+    noLoop();
+    
+    randomSeed(3928);
+    noiseSeed(3928);
+    
+    generateDoormat();
+}
+
+function generateDoormat() {
+    background(26);
+    
+    push();
+    translate(width/2, height/2);
+    rotate(PI/2);
+    translate(-height/2, -width/2);
+    
+    drawStripes();
+    if (doormatTextRows.length > 0) {
+        generateTextData();
+        drawText();
+    }
+    drawFringe();
+    drawSelvedgeEdges();
+    
+    pop();
+}
+
+function drawStripes() {
+    stripeData.forEach(stripe => {
+        fill(stripe.colors[0]);
+        noStroke();
+        rect(fringeLength, stripe.y + fringeLength, doormatWidth, stripe.height);
+    });
+}
+
+function generateTextData() {
+    textData = [];
+    doormatTextRows.forEach((text, rowIndex) => {
+        let startY = fringeLength + 150 + rowIndex * 100;
+        for (let i = 0; i < text.length; i++) {
+            let charX = fringeLength + 100 + i * 50;
+            textData.push({x: charX, y: startY, char: text[i]});
+        }
+    });
+}
+
+function drawText() {
+    textData.forEach(item => {
+        fill(255);
+        noStroke();
+        rect(item.x, item.y, 40, 70);
+    });
+}
+
+function drawFringe() {
+    for (let i = 0; i < 50; i++) {
+        let x = random(fringeLength, fringeLength + doormatWidth);
+        let color = stripeData[floor(map(x - fringeLength, 0, doormatWidth, 0, stripeData.length))]?.colors[0] || selectedPalette.colors[0];
+        stroke(color);
+        strokeWeight(2);
+        line(x, 0, x, fringeLength);
+        line(x, fringeLength + doormatHeight, x, fringeLength + doormatHeight + fringeLength);
+    }
+}
+
+function drawSelvedgeEdges() {
+    stripeData.forEach((stripe, i) => {
+        let y = stripe.y + fringeLength;
+        let color = stripe.colors[0];
+        stroke(color);
+        strokeWeight(2);
+        arc(fringeLength - 15, y + stripe.height/2, 30, 30, PI/2, 3*PI/2);
+        arc(fringeLength + doormatWidth + 15, y + stripe.height/2, 30, 30, -PI/2, PI/2);
+    });
+}</script></body></html>
