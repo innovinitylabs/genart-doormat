@@ -571,18 +571,8 @@ function drawSelvedgeEdges() {
             let startAngle = HALF_PI + random(-0.2, 0.2);
             let endAngle = -HALF_PI + random(-0.2, 0.2);
             
-            // Draw the semicircle (flowing from left to right)
-            arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
-            
-            // Add subtle shadow for depth with variation
-            fill(r * 0.7, g * 0.7, b * 0.7, 100);
-            arc(centerX + random(0.5, 1.5), centerY + random(0.5, 1.5), radius * 2, radius * 2, startAngle, endAngle);
-            
-            // Add small transparent hole in the center with variation
-            // To increase hole size: change 0.4 to a larger value (e.g., 0.6, 0.8)
-            // To decrease hole size: change 0.4 to a smaller value (e.g., 0.2, 0.3)
-            noFill();
-            arc(centerX, centerY, radius * random(0.8, 1.2), radius * random(0.8, 1.2), startAngle, endAngle);
+            // Draw textured semicircle with individual thread details
+            drawTexturedSelvedgeArc(centerX, centerY, radius, startAngle, endAngle, r, g, b, 'left');
         }
     }
     
@@ -630,23 +620,67 @@ function drawSelvedgeEdges() {
             let startAngle = -HALF_PI + random(-0.2, 0.2);
             let endAngle = HALF_PI + random(-0.2, 0.2);
             
-            // Draw the semicircle (flowing from right to left)
-            arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
-            
-            // Add subtle shadow for depth with variation
-            fill(r * 0.7, g * 0.7, b * 0.7, 100);
-            arc(centerX - random(0.5, 1.5), centerY + random(0.5, 1.5), radius * 2, radius * 2, startAngle, endAngle);
-            
-            // Add small transparent hole in the center with variation
-            // To increase hole size: change 0.4 to a larger value (e.g., 0.6, 0.8)
-            // To decrease hole size: change 0.4 to a smaller value (e.g., 0.2, 0.3)
-            noFill();
-            arc(centerX, centerY, radius * random(0.8, 1.2), radius * random(0.8, 1.2), startAngle, endAngle);
+            // Draw textured semicircle with individual thread details
+            drawTexturedSelvedgeArc(centerX, centerY, radius, startAngle, endAngle, r, g, b, 'right');
         }
     }
 }
 
-
+function drawTexturedSelvedgeArc(centerX, centerY, radius, startAngle, endAngle, r, g, b, side) {
+    // Draw a realistic textured selvedge arc made of individual threads
+    let threadCount = max(3, floor(radius / 2)); // Number of threads based on radius
+    let threadSpacing = radius / threadCount;
+    
+    // Draw base semicircle with main color - more transparent
+    fill(r, g, b, 180); // Reduced from 255 to 180 for transparency
+    noStroke();
+    arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
+    
+    // Add individual thread texture
+    for (let i = 0; i < threadCount; i++) {
+        let threadRadius = radius - (i * threadSpacing);
+        let threadAlpha = map(i, 0, threadCount, 255, 100); // Fade towards center
+        
+        // Vary thread color slightly for texture
+        let threadR = r + random(-20, 20);
+        let threadG = g + random(-20, 20);
+        let threadB = b + random(-20, 20);
+        threadR = constrain(threadR, 0, 255);
+        threadG = constrain(threadG, 0, 255);
+        threadB = constrain(threadB, 0, 255);
+        
+        fill(threadR, threadG, threadB, threadAlpha * 0.7); // Make threads more transparent
+        
+        // Draw individual thread arc with slight position variation
+        let threadX = centerX + random(-1, 1);
+        let threadY = centerY + random(-1, 1);
+        let threadStartAngle = startAngle + random(-0.1, 0.1);
+        let threadEndAngle = endAngle + random(-0.1, 0.1);
+        
+        arc(threadX, threadY, threadRadius * 2, threadRadius * 2, threadStartAngle, threadEndAngle);
+    }
+    
+    // Add subtle shadow for depth - more transparent
+    fill(r * 0.7, g * 0.7, b * 0.7, 50); // Reduced from 80 to 50
+    let shadowOffset = side === 'left' ? 1 : -1;
+    arc(centerX + shadowOffset, centerY + 1, radius * 2, radius * 2, startAngle, endAngle);
+    
+    // Add small transparent hole in the center
+    noFill();
+    arc(centerX, centerY, radius * 0.6, radius * 0.6, startAngle, endAngle);
+    
+    // Add some small texture details - tiny bumps and irregularities
+    for (let i = 0; i < 5; i++) {
+        let detailAngle = random(startAngle, endAngle);
+        let detailRadius = radius * random(0.3, 0.8);
+        let detailX = centerX + cos(detailAngle) * detailRadius;
+        let detailY = centerY + sin(detailAngle) * detailRadius;
+        
+        fill(r * 0.9, g * 0.9, b * 0.9, 40); // Reduced from 60 to 40 for more transparency
+        noStroke();
+        ellipse(detailX, detailY, random(1, 3), random(1, 3));
+    }
+}
 
 function drawFringeSection(x, y, w, h, side) {
     let fringeStrands = w / 12; // More fringe strands for thinner threads
