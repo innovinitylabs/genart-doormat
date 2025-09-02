@@ -149,7 +149,28 @@
         </div>
         
         <div class="controls">
-            <input type="text" id="textInput" class="text-input" placeholder="Enter text for doormat (A-Z, 0-9, space)" maxlength="11" oninput="validateTextInput(this)">
+            <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <label style="font-size: 12px; width: 60px;">Row 1:</label>
+                    <input type="text" id="textInput1" class="text-input" placeholder="Enter text (A-Z, 0-9, space)" maxlength="11" oninput="validateTextInput(this)">
+                </div>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <label style="font-size: 12px; width: 60px;">Row 2:</label>
+                    <input type="text" id="textInput2" class="text-input" placeholder="Enter text (A-Z, 0-9, space)" maxlength="11" oninput="validateTextInput(this)">
+                </div>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <label style="font-size: 12px; width: 60px;">Row 3:</label>
+                    <input type="text" id="textInput3" class="text-input" placeholder="Enter text (A-Z, 0-9, space)" maxlength="11" oninput="validateTextInput(this)">
+                </div>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <label style="font-size: 12px; width: 60px;">Row 4:</label>
+                    <input type="text" id="textInput4" class="text-input" placeholder="Enter text (A-Z, 0-9, space)" maxlength="11" oninput="validateTextInput(this)">
+                </div>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <label style="font-size: 12px; width: 60px;">Row 5:</label>
+                    <input type="text" id="textInput5" class="text-input" placeholder="Enter text (A-Z, 0-9, space)" maxlength="11" oninput="validateTextInput(this)">
+                </div>
+            </div>
             <button onclick="addTextToDoormat()">Add Text</button>
             <button onclick="clearText()">Clear Text</button>
         </div>
@@ -190,14 +211,22 @@
 
         
         function addTextToDoormat() {
-            const text = document.getElementById('textInput').value.trim();
-            if (text && typeof window.addTextToDoormatInSketch === 'function') {
-                window.addTextToDoormatInSketch(text);
+            const textRows = [];
+            for (let i = 1; i <= 5; i++) {
+                const text = document.getElementById('textInput' + i).value.trim();
+                if (text) {
+                    textRows.push(text);
+                }
+            }
+            if (textRows.length > 0 && typeof window.addTextToDoormatInSketch === 'function') {
+                window.addTextToDoormatInSketch(textRows);
             }
         }
         
         function clearText() {
-            document.getElementById('textInput').value = '';
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById('textInput' + i).value = '';
+            }
             if (typeof window.clearTextFromDoormat === 'function') {
                 window.clearTextFromDoormat();
             }

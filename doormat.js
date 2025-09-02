@@ -237,7 +237,7 @@ const colorPalettes = [
 
 let selectedPalette;
 let stripeData = [];
-let doormatText = ""; // Text to embed in the doormat
+let doormatTextRows = []; // Array of text rows to embed in the doormat
 let textData = []; // Text positioning and character data
 
 // Initialize with a default palette
@@ -811,22 +811,30 @@ function generateDoormat(seed) {
 
 
 // Text embedding functions
-function addTextToDoormatInSketch(text) {
-    const clean = text.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, MAX_CHARS);
-    doormatText = clean;
+function addTextToDoormatInSketch(textRows) {
+    // Handle both single string and array of strings
+    if (typeof textRows === 'string') {
+        textRows = [textRows];
+    }
+    
+    // Clean each text row
+    doormatTextRows = textRows.map(text => 
+        text.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, MAX_CHARS)
+    ).filter(text => text.length > 0); // Remove empty rows
+    
     generateTextData();
     redraw();
 }
 
 function clearTextFromDoormat() {
-    doormatText = "";
+    doormatTextRows = [];
     textData = [];
     redraw();
 }
 
 function generateTextData() {
     textData = [];
-    if (!doormatText) return;
+    if (!doormatTextRows || doormatTextRows.length === 0) return;
     
     // Use actual thread spacing for text
     const warpSpacing = warpThickness + 1;
@@ -839,21 +847,35 @@ function generateTextData() {
     const charHeight = 5 * scaledWeft; // height after rotation (5 rows)
     const spacing = scaledWeft; // vertical gap between stacked characters
     
-    // Calculate text dimensions
-    const textWidth = charWidth;
-    const textHeight = doormatText.length * (charHeight + spacing) - spacing;
+    // Calculate spacing between rows (horizontal spacing after rotation)
+    const rowSpacing = charWidth * 1.5; // Space between rows
     
-    // Center the text on the doormat (accounting for 90-degree rotation)
-    // After rotation: width becomes height, height becomes width
-    const startX = (doormatWidth - textWidth) / 2;
-    const startY = (doormatHeight - textHeight) / 2;
+    // Calculate total width needed for all rows
+    const totalRowsWidth = doormatTextRows.length * charWidth + (doormatTextRows.length - 1) * rowSpacing;
     
-    // Generate character data vertically bottom-to-top
-    for (let i = 0; i < doormatText.length; i++) {
-        const char = doormatText.charAt(i);
-        const charY = startY + (doormatText.length - 1 - i) * (charHeight + spacing);
-        const charPixels = generateCharacterPixels(char, startX, charY, charWidth, charHeight);
-        textData.push(...charPixels);
+    // Calculate starting X position to center all rows
+    const baseStartX = (doormatWidth - totalRowsWidth) / 2;
+    
+    // Generate text data for each row
+    for (let rowIndex = 0; rowIndex < doormatTextRows.length; rowIndex++) {
+        const doormatText = doormatTextRows[rowIndex];
+        if (!doormatText) continue;
+        
+        // Calculate text dimensions for this row
+        const textWidth = charWidth;
+        const textHeight = doormatText.length * (charHeight + spacing) - spacing;
+        
+        // Position for this row (left to right becomes after rotation)
+        const startX = baseStartX + rowIndex * (charWidth + rowSpacing);
+        const startY = (doormatHeight - textHeight) / 2;
+        
+        // Generate character data vertically bottom-to-top for this row
+        for (let i = 0; i < doormatText.length; i++) {
+            const char = doormatText.charAt(i);
+            const charY = startY + (doormatText.length - 1 - i) * (charHeight + spacing);
+            const charPixels = generateCharacterPixels(char, startX, charY, charWidth, charHeight);
+            textData.push(...charPixels);
+        }
     }
 }
 
