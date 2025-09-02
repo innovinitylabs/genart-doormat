@@ -689,44 +689,31 @@ function generateCharacterPixels() { return []; }`;
         }
 
         function minifyCode(code) {
-            // Aggressive minification for maximum size reduction
+            // Conservative but effective minification
             return code
                 // Remove all comments
                 .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
                 .replace(/\/\/.*$/gm, '') // Remove // comments
                 
-                // Remove all unnecessary whitespace
-                .replace(/\s+/g, '') // Remove ALL whitespace (spaces, tabs, newlines)
-                .replace(/;}/g, '}') // Remove semicolons before closing braces
-                .replace(/,\s*}/g, '}') // Remove trailing commas
-                .replace(/,\s*]/g, ']') // Remove trailing commas in arrays
-                
-                // Optimize common patterns
-                .replace(/let\s+/g, '') // Remove 'let ' declarations
-                .replace(/const\s+/g, '') // Remove 'const ' declarations
-                .replace(/function\s+/g, '') // Remove 'function ' keyword
-                .replace(/return\s+/g, '') // Remove 'return ' keyword
-                .replace(/if\s*\(/g, 'if(') // Remove space after if
-                .replace(/for\s*\(/g, 'for(') // Remove space after for
-                .replace(/while\s*\(/g, 'while(') // Remove space after while
-                
-                // Remove unnecessary semicolons and spaces
-                .replace(/;\s*}/g, '}') // Remove semicolons before braces
+                // Remove excessive whitespace but preserve syntax
+                .replace(/\s+/g, ' ') // Replace multiple whitespace with single space
+                .replace(/;\s*}/g, ';}') // Remove space before closing braces
                 .replace(/{\s*/g, '{') // Remove space after opening braces
                 .replace(/}\s*/g, '}') // Remove space after closing braces
                 .replace(/,\s*/g, ',') // Remove space after commas
+                .replace(/;\s*/g, ';') // Remove space after semicolons
                 .replace(/\(\s*/g, '(') // Remove space after opening parentheses
                 .replace(/\s*\)/g, ')') // Remove space before closing parentheses
                 .replace(/\[\s*/g, '[') // Remove space after opening brackets
                 .replace(/\s*\]/g, ']') // Remove space before closing brackets
                 
-                // Optimize specific patterns
-                .replace(/Math\./g, '') // Remove 'Math.' prefix (use global functions)
-                .replace(/window\./g, '') // Remove 'window.' prefix where safe
-                .replace(/typeof\s+/g, 'typeof') // Remove space after typeof
+                // Safe optimizations
+                .replace(/let\s+/g, 'let') // Keep 'let' but remove extra space
+                .replace(/const\s+/g, 'const') // Keep 'const' but remove extra space
+                .replace(/function\s+/g, 'function') // Keep 'function' but remove extra space
+                .replace(/return\s+/g, 'return') // Keep 'return' but remove extra space
                 
                 // Final cleanup
-                .replace(/\s+/g, '') // Remove any remaining whitespace
                 .trim();
         }
 
