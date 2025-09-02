@@ -251,7 +251,8 @@ function initializePalette() {
 function setup() {
     // Create canvas with swapped dimensions for 90-degree rotation
     // After rotation: width becomes height, height becomes width
-    let canvas = createCanvas(doormatHeight + (fringeLength * 2), doormatWidth + (fringeLength * 2));
+    // Increased buffer for frayed edges and selvedge variations
+    let canvas = createCanvas(doormatHeight + (fringeLength * 4), doormatWidth + (fringeLength * 4));
     canvas.parent('canvas-container');
     
     // Initialize palette
@@ -320,7 +321,8 @@ function generateStripeData() {
 }
 
 function draw() {
-    background(245, 245, 220); // Beige background
+    // Use a background that won't create visible bands after rotation
+    background(222, 222, 222); // Pure white background to avoid visible bands
     
     // Rotate canvas 90 degrees clockwise
     push();
@@ -330,7 +332,8 @@ function draw() {
     
     // Draw the main doormat area
     push();
-    translate(fringeLength, fringeLength);
+    // Center the doormat within the larger canvas buffer
+    translate(fringeLength * 2, fringeLength * 2);
     
     // Draw stripes
     for (let stripe of stripeData) {
@@ -342,7 +345,7 @@ function draw() {
     
     pop();
     
-    // Draw fringe
+    // Draw fringe with adjusted positioning for larger canvas
     drawFringe();
     
     pop(); // End rotation
@@ -507,20 +510,16 @@ function drawTextureOverlay() {
 
 function drawFringe() {
     // Top fringe (warp ends)
-    drawFringeSection(fringeLength, 0, doormatWidth, fringeLength, 'top');
+    // Top fringe - adjusted for larger canvas buffer
+    drawFringeSection(fringeLength * 2, fringeLength, doormatWidth, fringeLength, 'top');
     
-    // Bottom fringe (warp ends)
-    drawFringeSection(fringeLength, fringeLength + doormatHeight, doormatWidth, fringeLength, 'bottom');
+    // Bottom fringe - adjusted for larger canvas buffer
+    drawFringeSection(fringeLength * 2, fringeLength * 2 + doormatHeight, doormatWidth, fringeLength, 'bottom');
     
     // Draw selvedge edges (weft loops) on left and right sides
     drawSelvedgeEdges();
     
-    // Add subtle shadow under the doormat
-    push();
-    fill(0, 0, 0, 30);
-    noStroke();
-    rect(fringeLength + 5, fringeLength + doormatHeight + 5, doormatWidth - 10, 10);
-    pop();
+
 }
 
 function drawSelvedgeEdges() {
@@ -564,22 +563,26 @@ function drawSelvedgeEdges() {
             fill(r, g, b);
             noStroke();
             
-            let radius = weftThickness * 1.5; // Size based on weft thickness
-            let centerX = fringeLength; // Center at mat edge
-            let centerY = fringeLength + y + weftThickness/2; // Convert to absolute coordinates
+            let radius = weftThickness * random(1.2, 1.8); // Vary size slightly
+            let centerX = fringeLength * 2 + random(-2, 2); // Slight position variation
+            let centerY = fringeLength * 2 + y + weftThickness/2 + random(-1, 1); // Slight vertical variation
+            
+            // Vary the arc angles for more natural look
+            let startAngle = HALF_PI + random(-0.2, 0.2);
+            let endAngle = -HALF_PI + random(-0.2, 0.2);
             
             // Draw the semicircle (flowing from left to right)
-            arc(centerX, centerY, radius * 2, radius * 2, HALF_PI, -HALF_PI);
+            arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
             
-            // Add subtle shadow for depth
+            // Add subtle shadow for depth with variation
             fill(r * 0.7, g * 0.7, b * 0.7, 100);
-            arc(centerX + 1, centerY + 1, radius * 2, radius * 2, HALF_PI, -HALF_PI);
+            arc(centerX + random(0.5, 1.5), centerY + random(0.5, 1.5), radius * 2, radius * 2, startAngle, endAngle);
             
-            // Add small transparent hole in the center
+            // Add small transparent hole in the center with variation
             // To increase hole size: change 0.4 to a larger value (e.g., 0.6, 0.8)
             // To decrease hole size: change 0.4 to a smaller value (e.g., 0.2, 0.3)
             noFill();
-            arc(centerX, centerY, radius * 1, radius * 1, HALF_PI, -HALF_PI);
+            arc(centerX, centerY, radius * random(0.8, 1.2), radius * random(0.8, 1.2), startAngle, endAngle);
         }
     }
     
@@ -619,22 +622,26 @@ function drawSelvedgeEdges() {
             fill(r, g, b);
             noStroke();
             
-            let radius = weftThickness * 1.5; // Size based on weft thickness
-            let centerX = fringeLength + doormatWidth; // Center at mat edge
-            let centerY = fringeLength + y + weftThickness/2; // Convert to absolute coordinates
+            let radius = weftThickness * random(1.2, 1.8); // Vary size slightly
+            let centerX = fringeLength * 2 + doormatWidth + random(-2, 2); // Slight position variation
+            let centerY = fringeLength * 2 + y + weftThickness/2 + random(-1, 1); // Slight vertical variation
+            
+            // Vary the arc angles for more natural look
+            let startAngle = -HALF_PI + random(-0.2, 0.2);
+            let endAngle = HALF_PI + random(-0.2, 0.2);
             
             // Draw the semicircle (flowing from right to left)
-            arc(centerX, centerY, radius * 2, radius * 2, -HALF_PI, HALF_PI);
+            arc(centerX, centerY, radius * 2, radius * 2, startAngle, endAngle);
             
-            // Add subtle shadow for depth
+            // Add subtle shadow for depth with variation
             fill(r * 0.7, g * 0.7, b * 0.7, 100);
-            arc(centerX - 1, centerY + 1, radius * 2, radius * 2, -HALF_PI, HALF_PI);
+            arc(centerX - random(0.5, 1.5), centerY + random(0.5, 1.5), radius * 2, radius * 2, startAngle, endAngle);
             
-            // Add small transparent hole in the center
+            // Add small transparent hole in the center with variation
             // To increase hole size: change 0.4 to a larger value (e.g., 0.6, 0.8)
             // To decrease hole size: change 0.4 to a smaller value (e.g., 0.2, 0.3)
             noFill();
-            arc(centerX, centerY, radius * 0.4, radius * 0.4, -HALF_PI, HALF_PI);
+            arc(centerX, centerY, radius * random(0.8, 1.2), radius * random(0.8, 1.2), startAngle, endAngle);
         }
     }
 }
@@ -661,9 +668,14 @@ function drawFringeSection(x, y, w, h, side) {
             let startY = side === 'top' ? y + h : y;
             let endY = side === 'top' ? y : y + h;
             
-            // Add natural curl/wave to the fringe
-            let waveAmplitude = random(1, 3);
-            let waveFreq = random(0.3, 0.5);
+            // Add natural curl/wave to the fringe with more variation
+            let waveAmplitude = random(1, 4);
+            let waveFreq = random(0.2, 0.8);
+            
+            // Randomize the direction and intensity for each thread
+            let direction = random([-1, 1]); // Random left or right direction
+            let curlIntensity = random(0.5, 2.0);
+            let threadLength = random(0.8, 1.2); // Vary thread length
             
             // Use darker version of strand color for fringe
             let fringeColor = color(strandColor);
@@ -672,15 +684,19 @@ function drawFringeSection(x, y, w, h, side) {
             let b = blue(fringeColor) * 0.7;
             
             stroke(r, g, b);
-            strokeWeight(random(0.5, 1)); // Much thinner threads
+            strokeWeight(random(0.5, 1.2)); // Vary thread thickness
             
             noFill();
             beginShape();
             for (let t = 0; t <= 1; t += 0.1) {
-                let yPos = lerp(startY, endY, t);
-                let xOffset = sin(t * PI * waveFreq) * waveAmplitude * t;
-                // Add some randomness to make it look more natural
-                xOffset += random(-0.5, 0.5);
+                let yPos = lerp(startY, endY, t * threadLength);
+                let xOffset = sin(t * PI * waveFreq) * waveAmplitude * t * direction * curlIntensity;
+                // Add more randomness and natural variation
+                xOffset += random(-1, 1);
+                // Add occasional kinks and bends
+                if (random() < 0.3) {
+                    xOffset += random(-2, 2);
+                }
                 vertex(threadX + xOffset, yPos);
             }
             endShape();
