@@ -232,7 +232,7 @@ function generateStripeData() {
 
 function draw() {
     // Use a background that won't create visible bands after rotation
-    background(222, 222, 222); // Pure white background to avoid visible bands
+    background(245, 242, 238); // Warm, mellow cream background to enhance artwork
     
     // Rotate canvas 90 degrees clockwise
     push();
