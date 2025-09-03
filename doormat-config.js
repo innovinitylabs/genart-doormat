@@ -9,8 +9,8 @@
     const FRINGE_LENGTH = 30;
 
     // Thread specifications
-    const WEFT_THICKNESS = 8;
-    const TEXT_SCALE = 2;
+    const WEFT_THICKNESS = 4; // Reduced from 8 for better text readability
+    const TEXT_SCALE = 1; // Reduced from 2 for finer text detail
 
     // Text constraints
     const MAX_CHARS = 11;
