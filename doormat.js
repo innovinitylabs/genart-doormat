@@ -57,9 +57,9 @@ function selectPaletteByRarity() {
     const rarityWeights = {
         'Common': 60,      // 60% chance
         'Uncommon': 25,    // 25% chance  
-        'Rare': 10,        // 10% chance
-        'Epic': 4,         // 4% chance
-        'Legendary': 1     // 1% chance
+        'Rare': 11,        // 10% chance
+        'Epic': 8,         // 4% chance
+        'Legendary': 4     // 1% chance
     };
     
     // Roll for rarity tier first
