@@ -247,6 +247,11 @@ function drawStripe(stripe) {
                 const bgBrightness = (r + g + b) / 3;
                 let tc = bgBrightness < 128 ? lightTextColor : darkTextColor;
                 r = red(tc); g = green(tc); b = blue(tc);
+                
+                // Add shadow border for better text visibility
+                fill(0, 0, 0, 120);
+                noStroke();
+                rect(x - 1, y - 1, warpThickness + 2, weftSpacing + 2);
             }
             
             r = constrain(r, 0, 255);
@@ -299,6 +304,11 @@ function drawStripe(stripe) {
                 const bgBrightness = (r + g + b) / 3;
                 let tc = bgBrightness < 128 ? lightTextColor : darkTextColor;
                 r = red(tc); g = green(tc); b = blue(tc);
+                
+                // Add shadow border for better text visibility
+                fill(0, 0, 0, 120);
+                noStroke();
+                rect(x - 1, y - 1, warpSpacing + 2, weftThickness + 2);
             }
             
             r = constrain(r, 0, 255);
