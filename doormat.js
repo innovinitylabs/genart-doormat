@@ -51,6 +51,51 @@ function initializePalette() {
     updateTextColors();
 }
 
+// Rarity-based palette selection function
+function selectPaletteByRarity() {
+    // Define rarity tiers with weights (percentages)
+    const rarityWeights = {
+        'Common': 60,      // 60% chance
+        'Uncommon': 25,    // 25% chance  
+        'Rare': 10,        // 10% chance
+        'Epic': 4,         // 4% chance
+        'Legendary': 1     // 1% chance
+    };
+    
+    // Roll for rarity tier first
+    const rarityRoll = random(100);
+    let selectedRarity;
+    
+    if (rarityRoll < rarityWeights.Legendary) {
+        selectedRarity = 'Legendary';
+    } else if (rarityRoll < rarityWeights.Legendary + rarityWeights.Epic) {
+        selectedRarity = 'Epic';
+    } else if (rarityRoll < rarityWeights.Legendary + rarityWeights.Epic + rarityWeights.Rare) {
+        selectedRarity = 'Rare';
+    } else if (rarityRoll < rarityWeights.Legendary + rarityWeights.Epic + rarityWeights.Rare + rarityWeights.Uncommon) {
+        selectedRarity = 'Uncommon';
+    } else {
+        selectedRarity = 'Common';
+    }
+    
+    // Get palettes of the selected rarity
+    const palettesOfRarity = colorPalettes.filter(palette => {
+        const paletteRarity = getPaletteRarity(palette.name);
+        return paletteRarity === selectedRarity;
+    });
+    
+    // If no palettes of that rarity, fall back to common
+    if (palettesOfRarity.length === 0) {
+        console.log(`No ${selectedRarity} palettes found, falling back to Common`);
+        return random(colorPalettes.filter(palette => getPaletteRarity(palette.name) === 'Common'));
+    }
+    
+    // Select random palette from the chosen rarity tier
+    const selectedPalette = random(palettesOfRarity);
+    console.log(`Selected ${selectedRarity} palette: ${selectedPalette.name}`);
+    return selectedPalette;
+}
+
 function setup() {
     // Create canvas with swapped dimensions for 90-degree rotation
     // After rotation: width becomes height, height becomes width
@@ -74,8 +119,8 @@ function generateDoormatCore(seed) {
     warpThickness = random([1, 2]); // Keep warp thin for readable text
     console.log("Generated warp thickness:", warpThickness);
     
-    // Select random palette
-    selectedPalette = random(colorPalettes);
+    // Select palette based on rarity weights
+    selectedPalette = selectPaletteByRarity();
     window.selectedPalette = selectedPalette; // Make globally available
     updateTextColors();
     
@@ -248,7 +293,10 @@ function drawStripe(stripe) {
                 let tc = bgBrightness < 128 ? lightTextColor : darkTextColor;
                 r = red(tc); g = green(tc); b = blue(tc);
                 
-
+                // Add shadow border for better text visibility
+                fill(0, 0, 0, 120);
+                noStroke();
+                rect(x - 1, y - 1, warpThickness + 2, weftSpacing + 2);
             }
             
             r = constrain(r, 0, 255);
