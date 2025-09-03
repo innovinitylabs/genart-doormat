@@ -10,7 +10,7 @@
 
     // Thread specifications
     const WEFT_THICKNESS = 4; // Reduced from 8 for better text readability
-    const TEXT_SCALE = 1; // Reduced from 2 for finer text detail
+    const TEXT_SCALE = 0.5; // Much smaller text for better readability
 
     // Text constraints
     const MAX_CHARS = 11;
