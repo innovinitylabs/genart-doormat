@@ -103,6 +103,9 @@ function setup() {
     let canvas = createCanvas(doormatHeight + (fringeLength * 4), doormatWidth + (fringeLength * 4));
     canvas.parent('canvas-container');
     
+    // Set high DPR for crisp rendering on high-DPI displays
+    pixelDensity(2.5);
+    
     // Initialize palette
     initializePalette();
     
