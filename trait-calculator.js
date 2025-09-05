@@ -34,10 +34,10 @@ function calculateTraits() {
 
 function getPaletteRarity(paletteName) {
     // Define rarity tiers for different palette categories
-    const legendaryPalettes = ["Buddhist", "Maurya Empire", "Chola Dynasty", "Indigo Famine", "Bengal Famine", "Jamakalam"];
-    const epicPalettes = ["Indian Peacock", "Flamingo", "Toucan", "Madras Checks", "Kanchipuram Silk", "Natural Dyes", "Bleeding Vintage"];
-    const rarePalettes = ["Tamil Classical", "Sangam Era", "Pandya Dynasty", "Maratha Empire", "Rajasthani"];
-    const uncommonPalettes = ["Tamil Nadu Temple", "Kerala Onam", "Chettinad Spice", "Chennai Monsoon", "Bengal Indigo"];
+    const legendaryPalettes = ["Pandya Kingdom", "Chola Dynasty", "Indigo Famine", "Bengal Famine", "Jamakalam", "Madder Root", "Madras Checks"];
+    const epicPalettes = ["Buddhist", "Indian Peacock", "Flamingo", "Toucan", "Kanchipuram Silk", "Natural Dyes", "Bleeding Vintage"];
+    const rarePalettes = [ "Sangam Era", "Pandya Dynasty", "Maratha Empire", "Rajasthani", "Vintage Tamil", "Mumbai Monsoon", "Expanded Traditional"];
+    const uncommonPalettes = [ "Kerala Onam", "Chettinad Spice", "Chennai Monsoon", "Bengal Indigo", "Madras Summer", "Pondy Pastel", "Natural Dyes","Kanchipuram Gold", "Warm Tamil Madras"];
     
     if (legendaryPalettes.includes(paletteName)) return "Legendary";
     if (epicPalettes.includes(paletteName)) return "Epic";
